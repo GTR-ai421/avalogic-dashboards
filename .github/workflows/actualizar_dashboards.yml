@@ -1,0 +1,48 @@
+name: Actualizar Dashboards GTR
+
+on:
+  workflow_dispatch:
+    inputs:
+      motivo:
+        description: 'Motivo de la actualización (opcional)'
+        required: false
+        default: 'Actualización manual'
+
+jobs:
+  actualizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dependencias
+        run: |
+          pip install boxsdk==3.9.2 pandas openpyxl lxml requests numpy
+
+      - name: Crear carpetas de datos
+        run: |
+          mkdir -p data/wa data/ivr data/tmp
+
+      - name: Ejecutar procesamiento
+        env:
+          BOX_CLIENT_ID:     ${{ secrets.BOX_CLIENT_ID }}
+          BOX_CLIENT_SECRET: ${{ secrets.BOX_CLIENT_SECRET }}
+          BOX_ACCESS_TOKEN:  ${{ secrets.BOX_ACCESS_TOKEN }}
+          BOX_REFRESH_TOKEN: ${{ secrets.BOX_REFRESH_TOKEN }}
+        run: |
+          python procesar_dashboards.py
+
+      - name: Commit y push de cambios
+        run: |
+          git config user.name  "GTR Dashboard Bot"
+          git config user.email "gtr-bot@avalogic.com"
+          git add canales/index.html index.html data/datos_dashboards.json
+          git diff --staged --quiet || git commit -m "Dashboard actualizado: $(date +'%d/%m/%Y %H:%M') - ${{ github.event.inputs.motivo }}"
+          git push
