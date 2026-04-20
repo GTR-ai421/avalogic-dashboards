@@ -1014,9 +1014,10 @@ function getAgData(){
   if(agEst==='todas'){
     return WA.agentes.map(a=>({usuario:a.usuario,nombre:a.nombre,total:a.total,efectivos:a.efectivos,tasa:a.tasa_ef}));
   }
-  // Filtrar por estrategia desde por_estrategia
-  const byEst = WA.por_estrategia.filter(x=>x.estrategia===agEst);
-  return byEst.map(x=>({usuario:x.usuario,nombre:x.nombre,total:x.total,efectivos:x.efectivos,tasa:x.tasa}));
+  // Filtrar por estrategia_real del array agentes
+  return WA.agentes
+    .filter(a => a.estrategia_real && a.estrategia_real === agEst)
+    .map(a=>({usuario:a.usuario,nombre:a.nombre,total:a.total,efectivos:a.efectivos,tasa:a.tasa_ef}));
 }
 
 function renderAgTabla(){

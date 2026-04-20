@@ -275,38 +275,62 @@ def calcular_kpis_ivr(ivr_data):
 
 # ─── ACTUALIZAR HTML ─────────────────────────────────────────────────────────
 def actualizar_html(datos_wa, datos_ivr, ahora):
-    if not HTML_CANALES.exists():
-        print(f"  ✗ No se encontró {HTML_CANALES}")
-        return False
-
-    with open(HTML_CANALES, 'r', encoding='utf-8') as f:
-        html = f.read()
+    # Siempre descargar el HTML actual desde GitHub para no sobreescribir con versión local
+    api = f'https://api.github.com/repos/{GH_USER}/{GH_REPO}/contents/canales/index.html'
+    headers = {
+        'Authorization': f'token {GH_TOKEN}',
+        'Accept': 'application/vnd.github.v3+json',
+    }
+    try:
+        import urllib.request, base64
+        req = urllib.request.Request(api, headers=headers)
+        with urllib.request.urlopen(req, timeout=30) as r:
+            data = json.loads(r.read())
+        html = base64.b64decode(data['content']).decode('utf-8')
+        print(f"  ✓ HTML descargado desde GitHub ({len(html)//1024} KB)")
+    except Exception as e:
+        print(f"  ✗ No se pudo descargar HTML desde GitHub: {e}")
+        print(f"    Usando versión local como respaldo...")
+        if not HTML_CANALES.exists():
+            print(f"  ✗ No se encontró {HTML_CANALES}")
+            return False
+        with open(HTML_CANALES, 'r', encoding='utf-8') as f:
+            html = f.read()
 
     # Actualizar timestamp
     html = re.sub(r'Actualizado:.*?(?=<)', f'Actualizado: {ahora}', html)
 
-    # Inyectar datos WA — reemplazar los arrays de datos en el JS
+    # Inyectar datos WA
     if datos_wa:
-        # por_mes
-        html = re.sub(
-            r'por_mes:\[.*?\],\s*hora:\[',
-            f"por_mes:{json.dumps(datos_wa.get('por_mes',[]), ensure_ascii=False)},\n  hora:[",
-            html, flags=re.DOTALL
-        )
-        # hora
-        html = re.sub(
-            r'hora:\[.*?\],\s*dia:\[',
-            f"hora:{json.dumps(datos_wa.get('hora',[]), ensure_ascii=False)},\n  dia:[",
-            html, flags=re.DOTALL
-        )
-        # dia
-        html = re.sub(
-            r'dia:\[.*?\],\s*tipificaciones:\[',
-            f"dia:{json.dumps(datos_wa.get('dia',[]), ensure_ascii=False)},\n  tipificaciones:[",
-            html, flags=re.DOTALL
-        )
+        if datos_wa.get('por_mes'):
+            html = re.sub(
+                r'por_mes:\[.*?\],\s*hora:\[',
+                f"por_mes:{json.dumps(datos_wa.get('por_mes',[]), ensure_ascii=False)},\n  hora:[",
+                html, flags=re.DOTALL
+            )
+        if datos_wa.get('hora'):
+            html = re.sub(
+                r'hora:\[.*?\],\s*dia:\[',
+                f"hora:{json.dumps(datos_wa.get('hora',[]), ensure_ascii=False)},\n  dia:[",
+                html, flags=re.DOTALL
+            )
+        if datos_wa.get('dia'):
+            html = re.sub(
+                r'dia:\[.*?\],\s*tipificaciones:\[',
+                f"dia:{json.dumps(datos_wa.get('dia',[]), ensure_ascii=False)},\n  tipificaciones:[",
+                html, flags=re.DOTALL
+            )
+        # Inyectar agentes con estrategia_real
+        if datos_wa.get('agentes'):
+            ag_js = json.dumps(datos_wa['agentes'], ensure_ascii=False)
+            # El array en el HTML se llama 'agentes:'
+            html = re.sub(
+                r'agentes:\[.*?\],\s*por_estrategia:\[',
+                f"agentes:{ag_js},\n  por_estrategia:[",
+                html, flags=re.DOTALL
+            )
 
-    # IVR - actualizar av_mes e inb_mes
+    # IVR
     if datos_ivr:
         if datos_ivr.get('av_mes'):
             av_js = json.dumps(datos_ivr['av_mes'], ensure_ascii=False)
@@ -315,6 +339,8 @@ def actualizar_html(datos_wa, datos_ivr, ahora):
             inb_js = json.dumps(datos_ivr['inb_mes'], ensure_ascii=False)
             html = re.sub(r'inb_mes:\[.*?\]', f'inb_mes:{inb_js}', html, flags=re.DOTALL)
 
+    # Guardar localmente también
+    HTML_CANALES.parent.mkdir(parents=True, exist_ok=True)
     with open(HTML_CANALES, 'w', encoding='utf-8') as f:
         f.write(html)
     print(f"  ✓ HTML actualizado ({len(html)//1024} KB)")
