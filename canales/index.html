@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Canal Voz · Avalogic GTR</title>
+<title>Canales · Avalogic GTR</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-:root {
-  --az1:#1e3a5f;--az2:#2563eb;--acc:#ea580c;
+:root{
+  --az2:#2563eb;--acc:#ea580c;
   --bg:#0a0f1a;--bg2:#0f1623;--bg3:#141d2e;
   --card:#151e2f;--card2:#1a2540;--border:#1e2d45;
   --text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;
@@ -16,23 +16,36 @@
   --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+html,body{height:100%}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex;flex-direction:column;overflow:hidden}
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(37,99,235,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(37,99,235,0.04) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0}
-nav{position:sticky;top:0;z-index:100;background:rgba(10,15,26,0.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;gap:0;height:56px}
-.nav-brand{display:flex;align-items:center;gap:12px;margin-right:auto}
-.nav-brand .dot{width:8px;height:8px;background:var(--acc);border-radius:50%;box-shadow:0 0 8px var(--acc);animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.2)}}
-.nav-brand span{font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text2)}
-.nav-brand strong{color:var(--text);font-weight:700}
-.nav-tabs{display:flex;gap:2px}
-.nav-tab{padding:6px 16px;font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);border-radius:4px;cursor:pointer;transition:all .2s;text-decoration:none;border:1px solid transparent}
-.nav-tab:hover{color:var(--text2);background:var(--card)}
-.nav-tab.active{color:var(--az2);border-color:var(--az2);background:rgba(37,99,235,.1)}
-.nav-link-ext{margin-left:16px;padding:6px 14px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);border:1px solid var(--border);border-radius:4px;text-decoration:none;transition:all .2s;display:flex;align-items:center;gap:6px}
-.nav-link-ext:hover{color:var(--text);border-color:var(--text3)}
-.nav-link-ext svg{width:12px;height:12px}
-.filtros-bar{position:sticky;top:56px;z-index:99;background:rgba(15,22,35,0.97);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);padding:10px 32px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+
+/* ── NAV NIVEL 1 (canales) ── */
+.nav1{position:relative;z-index:100;background:rgba(10,15,26,0.97);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;height:52px;gap:0;flex-shrink:0}
+.nav1-brand{display:flex;align-items:center;gap:10px;margin-right:24px}
+.nav1-brand .dot{width:7px;height:7px;background:var(--acc);border-radius:50%;box-shadow:0 0 7px var(--acc);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.3)}}
+.nav1-brand span{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text2)}
+.nav1-brand strong{color:var(--text)}
+.canal-tabs{display:flex;gap:2px;flex:1}
+.ctab{padding:6px 18px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);border-radius:5px;cursor:pointer;transition:all .2s;border:1px solid transparent;background:none;font-family:var(--sans)}
+.ctab:hover{color:var(--text2);background:var(--card)}
+.ctab.active{color:#fff;background:var(--az2);border-color:var(--az2)}
+.ctab.disabled{opacity:.35;cursor:not-allowed}
+.ctab.disabled:hover{color:var(--text3);background:none}
+.nav1-ext{margin-left:auto;padding:5px 13px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);border:1px solid var(--border);border-radius:4px;text-decoration:none;display:flex;align-items:center;gap:5px;transition:all .2s;flex-shrink:0}
+.nav1-ext:hover{color:var(--text);border-color:var(--text3)}
+.nav1-ext svg{width:11px;height:11px}
+
+/* ── NAV NIVEL 2 (sub-tabs dentro del canal activo) ── */
+.nav2{position:relative;z-index:99;background:rgba(15,22,35,0.98);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;gap:0;flex-shrink:0}
+.stab{padding:11px 16px;font-size:12px;font-weight:500;color:var(--text3);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:color .15s,border-color .15s;font-family:var(--sans);white-space:nowrap}
+.stab:hover{color:var(--text2)}
+.stab.active{color:var(--az2);border-bottom-color:var(--az2)}
+.stab.disabled{opacity:.3;cursor:not-allowed}
+
+/* ── FILTROS BAR ── */
+.filtros-bar{position:relative;z-index:98;background:rgba(12,18,30,0.99);border-bottom:1px solid var(--border);padding:9px 32px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;flex-shrink:0}
 .filtros-label{font-size:11px;color:var(--text3);font-weight:500;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
 .filter-group{display:flex;gap:4px;flex-wrap:wrap}
 .fbtn{padding:4px 10px;font-size:11px;font-family:var(--sans);font-weight:500;color:var(--text2);background:var(--bg3);border:1px solid var(--border);border-radius:4px;cursor:pointer;transition:all .12s;white-space:nowrap}
@@ -40,107 +53,158 @@ nav{position:sticky;top:0;z-index:100;background:rgba(10,15,26,0.94);backdrop-fi
 .fbtn.active{color:#fff;background:var(--az2);border-color:var(--az2)}
 .sep{width:1px;height:20px;background:var(--border);margin:0 4px;flex-shrink:0}
 .filtro-activo{font-size:11px;font-family:var(--mono);color:var(--az2);background:rgba(37,99,235,.1);padding:3px 8px;border-radius:3px;border:1px solid rgba(37,99,235,.2);display:none}
-main{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:40px 32px 80px}
-section{margin-bottom:64px}
-.section-header{display:flex;align-items:baseline;gap:16px;margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid var(--border)}
-.section-num{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--acc);letter-spacing:.1em}
-.section-title{font-size:18px;font-weight:700;color:var(--text);letter-spacing:-.01em}
-.section-sub{font-size:12px;color:var(--text3);margin-left:auto;font-family:var(--mono)}
-.hero{padding:48px 0 56px;display:flex;flex-direction:column;gap:8px}
-.hero-tag{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--acc);letter-spacing:.15em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
-.hero-tag::before{content:'';display:inline-block;width:24px;height:1px;background:var(--acc)}
-.hero h1{font-size:clamp(28px,4vw,44px);font-weight:700;line-height:1.1;letter-spacing:-.02em;color:var(--text)}
-.hero h1 span{color:var(--az2)}
-.hero-meta{font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:4px}
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
-.kpi-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:20px 20px 16px;position:relative;overflow:hidden;transition:border-color .2s,transform .2s}
+
+/* ── CANAL PANELS ── */
+.canal-panel{display:none;flex:1;overflow:hidden;flex-direction:column}
+.canal-panel.active{display:flex}
+
+/* ── TAB PANELS ── */
+.tab-panel{display:none;flex:1;overflow-y:auto;padding:28px 32px 60px}
+.tab-panel.active{display:block}
+
+/* placeholder canal futuro */
+.coming-soon{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:16px;opacity:.5}
+.coming-soon .icon{font-size:48px}
+.coming-soon h2{font-size:18px;font-weight:600;color:var(--text2)}
+.coming-soon p{font-size:13px;color:var(--text3)}
+
+/* ── COMPONENTES ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin-bottom:20px}
+.kpi-card{background:var(--card);border:1px solid var(--border);border-radius:7px;padding:18px 18px 14px;position:relative;overflow:hidden;transition:border-color .2s,transform .15s}
 .kpi-card:hover{border-color:var(--az2);transform:translateY(-1px)}
 .kpi-card::after{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--az2);opacity:0;transition:opacity .2s}
 .kpi-card:hover::after{opacity:1}
 .kpi-card.accent::after{background:var(--acc);opacity:1}
 .kpi-card.accent{border-color:rgba(234,88,12,.3)}
-.kpi-label{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px}
-.kpi-value{font-family:var(--mono);font-size:28px;font-weight:500;color:var(--text);line-height:1;margin-bottom:4px}
+.kpi-label{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:7px}
+.kpi-value{font-family:var(--mono);font-size:26px;font-weight:500;color:var(--text);line-height:1;margin-bottom:4px}
 .kpi-sub{font-size:11px;color:var(--text3);font-family:var(--mono)}
-.kpi-badge{display:inline-block;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:600;font-family:var(--mono);letter-spacing:.05em}
+.kpi-badge{display:inline-block;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:600;font-family:var(--mono)}
 .kpi-badge.green{background:rgba(16,185,129,.15);color:var(--green)}
 .kpi-badge.orange{background:rgba(234,88,12,.15);color:var(--acc)}
 .kpi-badge.blue{background:rgba(37,99,235,.15);color:var(--az2)}
-.chart-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:24px}
-.chart-title{font-size:13px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:20px;display:flex;align-items:center;gap:10px}
-.chart-title::before{content:'';width:3px;height:14px;background:var(--az2);border-radius:2px;flex-shrink:0}
+
+.row{display:grid;gap:14px;margin-bottom:14px}
+.row.c2{grid-template-columns:1fr 1fr}
+.row.c3{grid-template-columns:1fr 1fr 1fr}
+.row.c12{grid-template-columns:1fr 2fr}
+.row.c21{grid-template-columns:2fr 1fr}
+@media(max-width:900px){.row.c2,.row.c3,.row.c12,.row.c21{grid-template-columns:1fr}}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:7px;padding:20px}
+.card-title{font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.card-title::before{content:'';width:3px;height:13px;background:var(--az2);border-radius:2px;flex-shrink:0}
 .chart-wrap{position:relative}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.grid-1-2{display:grid;grid-template-columns:1fr 2fr;gap:16px}
-.grid-2-1{display:grid;grid-template-columns:2fr 1fr;gap:16px}
-@media(max-width:900px){.grid-2,.grid-1-2,.grid-2-1{grid-template-columns:1fr}}
-.funnel{display:flex;flex-direction:column;gap:0}
-.funnel-step{display:flex;align-items:center;gap:16px;padding:14px 20px;border-left:3px solid var(--border);transition:background .2s}
-.funnel-step:hover{background:rgba(37,99,235,.04)}
-.funnel-step.highlight{border-left-color:var(--acc)}
-.funnel-bar-wrap{flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden}
-.funnel-bar{height:100%;border-radius:3px;background:var(--az2);transition:width .5s ease}
-.funnel-step.highlight .funnel-bar{background:var(--acc)}
-.funnel-label{font-size:12px;color:var(--text2);min-width:180px}
-.funnel-val{font-family:var(--mono);font-size:13px;color:var(--text);min-width:80px;text-align:right}
-.funnel-pct{font-family:var(--mono);font-size:11px;color:var(--text3);min-width:50px;text-align:right}
-.delta-info{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
-.delta-stat{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:12px 16px;text-align:center}
-.delta-stat .num{font-family:var(--mono);font-size:20px;color:var(--az2)}
-.delta-stat .lbl{font-size:11px;color:var(--text3);margin-top:2px}
-.table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:13px}
-thead th{padding:10px 14px;text-align:left;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);border-bottom:1px solid var(--border);white-space:nowrap}
-tbody td{padding:10px 14px;border-bottom:1px solid rgba(30,45,69,.5);color:var(--text2);font-family:var(--mono);font-size:12px}
+
+.funnel{display:flex;flex-direction:column}
+.fs{display:flex;align-items:center;gap:14px;padding:12px 16px;border-left:3px solid var(--border);transition:background .15s}
+.fs:hover{background:rgba(37,99,235,.04)}
+.fs.hl{border-left-color:var(--acc)}
+.fb-wrap{flex:1;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.fb{height:100%;border-radius:3px;background:var(--az2);transition:width .5s ease}
+.fs.hl .fb{background:var(--acc)}
+.fs-lbl{font-size:11px;color:var(--text2);min-width:170px}
+.fs-val{font-family:var(--mono);font-size:12px;color:var(--text);min-width:72px;text-align:right}
+.fs-pct{font-family:var(--mono);font-size:10px;color:var(--text3);min-width:44px;text-align:right}
+
+.delta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.ds{background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:10px 14px;text-align:center}
+.ds .dn{font-family:var(--mono);font-size:18px;color:var(--az2)}
+.ds .dl{font-size:10px;color:var(--text3);margin-top:2px}
+
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead th{padding:9px 12px;text-align:left;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);border-bottom:1px solid var(--border);white-space:nowrap}
+tbody td{padding:9px 12px;border-bottom:1px solid rgba(30,45,69,.5);color:var(--text2);font-family:var(--mono);font-size:11px}
 tbody tr:hover td{background:rgba(37,99,235,.04);color:var(--text)}
-tbody td:first-child{font-family:var(--sans);color:var(--text)}
-.bar-cell{display:flex;align-items:center;gap:8px}
-.inline-bar{flex:1;height:4px;background:var(--bg3);border-radius:2px;min-width:60px}
-.inline-bar-fill{height:100%;border-radius:2px;background:var(--az2)}
-.tag{display:inline-flex;align-items:center;padding:3px 8px;border-radius:3px;font-size:10px;font-weight:600;font-family:var(--mono);letter-spacing:.05em}
-.tag-blue{background:rgba(37,99,235,.15);color:var(--az2)}
-.tag-orange{background:rgba(234,88,12,.15);color:var(--acc)}
-.tag-green{background:rgba(16,185,129,.15);color:var(--green)}
-.insight{background:linear-gradient(135deg,rgba(37,99,235,.08) 0%,rgba(234,88,12,.05) 100%);border:1px solid rgba(37,99,235,.25);border-radius:8px;padding:20px 24px;display:flex;gap:16px;align-items:flex-start}
-.insight-icon{font-size:20px;flex-shrink:0;margin-top:2px}
-.insight-text{font-size:13px;line-height:1.6;color:var(--text2)}
+tbody td:first-child{font-family:var(--sans);color:var(--text);font-size:12px}
+.bc{display:flex;align-items:center;gap:7px}
+.ib{flex:1;height:4px;background:var(--bg3);border-radius:2px;min-width:50px}
+.ibf{height:100%;border-radius:2px;background:var(--az2)}
+.tag{display:inline-flex;align-items:center;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:600;font-family:var(--mono)}
+.tag.bl{background:rgba(37,99,235,.15);color:var(--az2)}
+.tag.or{background:rgba(234,88,12,.15);color:var(--acc)}
+.tag.gr{background:rgba(16,185,129,.15);color:var(--green)}
+
+.insight{background:linear-gradient(135deg,rgba(37,99,235,.07),rgba(234,88,12,.04));border:1px solid rgba(37,99,235,.2);border-radius:7px;padding:16px 20px;display:flex;gap:14px;margin-top:4px}
+.insight-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.insight-text{font-size:12px;line-height:1.6;color:var(--text2)}
 .insight-text strong{color:var(--text)}
-.ivr-compare{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.ivr-box{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:20px}
-.ivr-box-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:16px;display:flex;align-items:center;gap:8px}
-.dot-blue{background:var(--az2);width:6px;height:6px;border-radius:50%;display:inline-block}
-.dot-orange{background:var(--acc);width:6px;height:6px;border-radius:50%;display:inline-block}
-.ivr-big{font-family:var(--mono);font-size:40px;color:var(--text);line-height:1}
-.ivr-big span{font-size:20px;color:var(--text3)}
-.ivr-rows{margin-top:16px;display:flex;flex-direction:column;gap:8px}
-.ivr-row{display:flex;justify-content:space-between;align-items:center}
-.ivr-row-label{font-size:12px;color:var(--text3)}
-.ivr-row-val{font-family:var(--mono);font-size:13px;color:var(--text2)}
-footer{position:relative;z-index:1;text-align:center;padding:24px 32px;border-top:1px solid var(--border);font-size:11px;color:var(--text3);font-family:var(--mono)}
-@media(max-width:768px){nav{padding:0 16px;flex-wrap:wrap;height:auto;padding-top:8px;padding-bottom:8px}.filtros-bar{padding:10px 16px}.kpi-grid{grid-template-columns:repeat(2,1fr)}main{padding:24px 16px 60px}}
+
+.bar-row{margin-bottom:10px}
+.bar-row-header{display:flex;justify-content:space-between;margin-bottom:4px}
+.bar-row-label{font-size:12px;color:var(--text2)}
+.bar-row-val{font-family:var(--mono);font-size:12px;color:var(--text)}
+.bar-bg{height:6px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px}
+
+.ivr2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.ivr-box{background:var(--card);border:1px solid var(--border);border-radius:7px;padding:18px}
+.ivr-box-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:14px;display:flex;align-items:center;gap:7px}
+.ivr-big{font-family:var(--mono);font-size:36px;color:var(--text);line-height:1}
+.ivr-big span{font-size:18px;color:var(--text3)}
+.ivr-rows{margin-top:14px;display:flex;flex-direction:column;gap:7px}
+.ivr-row{display:flex;justify-content:space-between}
+.ivr-rl{font-size:11px;color:var(--text3)}
+.ivr-rv{font-family:var(--mono);font-size:12px;color:var(--text2)}
+.dot6{width:6px;height:6px;border-radius:50%;display:inline-block;flex-shrink:0}
 </style>
 </head>
 <body>
 
-<nav>
-  <div class="nav-brand">
+<!-- ══ NAV NIVEL 1: CANALES ══════════════════════════════════════════ -->
+<div class="nav1">
+  <div class="nav1-brand">
     <div class="dot"></div>
-    <span><strong>Avalogic</strong> GTR · Canal Voz</span>
+    <span><strong>Avalogic</strong> GTR</span>
   </div>
-  <div class="nav-tabs">
-    <a href="#resumen"   class="nav-tab active">Resumen</a>
-    <a href="#predictivo" class="nav-tab">Predictivo</a>
-    <a href="#agente"    class="nav-tab">Ag. Virtual</a>
-    <a href="#inbound"   class="nav-tab">IVR Inbound</a>
-    <a href="#relacion"  class="nav-tab">Relación</a>
+  <div class="canal-tabs">
+    <button class="ctab active" onclick="showCanal('voz',this)">Canal Voz</button>
+    <button class="ctab" onclick="showCanal('wa',this)">Canal WhatsApp</button>
   </div>
-  <a href="/" class="nav-link-ext">
+  <button id="btn-actualizar" onclick="dispararActualizacion()"
+    style="margin-left:12px;padding:6px 14px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--acc);border:none;border-radius:4px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:opacity .2s;font-family:var(--sans)">
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+    <span id="btn-actualizar-txt">Actualizar datos</span>
+  </button>
+  <a href="/avalogic-dashboards/" class="nav1-ext">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
     Dashboard Predictivo
   </a>
-</nav>
+</div>
 
-<div class="filtros-bar">
+<!-- ══ NAV NIVEL 2: SUB-TABS DEL CANAL ACTIVO ══════════════════════ -->
+<div class="nav2" id="nav2-voz">
+  <button class="stab active" onclick="showTab('voz','resumen',this)">Resumen</button>
+  <button class="stab" onclick="showTab('voz','predictivo',this)">Predictivo</button>
+  <button class="stab" onclick="showTab('voz','agente',this)">Ag. Virtual</button>
+  <button class="stab" onclick="showTab('voz','inbound',this)">IVR Inbound</button>
+  <button class="stab" onclick="showTab('voz','relacion',this)">Relación</button>
+</div>
+
+<!-- ══ NAV NIVEL 2: SUB-TABS WHATSAPP ══════════════════════════════ -->
+<div class="nav2" id="nav2-wa" style="display:none">
+  <button class="stab active" onclick="showTab('wa','resumen',this)">Resumen</button>
+  <button class="stab" onclick="showTab('wa','efectividad',this)">Efectividad</button>
+  <button class="stab" onclick="showTab('wa','agentes',this)">Agentes</button>
+  <button class="stab" onclick="showTab('wa','tipificacion',this)">Tipificación</button>
+</div>
+
+<!-- ══ FILTROS WHATSAPP ═════════════════════════════════════════════ -->
+<div class="filtros-bar" id="filtros-wa" style="display:none">
+  <span class="filtros-label">Mes</span>
+  <div class="filter-group" id="fg-wa-mes">
+    <button class="fbtn active" onclick="setFwa('mes','todos',this)">Todos</button>
+    <button class="fbtn" onclick="setFwa('mes','Enero',this)">Ene</button>
+    <button class="fbtn" onclick="setFwa('mes','Febrero',this)">Feb</button>
+    <button class="fbtn" onclick="setFwa('mes','Marzo',this)">Mar</button>
+    <button class="fbtn" onclick="setFwa('mes','Abril',this)">Abr</button>
+  </div>
+  <span class="filtro-activo" id="fa-wa-lbl"></span>
+</div>
+
+<!-- ══ FILTROS (Canal Voz) ═══════════════════════════════════════════ -->
+<div class="filtros-bar" id="filtros-voz">
   <span class="filtros-label">Mes</span>
   <div class="filter-group" id="fg-mes">
     <button class="fbtn active" onclick="setF('mes','todos',this)">Todos</button>
@@ -168,313 +232,418 @@ footer{position:relative;z-index:1;text-align:center;padding:24px 32px;border-to
   <span class="filtro-activo" id="fa-lbl"></span>
 </div>
 
-<main>
+<!-- ══ CANAL VOZ ══════════════════════════════════════════════════════ -->
+<div class="canal-panel active" id="canal-voz">
 
-  <div class="hero">
-    <div class="hero-tag">Análisis de canales</div>
-    <h1>Canal <span>Voz</span><br>Avalogic Cobranza</h1>
-    <div class="hero-meta">Período: 05 Ene 2026 → 18 Abr 2026 &nbsp;·&nbsp; Actualizado: 19/04/2026 21:04</div>
-  </div>
-
-  <!-- 01 RESUMEN -->
-  <section id="resumen">
-    <div class="section-header">
-      <span class="section-num">01</span>
-      <span class="section-title">Resumen Ejecutivo</span>
-      <span class="section-sub">KPIs globales del canal voz</span>
-    </div>
-    <div class="kpi-grid" style="margin-bottom:20px">
+  <!-- TAB: RESUMEN -->
+  <div class="tab-panel active" id="tab-voz-resumen">
+    <div class="kpi-grid">
       <div class="kpi-card"><div class="kpi-label">Total ANSWER</div><div class="kpi-value" id="k-answer">—</div><div class="kpi-sub">contestó el teléfono</div></div>
       <div class="kpi-card accent"><div class="kpi-label">Con gestión real</div><div class="kpi-value" id="k-gestion">—</div><div class="kpi-sub"><span class="kpi-badge blue" id="k-gestion-pct">—</span> de ANSWER</div></div>
       <div class="kpi-card"><div class="kpi-label">Gestiones efectivas</div><div class="kpi-value" id="k-efectivos">—</div><div class="kpi-sub"><span class="kpi-badge green" id="k-efectivos-pct">—</span> de ANSWER</div></div>
       <div class="kpi-card"><div class="kpi-label">Acuerdos/pagos</div><div class="kpi-value" id="k-acuerdos">—</div><div class="kpi-sub" id="k-valor">—</div></div>
-      <div class="kpi-card"><div class="kpi-label">Tasa contacto real</div><div class="kpi-value" id="k-tasa-contacto">—</div><div class="kpi-sub">sobre total marcaciones</div></div>
-      <div class="kpi-card"><div class="kpi-label">Ag. Virtual llamadas</div><div class="kpi-value" id="k-av">—</div><div class="kpi-sub">período filtrado</div></div>
+      <div class="kpi-card"><div class="kpi-label">Tasa contacto real</div><div class="kpi-value" id="k-tc">—</div><div class="kpi-sub">sobre total marcaciones</div></div>
+      <div class="kpi-card"><div class="kpi-label">Ag. Virtual</div><div class="kpi-value" id="k-av">—</div><div class="kpi-sub">llamadas período</div></div>
       <div class="kpi-card"><div class="kpi-label">IVR Inbound</div><div class="kpi-value" id="k-inb">—</div><div class="kpi-sub"><span class="kpi-badge green" id="k-inb-pct">—</span> a asesor</div></div>
-      <div class="kpi-card"><div class="kpi-label">Tasa efectiva</div><div class="kpi-value" id="k-tasa-ef">—</div><div class="kpi-sub">sobre ANSWER</div></div>
+      <div class="kpi-card"><div class="kpi-label">Tasa efectiva</div><div class="kpi-value" id="k-te">—</div><div class="kpi-sub">sobre ANSWER</div></div>
+    </div>
+    <div class="row c12">
+      <div class="card">
+        <div class="card-title">Embudo de conversión</div>
+        <div class="funnel" id="funnel-container"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Resultado de gestión</div>
+        <div class="chart-wrap" style="height:260px"><canvas id="chartResultados"></canvas></div>
+      </div>
     </div>
     <div class="insight">
       <div class="insight-icon">💡</div>
       <div class="insight-text" id="insight-resumen">—</div>
     </div>
-  </section>
+  </div>
 
-  <!-- 02 PREDICTIVO -->
-  <section id="predictivo">
-    <div class="section-header">
-      <span class="section-num">02</span>
-      <span class="section-title">Efectividad Real del Predictivo</span>
-      <span class="section-sub">Embudo · Conversión por estrategia y hora</span>
-    </div>
-    <div class="grid-1-2" style="margin-bottom:20px">
-      <div class="chart-card">
-        <div class="chart-title">Embudo de conversión</div>
-        <div class="funnel" id="funnel-container"></div>
+  <!-- TAB: PREDICTIVO -->
+  <div class="tab-panel" id="tab-voz-predictivo">
+    <div class="row c2" style="margin-bottom:14px">
+      <div class="card">
+        <div class="card-title">Delta temporal: ANSWER → Tipificación</div>
+        <div class="delta-grid">
+          <div class="ds"><div class="dn">66%</div><div class="dl">tipificado 0-5 min</div></div>
+          <div class="ds"><div class="dn">84%</div><div class="dl">tipificado 0-10 min</div></div>
+          <div class="ds"><div class="dn" id="d-total">—</div><div class="dl">registros con gestión</div></div>
+        </div>
+        <div class="chart-wrap" style="height:160px"><canvas id="chartDelta"></canvas></div>
       </div>
-      <div class="chart-card">
-        <div class="chart-title">Resultado de gestión</div>
-        <div class="chart-wrap" style="height:280px"><canvas id="chartResultados"></canvas></div>
-      </div>
-    </div>
-    <div class="chart-card" style="margin-bottom:20px">
-      <div class="chart-title">Delta temporal: ANSWER → Tipificación (minutos)</div>
-      <div class="delta-info">
-        <div class="delta-stat"><div class="num">66%</div><div class="lbl">tipificado en 0-5 min</div></div>
-        <div class="delta-stat"><div class="num">84%</div><div class="lbl">tipificado en 0-10 min</div></div>
-        <div class="delta-stat"><div class="num" id="d-total">—</div><div class="lbl">registros con gestión real</div></div>
-      </div>
-      <div class="chart-wrap" style="height:180px"><canvas id="chartDelta"></canvas></div>
-    </div>
-    <div class="grid-2" style="margin-bottom:20px">
-      <div class="chart-card">
-        <div class="chart-title">Tasa efectiva por estrategia</div>
+      <div class="card">
+        <div class="card-title">Tasa efectiva por estrategia</div>
         <div class="chart-wrap" style="height:220px"><canvas id="chartEstrategia"></canvas></div>
       </div>
-      <div class="chart-card">
-        <div class="chart-title">Estrategia de marcación</div>
-        <div id="marcacion-detail" style="display:flex;flex-direction:column;gap:16px;padding-top:8px"></div>
+    </div>
+    <div class="row c2" style="margin-bottom:14px">
+      <div class="card">
+        <div class="card-title">Tasa efectiva por hora</div>
+        <div class="chart-wrap" style="height:200px"><canvas id="chartHora"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Tasa efectiva por día</div>
+        <div class="chart-wrap" style="height:200px"><canvas id="chartDia"></canvas></div>
       </div>
     </div>
-    <div class="grid-2">
-      <div class="chart-card">
-        <div class="chart-title">Tasa efectiva por hora</div>
-        <div class="chart-wrap" style="height:220px"><canvas id="chartHora"></canvas></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-title">Tasa efectiva por día</div>
-        <div class="chart-wrap" style="height:220px"><canvas id="chartDia"></canvas></div>
-      </div>
+    <div class="card">
+      <div class="card-title">Estrategia de marcación</div>
+      <div id="marcacion-detail" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;padding-top:4px"></div>
     </div>
-  </section>
+  </div>
 
-  <!-- 03 AGENTE VIRTUAL -->
-  <section id="agente">
-    <div class="section-header">
-      <span class="section-num">03</span>
-      <span class="section-title">Agente Virtual (Outbound)</span>
-      <span class="section-sub">IVR_Mnsje_de_voz_cliente</span>
-    </div>
-    <div class="kpi-grid" style="margin-bottom:20px">
+  <!-- TAB: AGENTE VIRTUAL -->
+  <div class="tab-panel" id="tab-voz-agente">
+    <div class="kpi-grid">
       <div class="kpi-card"><div class="kpi-label">Total llamadas AV</div><div class="kpi-value" id="av-total">—</div><div class="kpi-sub">período filtrado</div></div>
       <div class="kpi-card"><div class="kpi-label">Escucha completa</div><div class="kpi-value" id="av-ok">—</div><div class="kpi-sub"><span class="kpi-badge blue" id="av-ok-pct">—</span></div></div>
-      <div class="kpi-card"><div class="kpi-label">Colgaron en IVR</div><div class="kpi-value" id="av-hungup">—</div><div class="kpi-sub" id="av-hungup-pct">—</div></div>
-      <div class="kpi-card accent"><div class="kpi-label">Presionaron "1"</div><div class="kpi-value" id="av-asesor">—</div><div class="kpi-sub"><span class="kpi-badge orange" id="av-conv">—</span> conversión</div></div>
+      <div class="kpi-card"><div class="kpi-label">Colgaron en IVR</div><div class="kpi-value" id="av-hu">—</div><div class="kpi-sub" id="av-hu-pct">—</div></div>
+      <div class="kpi-card accent"><div class="kpi-label">Presionaron "1"</div><div class="kpi-value" id="av-as">—</div><div class="kpi-sub"><span class="kpi-badge orange" id="av-conv">—</span> conversión</div></div>
     </div>
-    <div class="grid-2-1" style="margin-bottom:20px">
-      <div class="chart-card">
-        <div class="chart-title">Volumen mensual agente virtual</div>
-        <div class="chart-wrap" style="height:240px"><canvas id="chartAVMes"></canvas></div>
+    <div class="row c21">
+      <div class="card">
+        <div class="card-title">Volumen mensual agente virtual</div>
+        <div class="chart-wrap" style="height:230px"><canvas id="chartAVMes"></canvas></div>
       </div>
-      <div class="chart-card">
-        <div class="chart-title">Tasa escucha por mes</div>
-        <div id="av-escucha-bars" style="display:flex;flex-direction:column;gap:12px;padding-top:4px"></div>
-        <div style="margin-top:20px;padding:12px 14px;background:var(--bg3);border-radius:6px;border:1px solid var(--border)">
-          <div style="font-size:11px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.07em">Cédulas únicas contactadas</div>
-          <div style="font-family:var(--mono);font-size:22px;color:var(--az2)">133,159</div>
+      <div class="card">
+        <div class="card-title">Tasa escucha por mes</div>
+        <div id="av-escucha-bars" style="display:flex;flex-direction:column;gap:12px"></div>
+        <div style="margin-top:16px;padding:12px;background:var(--bg3);border-radius:5px;border:1px solid var(--border)">
+          <div style="font-size:10px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.07em">Cédulas únicas contactadas</div>
+          <div style="font-family:var(--mono);font-size:20px;color:var(--az2)">133,159</div>
         </div>
       </div>
     </div>
-    <div class="insight">
+    <div class="insight" style="margin-top:14px">
       <div class="insight-icon">⚠️</div>
       <div class="insight-text" id="insight-av">—</div>
     </div>
-  </section>
+  </div>
 
-  <!-- 04 INBOUND -->
-  <section id="inbound">
-    <div class="section-header">
-      <span class="section-num">04</span>
-      <span class="section-title">IVR Inbound</span>
-      <span class="section-sub">IVR_Moviaval · Llamadas entrantes</span>
-    </div>
-    <div class="kpi-grid" style="margin-bottom:20px">
+  <!-- TAB: IVR INBOUND -->
+  <div class="tab-panel" id="tab-voz-inbound">
+    <div class="kpi-grid">
       <div class="kpi-card accent"><div class="kpi-label">Total entrantes</div><div class="kpi-value" id="inb-total">—</div><div class="kpi-sub">período filtrado</div></div>
-      <div class="kpi-card"><div class="kpi-label">Llegaron a asesor</div><div class="kpi-value" id="inb-asesor">—</div><div class="kpi-sub"><span class="kpi-badge green" id="inb-pct">—</span> del total</div></div>
-      <div class="kpi-card"><div class="kpi-label">Colgaron en menú</div><div class="kpi-value" id="inb-hungup">—</div><div class="kpi-sub" id="inb-hungup-pct">—</div></div>
-      <div class="kpi-card"><div class="kpi-label">Tendencia</div><div class="kpi-value" id="inb-tendencia" style="font-size:20px">—</div><div class="kpi-sub" id="inb-tendencia-sub">—</div></div>
+      <div class="kpi-card"><div class="kpi-label">Llegaron a asesor</div><div class="kpi-value" id="inb-as">—</div><div class="kpi-sub"><span class="kpi-badge green" id="inb-pct2">—</span> del total</div></div>
+      <div class="kpi-card"><div class="kpi-label">Colgaron en menú</div><div class="kpi-value" id="inb-hu">—</div><div class="kpi-sub" id="inb-hu-pct">—</div></div>
+      <div class="kpi-card"><div class="kpi-label">Tendencia</div><div class="kpi-value" id="inb-trend" style="font-size:22px">—</div><div class="kpi-sub" id="inb-trend-sub">—</div></div>
     </div>
-    <div class="grid-2">
-      <div class="chart-card">
-        <div class="chart-title">Volumen inbound por mes</div>
+    <div class="row c2">
+      <div class="card">
+        <div class="card-title">Volumen inbound por mes</div>
         <div class="chart-wrap" style="height:220px"><canvas id="chartInbMes"></canvas></div>
       </div>
-      <div class="chart-card">
-        <div class="chart-title">Detalle por mes</div>
-        <div class="table-wrap"><table><thead><tr><th>Mes</th><th>Total</th><th>A asesor</th><th>Abandono</th><th>% asesor</th></tr></thead><tbody id="tbody-inbound"></tbody></table></div>
+      <div class="card">
+        <div class="card-title">Detalle por mes</div>
+        <div class="tbl-wrap"><table><thead><tr><th>Mes</th><th>Total</th><th>A asesor</th><th>Abandono</th><th>% asesor</th></tr></thead><tbody id="tbody-inbound"></tbody></table></div>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- v2-filtros --><!-- 05 RELACIÓN -->
-  <section id="relacion">
-    <div class="section-header">
-      <span class="section-num">05</span>
-      <span class="section-title">Relación IVR ↔ Predictivo</span>
-      <span class="section-sub">¿El agente virtual genera llamadas de retorno?</span>
-    </div>
-    <div class="ivr-compare" style="margin-bottom:20px">
+  <!-- TAB: RELACIÓN -->
+  <div class="tab-panel" id="tab-voz-relacion">
+    <div class="ivr2">
       <div class="ivr-box">
-        <div class="ivr-box-title"><span class="dot-blue"></span>Agente Virtual → Inbound</div>
+        <div class="ivr-box-title"><span class="dot6" style="background:var(--az2)"></span>Agente Virtual → Inbound</div>
         <div class="ivr-big">0 <span>registros</span></div>
-        <div style="font-size:12px;color:var(--text3);margin-top:8px;line-height:1.5">Clientes que recibieron mensaje de voz y llamaron al inbound en D+0 a D+3</div>
-        <div style="margin-top:16px;padding:12px;background:var(--bg3);border-radius:6px;border:1px solid var(--border)">
-          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Interpretación</div>
-          <div style="font-size:12px;color:var(--text2);line-height:1.5">No se detectó ningún cruce entre cédulas del agente virtual y del IVR inbound. El agente virtual <strong style="color:var(--text)">no genera llamadas de retorno medibles</strong>.</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:8px;line-height:1.5">Clientes que recibieron msg de voz y llamaron al inbound en D+0 a D+3</div>
+        <div style="margin-top:14px;padding:12px;background:var(--bg3);border-radius:5px;border:1px solid var(--border)">
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Interpretación</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.5">No se detectó cruce entre cédulas del agente virtual y del IVR inbound. El agente virtual <strong style="color:var(--text)">no genera llamadas de retorno medibles</strong>.</div>
         </div>
       </div>
       <div class="ivr-box">
-        <div class="ivr-box-title"><span class="dot-orange"></span>Cobertura de cartera</div>
+        <div class="ivr-box-title"><span class="dot6" style="background:var(--acc)"></span>Cobertura de cartera</div>
         <div class="ivr-big">25,009 <span>créditos</span></div>
         <div class="ivr-rows">
-          <div class="ivr-row"><span class="ivr-row-label">Marcados por predictivo</span><span class="ivr-row-val">27,748</span></div>
-          <div class="ivr-row"><span class="ivr-row-label">Con al menos 1 ANSWER</span><span class="ivr-row-val">17,944 <span style="color:var(--green);font-size:11px">(64.7%)</span></span></div>
-          <div class="ivr-row"><span class="ivr-row-label">Sin ningún ANSWER</span><span class="ivr-row-val">9,804 <span style="color:var(--acc);font-size:11px">(35.3%)</span></span></div>
-          <div class="ivr-row"><span class="ivr-row-label">Cédulas únicas AV</span><span class="ivr-row-val">133,159</span></div>
+          <div class="ivr-row"><span class="ivr-rl">Marcados por predictivo</span><span class="ivr-rv">27,748</span></div>
+          <div class="ivr-row"><span class="ivr-rl">Con al menos 1 ANSWER</span><span class="ivr-rv">17,944 <span style="color:var(--green);font-size:10px">(64.7%)</span></span></div>
+          <div class="ivr-row"><span class="ivr-rl">Sin ningún ANSWER</span><span class="ivr-rv">9,804 <span style="color:var(--acc);font-size:10px">(35.3%)</span></span></div>
+          <div class="ivr-row"><span class="ivr-rl">Cédulas únicas AV</span><span class="ivr-rv">133,159</span></div>
         </div>
       </div>
     </div>
-    <div class="chart-card" style="margin-bottom:20px">
-      <div class="chart-title">Conversión real por cluster (Clusters 1-10)</div>
-      <div class="table-wrap"><table><thead><tr><th>Cluster</th><th>ANSWER</th><th>Con gestión</th><th>Efectivos</th><th>% contacto</th><th>% efectivo</th></tr></thead><tbody id="tbody-cluster"></tbody></table></div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-title">Conversión real por cluster (Clusters 1-10)</div>
+      <div class="tbl-wrap"><table><thead><tr><th>Cluster</th><th>ANSWER</th><th>Con gestión</th><th>Efectivos</th><th>% contacto</th><th>% efectivo</th></tr></thead><tbody id="tbody-cluster"></tbody></table></div>
     </div>
     <div class="insight">
       <div class="insight-icon">🎯</div>
-      <div class="insight-text"><strong>Clusters 2, 3 y 4</strong> concentran el mayor volumen. <strong>Cluster 7 (GPS)</strong> y <strong>Cluster 2 (50-75%)</strong> tienen las mejores tasas efectivas (5.6–5.7%). La <strong>mora temprana (0-214d)</strong> muestra la mayor tasa de conversión real (7.9%) — priorizar marcación temprana maximiza acuerdos.</div>
+      <div class="insight-text"><strong>Clusters 2, 3 y 4</strong> concentran el mayor volumen. <strong>Cluster 7 (GPS)</strong> y <strong>Cluster 2 (50-75%)</strong> tienen las mejores tasas efectivas (5.6–5.7%). La <strong>mora temprana (0-214d)</strong> muestra la mayor tasa de conversión real (7.9%).</div>
     </div>
-  </section>
+  </div>
 
-</main>
-<footer>Avalogic GTR · Dashboard Canal Voz · 19/04/2026 &nbsp;·&nbsp; Datos: Wolkvox + IVR + Productividad</footer>
+</div><!-- /canal-voz -->
+
+<!-- ══ CANAL WHATSAPP ═════════════════════════════════════════════════ -->
+<div class="canal-panel" id="canal-wa">
+
+  <!-- TAB: RESUMEN WA -->
+  <div class="tab-panel active" id="tab-wa-resumen">
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-label">Total conversaciones</div><div class="kpi-value" id="wa-k-total">—</div><div class="kpi-sub">período filtrado</div></div>
+      <div class="kpi-card accent"><div class="kpi-label">Con asesor real</div><div class="kpi-value" id="wa-k-real">—</div><div class="kpi-sub"><span class="kpi-badge blue" id="wa-k-real-pct">—</span> del total</div></div>
+      <div class="kpi-card"><div class="kpi-label">Gestiones efectivas</div><div class="kpi-value" id="wa-k-ef">—</div><div class="kpi-sub"><span class="kpi-badge green" id="wa-k-ef-pct">—</span> sobre real</div></div>
+      <div class="kpi-card"><div class="kpi-label">Acuerdos/pagos</div><div class="kpi-value" id="wa-k-ac">—</div><div class="kpi-sub"><span class="kpi-badge green" id="wa-k-ac-pct">—</span> sobre efectivos</div></div>
+      <div class="kpi-card"><div class="kpi-label">Timeout / abandono</div><div class="kpi-value" id="wa-k-to">—</div><div class="kpi-sub" id="wa-k-to-pct">—</div></div>
+      <div class="kpi-card"><div class="kpi-label">T. medio en asesor</div><div class="kpi-value">70.5<span style="font-size:16px;color:var(--text3)"> min</span></div><div class="kpi-sub">promedio 4 meses</div></div>
+      <div class="kpi-card"><div class="kpi-label">FRT mediana</div><div class="kpi-value">7.8<span style="font-size:16px;color:var(--text3)"> min</span></div><div class="kpi-sub">primera respuesta</div></div>
+      <div class="kpi-card"><div class="kpi-label">FRT promedio</div><div class="kpi-value">33.2<span style="font-size:16px;color:var(--text3)"> min</span></div><div class="kpi-sub">incluye colas largas</div></div>
+    </div>
+    <div class="row c12">
+      <div class="card">
+        <div class="card-title">Embudo WhatsApp</div>
+        <div class="funnel" id="wa-funnel"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Conversaciones por mes</div>
+        <div class="chart-wrap" style="height:260px"><canvas id="wa-chartMes"></canvas></div>
+      </div>
+    </div>
+    <div class="insight">
+      <div class="insight-icon">💬</div>
+      <div class="insight-text" id="wa-insight-resumen">—</div>
+    </div>
+  </div>
+
+  <!-- TAB: EFECTIVIDAD WA -->
+  <div class="tab-panel" id="tab-wa-efectividad">
+    <div class="row c2" style="margin-bottom:14px">
+      <div class="card">
+        <div class="card-title">Tasa efectiva por hora</div>
+        <div class="chart-wrap" style="height:220px"><canvas id="wa-chartHora"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Tasa efectiva por día</div>
+        <div class="chart-wrap" style="height:220px"><canvas id="wa-chartDia"></canvas></div>
+      </div>
+    </div>
+    <div class="row c2">
+      <div class="card">
+        <div class="card-title">Efectivos vs acuerdos por mes</div>
+        <div class="chart-wrap" style="height:220px"><canvas id="wa-chartEfMes"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Detalle mensual</div>
+        <div class="tbl-wrap"><table><thead><tr><th>Mes</th><th>Conversaciones</th><th>Efectivos</th><th>Acuerdos</th><th>% ef.</th></tr></thead><tbody id="wa-tbody-mes"></tbody></table></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: AGENTES WA -->
+  <div class="tab-panel" id="tab-wa-agentes">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap">
+      <span class="filtros-label">Filtrar por estrategia</span>
+      <div class="filter-group" id="fg-ag-est">
+        <button class="fbtn active" onclick="setAgEst('todas',this)">Todas</button>
+        <button class="fbtn" onclick="setAgEst('MORA TEMPRANA (0-214)',this)">Temprana 0-214</button>
+        <button class="fbtn" onclick="setAgEst('MORA TEMPRANA (215-579)',this)">Mora intermedia</button>
+        <button class="fbtn" onclick="setAgEst('MORA ALTA >580 - 1099',this)">Alta 580-1099</button>
+        <button class="fbtn" onclick="setAgEst('MORA ALTA >1100',this)">Alta +1100</button>
+      </div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+        <span class="filtros-label">Ordenar por</span>
+        <div class="filter-group" id="fg-ag-ord">
+          <button class="fbtn active" onclick="setAgOrd('total',this)">Volumen</button>
+          <button class="fbtn" onclick="setAgOrd('tasa',this)">Tasa efectiva</button>
+          <button class="fbtn" onclick="setAgOrd('efectivos',this)">Efectivos</button>
+        </div>
+      </div>
+    </div>
+    <div class="row c2">
+      <div class="card">
+        <div class="card-title">Tasa efectiva por agente <span id="ag-chart-label" style="font-size:10px;color:var(--text3);font-weight:400;text-transform:none;letter-spacing:0">(top 15 visible)</span></div>
+        <div class="chart-wrap" style="height:320px"><canvas id="wa-chartAgentes"></canvas></div>
+      </div>
+      <div class="card" style="display:flex;flex-direction:column">
+        <div class="card-title">Todos los agentes <span id="ag-count" style="font-size:10px;color:var(--text3);font-weight:400;text-transform:none;letter-spacing:0"></span></div>
+        <input id="ag-search" type="text" placeholder="Buscar agente..." 
+          style="padding:6px 10px;font-size:11px;font-family:var(--sans);background:var(--bg3);border:1px solid var(--border);border-radius:4px;color:var(--text);margin-bottom:10px;outline:none"
+          oninput="renderAgTabla()">
+        <div class="tbl-wrap" style="flex:1;overflow-y:auto;max-height:360px">
+          <table><thead><tr><th>#</th><th>Agente</th><th>Chats</th><th>Efectivos</th><th>% ef.</th></tr></thead>
+          <tbody id="wa-tbody-agentes"></tbody></table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: TIPIFICACIÓN WA -->
+  <div class="tab-panel" id="tab-wa-tipificacion">
+    <div class="row c12">
+      <div class="card">
+        <div class="card-title">Distribución tipificaciones</div>
+        <div class="chart-wrap" style="height:320px"><canvas id="wa-chartTip"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Detalle tipificaciones</div>
+        <div class="tbl-wrap"><table><thead><tr><th>Código</th><th>Descripción</th><th>Cantidad</th><th>%</th></tr></thead><tbody id="wa-tbody-tip"></tbody></table></div>
+      </div>
+    </div>
+    <div class="insight" style="margin-top:14px">
+      <div class="insight-icon">📊</div>
+      <div class="insight-text"><strong>CBZ_CONTACTO_NO_EXITOSO</strong> representa el 66.8% de las gestiones — el cliente responde pero no hay acuerdo. <strong>CBZ_REQUERIMIENTO</strong> (22.1%) son consultas y solicitudes. Solo el <strong>6.3% termina en acuerdo o pago efectivo</strong>, lo que muestra alto potencial de mejora en conversión.</div>
+    </div>
+  </div>
+
+</div><!-- /canal-wa -->
 
 <script>
-// ─── DATOS BASE ───────────────────────────────────────────────────────────────
+// ─── NAVEGACIÓN ───────────────────────────────────────────────────────────────
+function showCanal(canal, btn) {
+  document.querySelectorAll('.ctab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.canal-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('canal-'+canal).classList.add('active');
+  document.getElementById('nav2-voz').style.display   = canal==='voz'?'flex':'none';
+  document.getElementById('filtros-voz').style.display= canal==='voz'?'flex':'none';
+  document.getElementById('nav2-wa').style.display    = canal==='wa'?'flex':'none';
+  document.getElementById('filtros-wa').style.display = canal==='wa'?'flex':'none';
+  if(canal==='wa') renderWaTab(activeWaTab);
+}
+
+function showTab(canal, tab, btn) {
+  const prefix = 'tab-'+canal+'-';
+  document.querySelectorAll('#canal-'+canal+' .tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById(prefix+tab).classList.add('active');
+  document.querySelectorAll('#nav2-'+canal+' .stab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(canal==='voz') renderTab(tab);
+  if(canal==='wa')  renderWaTab(tab);
+}
+
+// ─── DATOS ────────────────────────────────────────────────────────────────────
 const BASE = {
-  por_estrategia: [
-    {est:"mora_temprana_0_214",       marc:"columna", ans:17700,ges:3282,ef:1401,ac:443},
-    {est:"mora_temprana_0_214",       marc:"fila",    ans:11764,ges:2180,ef: 934,ac:296},
-    {est:"mora_intermedia_215_a_579", marc:"columna", ans:25947,ges:4002,ef:1131,ac:358},
-    {est:"mora_intermedia_215_a_579", marc:"fila",    ans:17298,ges:2665,ef: 754,ac:239},
-    {est:"mora_alta_580_1099",        marc:"columna", ans: 9646,ges: 671,ef: 285,ac: 90},
-    {est:"mora_alta_580_1099",        marc:"fila",    ans: 6431,ges: 447,ef: 190,ac: 60},
-    {est:"mora_alta_1100",            marc:"columna", ans: 3666,ges: 221,ef:  70,ac: 22},
-    {est:"mora_alta_1100",            marc:"fila",    ans: 2360,ges: 172,ef:  47,ac: 15},
+  pe:[
+    {est:"mora_temprana_0_214",       marc:"columna",ans:17700,ges:3282,ef:1401,ac:443},
+    {est:"mora_temprana_0_214",       marc:"fila",   ans:11764,ges:2180,ef: 934,ac:296},
+    {est:"mora_intermedia_215_a_579", marc:"columna",ans:25947,ges:4002,ef:1131,ac:358},
+    {est:"mora_intermedia_215_a_579", marc:"fila",   ans:17298,ges:2665,ef: 754,ac:239},
+    {est:"mora_alta_580_1099",        marc:"columna",ans: 9646,ges: 671,ef: 285,ac: 90},
+    {est:"mora_alta_580_1099",        marc:"fila",   ans: 6431,ges: 447,ef: 190,ac: 60},
+    {est:"mora_alta_1100",            marc:"columna",ans: 3666,ges: 221,ef:  70,ac: 22},
+    {est:"mora_alta_1100",            marc:"fila",   ans: 2360,ges: 172,ef:  47,ac: 15},
   ],
-  av_mes: [
+  av:[
     {mes:"Enero",  tot:45852, ok:35710,hu:10142,as:86},
     {mes:"Febrero",tot:18759, ok:14848,hu: 3911,as:49},
     {mes:"Marzo",  tot:116136,ok:82292,hu:33844,as:251},
     {mes:"Abril",  tot:114152,ok:84792,hu:29360,as:235},
   ],
-  inb_mes: [
+  inb:[
     {mes:"Enero",  tot:4544, ok:3214,hu:1330,as:3017,pct:66.4},
     {mes:"Febrero",tot:5580, ok:3902,hu:1678,as:3741,pct:67.0},
     {mes:"Marzo",  tot:6264, ok:4162,hu:2102,as:4012,pct:64.0},
     {mes:"Abril",  tot:3311, ok:2160,hu:1151,as:2070,pct:62.5},
   ],
-  hora:[{"h": 7, "tot": 5658, "ef": 241, "tasa": 4.26}, {"h": 8, "tot": 9471, "ef": 422, "tasa": 4.46}, {"h": 9, "tot": 8735, "ef": 774, "tasa": 8.86}, {"h": 10, "tot": 12031, "ef": 1055, "tasa": 8.77}, {"h": 11, "tot": 12098, "ef": 833, "tasa": 6.89}, {"h": 12, "tot": 7870, "ef": 526, "tasa": 6.68}, {"h": 13, "tot": 7152, "ef": 531, "tasa": 7.42}, {"h": 14, "tot": 8173, "ef": 574, "tasa": 7.02}, {"h": 15, "tot": 8044, "ef": 502, "tasa": 6.24}, {"h": 16, "tot": 6877, "ef": 373, "tasa": 5.42}, {"h": 17, "tot": 4002, "ef": 227, "tasa": 5.67}, {"h": 18, "tot": 3734, "ef": 152, "tasa": 4.07}, {"h": 19, "tot": 34, "ef": 4, "tasa": 11.76}],
-  dia:[
-    {n:"Lun",r:4.41},{n:"Mar",r:5.09},{n:"Mié",r:5.92},
-    {n:"Jue",r:4.57},{n:"Vie",r:5.64},{n:"Sáb",r:4.70}
+  hora:[{h:7,r:6.58},{h:8,r:5.05},{h:9,r:5.95},{h:10,r:5.32},{h:11,r:5.08},{h:12,r:4.69},
+        {h:13,r:6.32},{h:14,r:5.01},{h:15,r:4.54},{h:16,r:4.03},{h:17,r:4.64},{h:18,r:4.53}],
+  dia:[{n:"Lun",r:4.41},{n:"Mar",r:5.09},{n:"Mié",r:5.92},{n:"Jue",r:4.57},{n:"Vie",r:5.64},{n:"Sáb",r:4.70}],
+  res:[
+    {l:"Contacto Exitoso",p:.365},{l:"No Hubo Acuerdo",p:.228},{l:"Contacto no Exitoso",p:.180},
+    {l:"Acuerdo c/Descuento",p:.081},{l:"Requerimiento",p:.063},{l:"Acuerdo de Pago",p:.031},
+    {l:"Búsqueda Web",p:.035},{l:"Otros",p:.017},
   ],
-  res_pct:[
-    {lbl:"Contacto Exitoso",p:0.365},{lbl:"No Hubo Acuerdo",p:0.228},
-    {lbl:"Contacto no Exitoso",p:0.180},{lbl:"Acuerdo con Descuento",p:0.081},
-    {lbl:"Requerimiento",p:0.063},{lbl:"Acuerdo de Pago",p:0.031},
-    {lbl:"Búsqueda Web",p:0.035},{lbl:"Otros",p:0.017},
-  ],
-  delta:[
-    {r:"0-5",c:9107},{r:"5-10",c:2442},{r:"10-15",c:1234},
-    {r:"15-20",c:590},{r:"20-25",c:258},{r:"25-30",c:142}
-  ],
+  delta:[{r:"0-5",c:9107},{r:"5-10",c:2442},{r:"10-15",c:1234},{r:"15-20",c:590},{r:"20-25",c:258},{r:"25-30",c:142}],
   clusters:[
-    {cl:"Cluster 1: 75-100%", ans:1236, ges:117,  ef:56,  tc:9.5, te:4.5},
-    {cl:"Cluster 2: 50-75%",  ans:9047, ges:1209, ef:517, tc:13.4,te:5.7},
-    {cl:"Cluster 3: 25-50%",  ans:21666,ges:2925, ef:1162,tc:13.5,te:5.4},
-    {cl:"Cluster 4: 0-25%",   ans:18650,ges:2470, ef:956, tc:13.2,te:5.1},
-    {cl:"Cluster 5: Sin prenda",ans:11746,ges:1306,ef:545, tc:11.1,te:4.6},
-    {cl:"Cluster 6: CEP",     ans:4526, ges:583,  ef:209, tc:12.9,te:4.6},
-    {cl:"Cluster 7: GPS",     ans:2359, ges:298,  ef:132, tc:12.6,te:5.6},
-    {cl:"Cluster 8: C.micro", ans:6037, ges:639,  ef:276, tc:10.6,te:4.6},
-    {cl:"Cluster 9: C.CEP",   ans:942,  ges:97,   ef:39,  tc:10.3,te:4.1},
-    {cl:"Cluster 10: LibreInv",ans:257, ges:23,   ef:10,  tc:8.9, te:3.9},
+    {cl:"Cluster 1: 75-100%",ans:1236, ges:117,  ef:56,  tc:9.5, te:4.5},
+    {cl:"Cluster 2: 50-75%", ans:9047, ges:1209, ef:517, tc:13.4,te:5.7},
+    {cl:"Cluster 3: 25-50%", ans:21666,ges:2925, ef:1162,tc:13.5,te:5.4},
+    {cl:"Cluster 4: 0-25%",  ans:18650,ges:2470, ef:956, tc:13.2,te:5.1},
+    {cl:"Cluster 5: Sin prenda",ans:11746,ges:1306,ef:545,tc:11.1,te:4.6},
+    {cl:"Cluster 6: CEP",    ans:4526, ges:583,  ef:209, tc:12.9,te:4.6},
+    {cl:"Cluster 7: GPS",    ans:2359, ges:298,  ef:132, tc:12.6,te:5.6},
+    {cl:"Cluster 8: C.micro",ans:6037, ges:639,  ef:276, tc:10.6,te:4.6},
+    {cl:"Cluster 9: C.CEP",  ans:942,  ges:97,   ef:39,  tc:10.3,te:4.1},
+    {cl:"Cluster 10: LibreInv",ans:257,ges:23,   ef:10,  tc:8.9, te:3.9},
   ],
-  total_marc: 909987,
+  total_marc:909987,
 };
 
 // ─── FILTROS ──────────────────────────────────────────────────────────────────
-const F = {mes:'todos', estrategia:'todas', marcacion:'todas'};
+const F={mes:'todos',estrategia:'todas',marcacion:'todas'};
+let activeTab='resumen';
 
-function setF(key, val, btn) {
-  F[key] = val;
-  const gid = {mes:'fg-mes',estrategia:'fg-estrategia',marcacion:'fg-marcacion'}[key];
+function setF(key,val,btn){
+  F[key]=val;
+  const gid={mes:'fg-mes',estrategia:'fg-estrategia',marcacion:'fg-marcacion'}[key];
   document.querySelectorAll('#'+gid+' .fbtn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   const act=[];
-  if(F.mes!=='todos') act.push(F.mes);
-  if(F.estrategia!=='todas') act.push(F.estrategia.replace('mora_','').replace(/_/g,' '));
-  if(F.marcacion!=='todas') act.push(F.marcacion);
+  if(F.mes!=='todos')act.push(F.mes);
+  if(F.estrategia!=='todas')act.push(F.estrategia.replace('mora_','').replace(/_/g,' '));
+  if(F.marcacion!=='todas')act.push(F.marcacion);
   const lbl=document.getElementById('fa-lbl');
   if(act.length){lbl.textContent=act.join(' · ');lbl.style.display='inline-block';}
   else lbl.style.display='none';
-  renderAll();
+  renderTab(activeTab);
 }
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
-const N = n => Math.round(+n).toLocaleString('es-CO');
-const charts = {};
-function mkChart(id,cfg){if(charts[id])charts[id].destroy();charts[id]=new Chart(document.getElementById(id),cfg);}
+const N=n=>Math.round(+n).toLocaleString('es-CO');
+const charts={};
+function mkC(id,cfg){if(charts[id])charts[id].destroy();charts[id]=new Chart(document.getElementById(id),cfg);}
 Chart.defaults.color='#64748b';
 Chart.defaults.font.family="'IBM Plex Sans',sans-serif";
 Chart.defaults.font.size=11;
 const MN="'IBM Plex Mono',monospace";
 function gO(){return{grid:{color:'rgba(30,45,69,0.7)',drawBorder:false},ticks:{color:'#64748b'}};}
 
-// ─── FILTRADO ─────────────────────────────────────────────────────────────────
-function filtEst() {
-  let r=BASE.por_estrategia;
-  if(F.estrategia!=='todas') r=r.filter(x=>x.est===F.estrategia);
-  if(F.marcacion!=='todas')  r=r.filter(x=>x.marc===F.marcacion);
-  const ans=r.reduce((s,x)=>s+x.ans,0), ges=r.reduce((s,x)=>s+x.ges,0),
-        ef=r.reduce((s,x)=>s+x.ef,0),   ac=r.reduce((s,x)=>s+x.ac,0);
-  return {ans,ges,ef,ac,
-    tgA: ans>0?(ges/ans*100).toFixed(1):'0.0',
-    teA: ans>0?(ef/ans*100).toFixed(1):'0.0',
-    tcR: (ges/BASE.total_marc*100).toFixed(1)};
+function filtPE(){
+  let r=BASE.pe;
+  if(F.estrategia!=='todas')r=r.filter(x=>x.est===F.estrategia);
+  if(F.marcacion!=='todas') r=r.filter(x=>x.marc===F.marcacion);
+  const ans=r.reduce((s,x)=>s+x.ans,0),ges=r.reduce((s,x)=>s+x.ges,0),
+        ef=r.reduce((s,x)=>s+x.ef,0),ac=r.reduce((s,x)=>s+x.ac,0);
+  return{ans,ges,ef,ac,
+    tgA:ans>0?(ges/ans*100).toFixed(1):'0.0',
+    teA:ans>0?(ef/ans*100).toFixed(1):'0.0',
+    tcR:(ges/BASE.total_marc*100).toFixed(1)};
 }
-function filtAV() { return F.mes==='todos'?BASE.av_mes:BASE.av_mes.filter(m=>m.mes===F.mes); }
-function filtInb(){ return F.mes==='todos'?BASE.inb_mes:BASE.inb_mes.filter(m=>m.mes===F.mes); }
-
-function estData() {
-  const keys=[
-    {k:'mora_temprana_0_214',       lb:'Mora temprana\n0-214d'},
-    {k:'mora_intermedia_215_a_579', lb:'Mora intermedia\n215-579d'},
-    {k:'mora_alta_580_1099',        lb:'Mora alta\n580-1099d'},
-    {k:'mora_alta_1100',            lb:'Mora alta\n1100d+'},
+function filtAV(){return F.mes==='todos'?BASE.av:BASE.av.filter(m=>m.mes===F.mes);}
+function filtInb(){return F.mes==='todos'?BASE.inb:BASE.inb.filter(m=>m.mes===F.mes);}
+function estData(){
+  const ks=[
+    {k:'mora_temprana_0_214',lb:'Temprana\n0-214d'},
+    {k:'mora_intermedia_215_a_579',lb:'Intermedia\n215-579d'},
+    {k:'mora_alta_580_1099',lb:'Alta\n580-1099d'},
+    {k:'mora_alta_1100',lb:'Alta\n1100d+'},
   ];
-  return keys.map(e=>{
-    let r=BASE.por_estrategia.filter(x=>x.est===e.k);
-    if(F.estrategia!=='todas'&&F.estrategia!==e.k) return null;
-    if(F.marcacion!=='todas') r=r.filter(x=>x.marc===F.marcacion);
-    const ans=r.reduce((s,x)=>s+x.ans,0), ef=r.reduce((s,x)=>s+x.ef,0);
-    return {lb:e.lb, tasa:ans>0?+(ef/ans*100).toFixed(1):0};
+  return ks.map(e=>{
+    if(F.estrategia!=='todas'&&F.estrategia!==e.k)return null;
+    let r=BASE.pe.filter(x=>x.est===e.k);
+    if(F.marcacion!=='todas')r=r.filter(x=>x.marc===F.marcacion);
+    const ans=r.reduce((s,x)=>s+x.ans,0),ef=r.reduce((s,x)=>s+x.ef,0);
+    return{lb:e.lb,tasa:ans>0?+(ef/ans*100).toFixed(1):0};
   }).filter(Boolean);
 }
-function marcData() {
-  return ['columna','fila'].map(m=>{
-    if(F.marcacion!=='todas'&&F.marcacion!==m) return null;
-    let r=BASE.por_estrategia.filter(x=>x.marc===m);
-    if(F.estrategia!=='todas') r=r.filter(x=>x.est===F.estrategia);
-    const ans=r.reduce((s,x)=>s+x.ans,0), ef=r.reduce((s,x)=>s+x.ef,0);
-    return {m, ans, tasa:ans>0?+(ef/ans*100).toFixed(1):0};
+function marcData(){
+  return['columna','fila'].map(m=>{
+    if(F.marcacion!=='todas'&&F.marcacion!==m)return null;
+    let r=BASE.pe.filter(x=>x.marc===m);
+    if(F.estrategia!=='todas')r=r.filter(x=>x.est===F.estrategia);
+    const ans=r.reduce((s,x)=>s+x.ans,0),ef=r.reduce((s,x)=>s+x.ef,0);
+    return{m,ans,tasa:ans>0?+(ef/ans*100).toFixed(1):0};
   }).filter(Boolean);
 }
 
-// ─── RENDER ───────────────────────────────────────────────────────────────────
-function renderAll(){
-  const d=filtEst(), av=filtAV(), inb=filtInb();
-  const avTot=av.reduce((s,m)=>s+m.tot,0), inbTot=inb.reduce((s,m)=>s+m.tot,0), inbAs=inb.reduce((s,m)=>s+m.as,0);
+// ─── RENDER POR TAB ──────────────────────────────────────────────────────────
+function renderTab(tab){
+  activeTab=tab;
+  if(tab==='resumen')   renderResumen();
+  if(tab==='predictivo')renderPredictivo();
+  if(tab==='agente')    renderAgente();
+  if(tab==='inbound')   renderInbound();
+  if(tab==='relacion')  renderRelacion();
+}
 
-  // KPIs resumen
+function renderResumen(){
+  const d=filtPE(),av=filtAV(),inb=filtInb();
+  const avT=av.reduce((s,m)=>s+m.tot,0),inbT=inb.reduce((s,m)=>s+m.tot,0),inbA=inb.reduce((s,m)=>s+m.as,0);
   document.getElementById('k-answer').textContent=N(d.ans);
   document.getElementById('k-gestion').textContent=N(d.ges);
   document.getElementById('k-gestion-pct').textContent=d.tgA+'%';
@@ -482,187 +651,444 @@ function renderAll(){
   document.getElementById('k-efectivos-pct').textContent=d.teA+'%';
   document.getElementById('k-acuerdos').textContent=N(d.ac);
   document.getElementById('k-valor').textContent='$'+Math.round(d.ac*16986).toLocaleString('es-CO');
-  document.getElementById('k-tasa-contacto').textContent=d.tcR+'%';
-  document.getElementById('k-av').textContent=N(avTot);
-  document.getElementById('k-inb').textContent=N(inbTot);
-  document.getElementById('k-inb-pct').textContent=(inbTot>0?(inbAs/inbTot*100).toFixed(1):'0.0')+'%';
-  document.getElementById('k-tasa-ef').textContent=d.teA+'%';
+  document.getElementById('k-tc').textContent=d.tcR+'%';
+  document.getElementById('k-av').textContent=N(avT);
+  document.getElementById('k-inb').textContent=N(inbT);
+  document.getElementById('k-inb-pct').textContent=(inbT>0?(inbA/inbT*100).toFixed(1):'0.0')+'%';
+  document.getElementById('k-te').textContent=d.teA+'%';
   document.getElementById('insight-resumen').innerHTML=
-    `De <strong>${N(d.ans)} ANSWER</strong> bajo los filtros actuales, <strong>${N(d.ges)} generaron gestión real</strong> (${d.tgA}%). 
-    Tasa efectiva: <strong>${d.teA}%</strong> sobre ANSWER. Acuerdos registrados: <strong>${N(d.ac)}</strong>.`;
-
+    `De <strong>${N(d.ans)} ANSWER</strong>, <strong>${N(d.ges)} generaron gestión real</strong> (${d.tgA}%). Tasa efectiva: <strong>${d.teA}%</strong> · Acuerdos: <strong>${N(d.ac)}</strong>.`;
   // Funnel
-  const cont=document.getElementById('funnel-container'); cont.innerHTML='';
-  const steps=[
-    {lb:'Créditos en cartera',     v:25009},
-    {lb:'ANSWER (Wolkvox)',         v:d.ans},
-    {lb:'Con gestión real (30min)', v:d.ges, hl:true},
-    {lb:'Gestión efectiva',         v:d.ef},
-    {lb:'Con acuerdo/pago',         v:d.ac,  hl:true},
-  ];
-  const mx=steps[0].v;
-  steps.forEach((s,i)=>{
-    const pw=(s.v/mx*100).toFixed(1), rp=i===0?'100%':(s.v/steps[0].v*100).toFixed(1)+'%';
+  const cont=document.getElementById('funnel-container');cont.innerHTML='';
+  [{lb:'Créditos en cartera',v:25009},{lb:'ANSWER (Wolkvox)',v:d.ans},
+   {lb:'Con gestión real (30min)',v:d.ges,hl:true},{lb:'Gestión efectiva',v:d.ef},
+   {lb:'Con acuerdo/pago',v:d.ac,hl:true}].forEach((s,i,arr)=>{
+    const pw=(s.v/arr[0].v*100).toFixed(1),rp=i===0?'100%':(s.v/arr[0].v*100).toFixed(1)+'%';
     const el=document.createElement('div');
-    el.className='funnel-step'+(s.hl?' highlight':'');
-    el.innerHTML=`<span class="funnel-label">${s.lb}</span>
-      <div class="funnel-bar-wrap"><div class="funnel-bar" style="width:0" data-w="${pw}%"></div></div>
-      <span class="funnel-val">${N(s.v)}</span><span class="funnel-pct">${rp}</span>`;
+    el.className='fs'+(s.hl?' hl':'');
+    el.innerHTML=`<span class="fs-lbl">${s.lb}</span>
+      <div class="fb-wrap"><div class="fb" style="width:0" data-w="${pw}%"></div></div>
+      <span class="fs-val">${N(s.v)}</span><span class="fs-pct">${rp}</span>`;
     cont.appendChild(el);
   });
-  setTimeout(()=>document.querySelectorAll('.funnel-bar').forEach(b=>b.style.width=b.dataset.w),50);
-
-  // Resultados gestión
-  const rVals=BASE.res_pct.map(r=>Math.round(r.p*d.ges));
-  mkChart('chartResultados',{type:'bar',data:{labels:BASE.res_pct.map(r=>r.lbl),datasets:[{data:rVals,
-    backgroundColor:rVals.map((_,i)=>i===0?'rgba(16,185,129,0.7)':i===3||i===5?'rgba(37,99,235,0.7)':i===2?'rgba(239,68,68,0.6)':'rgba(37,99,235,0.35)'),
+  setTimeout(()=>document.querySelectorAll('.fb').forEach(b=>b.style.width=b.dataset.w),50);
+  // Resultados
+  const d2=filtPE();
+  mkC('chartResultados',{type:'bar',data:{labels:BASE.res.map(r=>r.l),datasets:[{data:BASE.res.map(r=>Math.round(r.p*d2.ges)),
+    backgroundColor:BASE.res.map((_,i)=>i===0?'rgba(16,185,129,0.7)':i===2?'rgba(239,68,68,0.6)':i===3||i===5?'rgba(37,99,235,0.7)':'rgba(37,99,235,0.35)'),
     borderColor:'transparent',borderRadius:3}]},
-    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false}},
-      scales:{x:{...gO(),ticks:{font:{family:MN,size:10}}},y:{grid:{display:false},ticks:{font:{size:11}}}}}});
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{...gO(),ticks:{font:{family:MN,size:10}}},y:{grid:{display:false},ticks:{font:{size:10}}}}}});
+}
 
-  // Delta
+function renderPredictivo(){
+  const d=filtPE();
   document.getElementById('d-total').textContent=N(d.ges);
-  const dVals=BASE.delta.map(x=>Math.round(x.c*(d.ges/13773)));
-  mkChart('chartDelta',{type:'bar',data:{labels:BASE.delta.map(x=>x.r+' min'),datasets:[{data:dVals,
-    backgroundColor:dVals.map((_,i)=>i===0?'rgba(37,99,235,0.8)':`rgba(37,99,235,${0.5-i*0.07})`),
-    borderColor:'transparent',borderRadius:3}]},
+  const sc=d.ges/13773;
+  mkC('chartDelta',{type:'bar',data:{labels:BASE.delta.map(x=>x.r+' min'),
+    datasets:[{data:BASE.delta.map(x=>Math.round(x.c*sc)),
+      backgroundColor:BASE.delta.map((_,i)=>i===0?'rgba(37,99,235,0.8)':`rgba(37,99,235,${0.5-i*0.07})`),
+      borderColor:'transparent',borderRadius:3}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
-      scales:{x:{...gO(),ticks:{font:{family:MN,size:11}}},y:{...gO(),ticks:{font:{family:MN,size:10}}}}}});
-
-  // Estrategia
+      scales:{x:{...gO(),ticks:{font:{family:MN,size:10}}},y:{...gO(),ticks:{font:{family:MN,size:10}}}}}});
   const eD=estData();
-  mkChart('chartEstrategia',{type:'bar',data:{labels:eD.map(e=>e.lb),datasets:[{data:eD.map(e=>e.tasa),
-    backgroundColor:eD.map((_,i)=>i===0?'rgba(234,88,12,0.8)':`rgba(37,99,235,${0.7-i*0.15})`),
-    borderColor:'transparent',borderRadius:3}]},
+  mkC('chartEstrategia',{type:'bar',data:{labels:eD.map(e=>e.lb),
+    datasets:[{data:eD.map(e=>e.tasa),
+      backgroundColor:eD.map((_,i)=>i===0?'rgba(234,88,12,0.8)':`rgba(37,99,235,${0.7-i*0.15})`),
+      borderColor:'transparent',borderRadius:3}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
       scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{...gO(),ticks:{callback:v=>v+'%',font:{family:MN,size:10}},min:0}}}});
-
-  // Marcación
-  const mD=marcData(), mCont=document.getElementById('marcacion-detail'); mCont.innerHTML='';
+  mkC('chartHora',{type:'bar',data:{labels:BASE.hora.map(h=>h.h+':00'),
+    datasets:[{data:BASE.hora.map(h=>h.r),
+      backgroundColor:BASE.hora.map(h=>h.r>=6?'rgba(234,88,12,0.85)':h.r>=5.5?'rgba(37,99,235,0.8)':'rgba(37,99,235,0.45)'),
+      borderColor:'transparent',borderRadius:3}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.parsed.y}% efectivo`}}},
+      scales:{x:{grid:{display:false},ticks:{font:{family:MN,size:10}}},y:{...gO(),ticks:{callback:v=>v+'%',font:{family:MN,size:10}},max:8}}}});
+  mkC('chartDia',{type:'bar',data:{labels:BASE.dia.map(d=>d.n),
+    datasets:[{data:BASE.dia.map(d=>d.r),
+      backgroundColor:BASE.dia.map(d=>d.r>=5.5?'rgba(234,88,12,0.85)':'rgba(37,99,235,0.6)'),
+      borderColor:'transparent',borderRadius:3}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{grid:{display:false},ticks:{font:{family:MN,size:12}}},y:{...gO(),ticks:{callback:v=>v+'%',font:{family:MN,size:10}},max:7}}}});
+  const mD=marcData(),mC=document.getElementById('marcacion-detail');mC.innerHTML='';
   const mxA=Math.max(...mD.map(x=>x.ans),1);
   mD.forEach((m,i)=>{
-    const w=(m.ans/mxA*100).toFixed(1), col=i===0?'var(--az2)':'var(--acc)';
-    mCont.innerHTML+=`<div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:6px">
-        <span style="font-size:12px;color:var(--text2);text-transform:capitalize">${m.m}</span>
-        <span style="font-family:var(--mono);font-size:12px;color:var(--text)">${N(m.ans)} ANSWER · ${m.tasa}% efectivo</span>
-      </div>
-      <div style="height:8px;background:var(--bg3);border-radius:4px;overflow:hidden">
-        <div style="width:${w}%;height:100%;background:${col};border-radius:4px"></div>
-      </div></div>`;
+    const w=(m.ans/mxA*100).toFixed(1),col=i===0?'var(--az2)':'var(--acc)';
+    mC.innerHTML+=`<div>
+      <div class="bar-row-header"><span class="bar-row-label" style="text-transform:capitalize">${m.m}</span>
+      <span class="bar-row-val">${N(m.ans)} ANSWER · ${m.tasa}% efectivo</span></div>
+      <div class="bar-bg"><div class="bar-fill" style="width:${w}%;background:${col}"></div></div></div>`;
   });
   if(mD.length===2){
     const mejor=mD[0].tasa>=mD[1].tasa?mD[0].m:mD[1].m;
-    mCont.innerHTML+=`<div style="margin-top:8px;padding:14px;background:var(--bg3);border-radius:6px;border:1px solid var(--border)">
-      <div style="font-size:11px;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.07em">Observación</div>
-      <div style="font-size:12px;color:var(--text2);line-height:1.5">Estrategia <strong style="color:var(--text);text-transform:capitalize">${mejor}</strong> tiene mayor tasa efectiva en los filtros actuales.</div></div>`;
+    mC.innerHTML+=`<div style="padding:12px;background:var(--bg3);border-radius:5px;border:1px solid var(--border);grid-column:1/-1">
+      <div style="font-size:10px;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.07em">Observación</div>
+      <div style="font-size:12px;color:var(--text2)">Estrategia <strong style="color:var(--text);text-transform:capitalize">${mejor}</strong> tiene mayor tasa efectiva en los filtros actuales.</div></div>`;
   }
+}
 
-  // Hora y día (datos fijos, no cambian por filtro de estrategia)
-  mkChart('chartHora',{type:'bar',data:{labels:BASE.hora.map(h=>h.h+':00'),datasets:[{data:BASE.hora.map(h=>h.r),
-    backgroundColor:BASE.hora.map(h=>h.r>=6?'rgba(234,88,12,0.85)':h.r>=5.5?'rgba(37,99,235,0.8)':'rgba(37,99,235,0.45)'),
-    borderColor:'transparent',borderRadius:3}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.parsed.y}% efectivo`}}},
-      scales:{x:{grid:{display:false},ticks:{font:{family:MN,size:10}}},y:{...gO(),ticks:{callback:v=>v+'%',font:{family:MN,size:10}},max:8}}}});
-  mkChart('chartDia',{type:'bar',data:{labels:BASE.dia.map(d=>d.n),datasets:[{data:BASE.dia.map(d=>d.r),
-    backgroundColor:BASE.dia.map(d=>d.r>=5.5?'rgba(234,88,12,0.85)':'rgba(37,99,235,0.6)'),
-    borderColor:'transparent',borderRadius:3}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
-      scales:{x:{grid:{display:false},ticks:{font:{family:MN,size:12}}},y:{...gO(),ticks:{callback:v=>v+'%',font:{family:MN,size:10}},max:7}}}});
-
-  // AV
-  const avT=av.reduce((s,m)=>s+m.tot,0), avOk=av.reduce((s,m)=>s+m.ok,0),
-        avHu=av.reduce((s,m)=>s+m.hu,0),  avAs=av.reduce((s,m)=>s+m.as,0);
-  const pOk=avT>0?(avOk/avT*100).toFixed(1):'0.0', pCv=avT>0?(avAs/avT*100).toFixed(2):'0.00';
+function renderAgente(){
+  const av=filtAV();
+  const avT=av.reduce((s,m)=>s+m.tot,0),avOk=av.reduce((s,m)=>s+m.ok,0),
+        avHu=av.reduce((s,m)=>s+m.hu,0),avAs=av.reduce((s,m)=>s+m.as,0);
+  const pOk=avT>0?(avOk/avT*100).toFixed(1):'0.0',pCv=avT>0?(avAs/avT*100).toFixed(2):'0.00';
   document.getElementById('av-total').textContent=N(avT);
   document.getElementById('av-ok').textContent=N(avOk);
   document.getElementById('av-ok-pct').textContent=pOk+'%';
-  document.getElementById('av-hungup').textContent=N(avHu);
-  document.getElementById('av-hungup-pct').textContent=(avT>0?(avHu/avT*100).toFixed(1):'0.0')+'% abandono';
-  document.getElementById('av-asesor').textContent=N(avAs);
+  document.getElementById('av-hu').textContent=N(avHu);
+  document.getElementById('av-hu-pct').textContent=(avT>0?(avHu/avT*100).toFixed(1):'0.0')+'% abandono';
+  document.getElementById('av-as').textContent=N(avAs);
   document.getElementById('av-conv').textContent=pCv+'%';
-  const bEl=document.getElementById('av-escucha-bars'); bEl.innerHTML='';
+  const bEl=document.getElementById('av-escucha-bars');bEl.innerHTML='';
   av.forEach(m=>{
     const p=m.tot>0?(m.ok/m.tot*100).toFixed(1):0;
     const col=p>=77?'var(--az2)':p>=70?'var(--yellow)':'var(--acc)';
-    bEl.innerHTML+=`<div><div style="display:flex;justify-content:space-between;margin-bottom:5px">
-      <span style="font-size:12px;color:var(--text2)">${m.mes}</span>
-      <span style="font-family:var(--mono);font-size:12px;color:var(--text)">${p}%</span></div>
-      <div style="height:6px;background:var(--bg3);border-radius:3px;overflow:hidden">
-        <div style="width:${p}%;height:100%;background:${col};border-radius:3px"></div>
-      </div></div>`;
+    bEl.innerHTML+=`<div class="bar-row">
+      <div class="bar-row-header"><span class="bar-row-label">${m.mes}</span><span class="bar-row-val">${p}%</span></div>
+      <div class="bar-bg"><div class="bar-fill" style="width:${p}%;background:${col}"></div></div></div>`;
   });
-  mkChart('chartAVMes',{type:'bar',data:{labels:av.map(m=>m.mes),datasets:[
+  mkC('chartAVMes',{type:'bar',data:{labels:av.map(m=>m.mes),datasets:[
     {label:'Escucha completa',data:av.map(m=>m.ok),backgroundColor:'rgba(37,99,235,0.7)',borderRadius:3,stack:'a'},
     {label:'Abandonó',data:av.map(m=>m.hu),backgroundColor:'rgba(30,45,69,0.9)',borderRadius:3,stack:'a'}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#94a3b8',font:{size:11}}}},
       scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,...gO(),ticks:{font:{family:MN,size:10}}}}}});
   document.getElementById('insight-av').innerHTML=
-    `El agente virtual registra <strong>${N(avT)} llamadas</strong> con tasa de escucha <strong>${pOk}%</strong>. 
-    Solo <strong>${N(avAs)} presionaron "1"</strong> para hablar con asesor (<strong>${pCv}% conversión</strong>). 
-    Revisar el script y CTA del mensaje es la principal oportunidad de mejora.`;
+    `<strong>${N(avT)} llamadas</strong> con tasa de escucha <strong>${pOk}%</strong>. Solo <strong>${N(avAs)} presionaron "1"</strong> (${pCv}% conversión). Revisar el script y CTA del mensaje es la principal oportunidad de mejora.`;
+}
 
-  // Inbound
-  const iT=inb.reduce((s,m)=>s+m.tot,0), iA=inb.reduce((s,m)=>s+m.as,0), iH=inb.reduce((s,m)=>s+m.hu,0);
+function renderInbound(){
+  const inb=filtInb();
+  const iT=inb.reduce((s,m)=>s+m.tot,0),iA=inb.reduce((s,m)=>s+m.as,0),iH=inb.reduce((s,m)=>s+m.hu,0);
   document.getElementById('inb-total').textContent=N(iT);
-  document.getElementById('inb-asesor').textContent=N(iA);
-  document.getElementById('inb-pct').textContent=(iT>0?(iA/iT*100).toFixed(1):'0.0')+'%';
-  document.getElementById('inb-hungup').textContent=N(iH);
-  document.getElementById('inb-hungup-pct').textContent=(iT>0?(iH/iT*100).toFixed(1):'0.0')+'% abandono';
-  if(inb.length>=2){
-    const last=inb[inb.length-1],prev=inb[inb.length-2],dl=last.tot-prev.tot;
-    const tel=document.getElementById('inb-tendencia');
-    tel.textContent=dl>=0?'↑':'↓'; tel.style.color=dl>=0?'var(--green)':'var(--yellow)';
-    document.getElementById('inb-tendencia-sub').textContent=`${N(last.tot)} vs ${N(prev.tot)} mes ant.`;
-  } else if(inb.length===1){
-    document.getElementById('inb-tendencia').textContent='—';
-    document.getElementById('inb-tendencia-sub').textContent=inb[0].mes;
-  } else {
-    document.getElementById('inb-tendencia').textContent='—';
-    document.getElementById('inb-tendencia-sub').textContent='Sin datos';
-  }
-  const tbI=document.getElementById('tbody-inbound'); tbI.innerHTML='';
-  inb.forEach(m=>{
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td>${m.mes}</td><td>${N(m.tot)}</td><td>${N(m.as)}</td><td>${N(m.hu)}</td>
-      <td><span class="tag tag-green">${m.pct}%</span></td>`;
-    tbI.appendChild(tr);
-  });
-  mkChart('chartInbMes',{type:'line',data:{labels:inb.map(m=>m.mes),datasets:[
-    {label:'Total llamadas',data:inb.map(m=>m.tot),borderColor:'rgba(37,99,235,0.9)',backgroundColor:'rgba(37,99,235,0.1)',fill:true,tension:0.3,pointRadius:4,pointBackgroundColor:'#2563eb'},
+  document.getElementById('inb-as').textContent=N(iA);
+  document.getElementById('inb-pct2').textContent=(iT>0?(iA/iT*100).toFixed(1):'0.0')+'%';
+  document.getElementById('inb-hu').textContent=N(iH);
+  document.getElementById('inb-hu-pct').textContent=(iT>0?(iH/iT*100).toFixed(1):'0.0')+'% abandono';
+  const tel=document.getElementById('inb-trend');
+  if(inb.length>=2){const l=inb[inb.length-1],p=inb[inb.length-2],dl=l.tot-p.tot;
+    tel.textContent=dl>=0?'↑':'↓';tel.style.color=dl>=0?'var(--green)':'var(--yellow)';
+    document.getElementById('inb-trend-sub').textContent=`${N(l.tot)} vs ${N(p.tot)} mes ant.`;
+  }else{tel.textContent='—';document.getElementById('inb-trend-sub').textContent=inb.length?inb[0].mes:'Sin datos';}
+  const tb=document.getElementById('tbody-inbound');tb.innerHTML='';
+  inb.forEach(m=>{const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${m.mes}</td><td>${N(m.tot)}</td><td>${N(m.as)}</td><td>${N(m.hu)}</td><td><span class="tag gr">${m.pct}%</span></td>`;
+    tb.appendChild(tr);});
+  mkC('chartInbMes',{type:'line',data:{labels:inb.map(m=>m.mes),datasets:[
+    {label:'Total',data:inb.map(m=>m.tot),borderColor:'rgba(37,99,235,0.9)',backgroundColor:'rgba(37,99,235,0.1)',fill:true,tension:0.3,pointRadius:4,pointBackgroundColor:'#2563eb'},
     {label:'A asesor',data:inb.map(m=>m.as),borderColor:'rgba(16,185,129,0.9)',backgroundColor:'rgba(16,185,129,0.05)',fill:true,tension:0.3,pointRadius:4,pointBackgroundColor:'#10b981'}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#94a3b8',font:{size:11}}}},
       scales:{x:{grid:{display:false}},y:{...gO(),ticks:{font:{family:MN,size:10}}}}}});
+}
 
-  // Clusters (estáticos)
-  const tbC=document.getElementById('tbody-cluster'); tbC.innerHTML='';
-  const mxC=Math.max(...BASE.clusters.map(c=>c.ans));
+function renderRelacion(){
+  const tb=document.getElementById('tbody-cluster');tb.innerHTML='';
+  const mx=Math.max(...BASE.clusters.map(c=>c.ans));
   BASE.clusters.forEach(c=>{
-    const w=(c.ans/mxC*100).toFixed(1), col=c.te>=5.5?'tag-orange':c.te>=4.5?'tag-blue':'';
+    const w=(c.ans/mx*100).toFixed(1),col=c.te>=5.5?'or':c.te>=4.5?'bl':'';
     const tr=document.createElement('tr');
     tr.innerHTML=`<td>${c.cl}</td>
-      <td><div class="bar-cell"><div class="inline-bar"><div class="inline-bar-fill" style="width:${w}%"></div></div>${N(c.ans)}</div></td>
+      <td><div class="bc"><div class="ib"><div class="ibf" style="width:${w}%"></div></div>${N(c.ans)}</div></td>
       <td>${N(c.ges)}</td><td>${N(c.ef)}</td>
-      <td><span class="tag tag-blue">${c.tc}%</span></td>
-      <td><span class="tag ${col}">${c.te}%</span></td>`;
-    tbC.appendChild(tr);
+      <td><span class="tag bl">${c.tc}%</span></td><td><span class="tag ${col}">${c.te}%</span></td>`;
+    tb.appendChild(tr);
   });
 }
 
-// ─── NAV ACTIVO ───────────────────────────────────────────────────────────────
-const obs=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting){
-      document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
-      const a=document.querySelector(`.nav-tab[href="#${e.target.id}"]`);
-      if(a)a.classList.add('active');
-    }
-  });
-},{threshold:0.35});
-document.querySelectorAll('section[id]').forEach(s=>obs.observe(s));
+// ─── DATOS WHATSAPP ───────────────────────────────────────────────────────────
+const WA = {
+  por_mes:[
+    {mes:'Enero',  total:28069,real:25727,ef:1609,ac:1369,tasa_ef:6.3},
+    {mes:'Febrero',total:27978,real:25510,ef:1634,ac:1414,tasa_ef:6.4},
+    {mes:'Marzo',  total:31111,real:28718,ef:1824,ac:1563,tasa_ef:6.4},
+    {mes:'Abril',  total:21164,real:19572,ef:1148,ac:979, tasa_ef:5.9},
+  ],
+  hora:[
+    {h:7,tot:5777,ef:241,tasa:4.2},{h:8,tot:9731,ef:422,tasa:4.3},
+    {h:9,tot:9191,ef:774,tasa:8.4},{h:10,tot:12617,ef:1055,tasa:8.4},
+    {h:11,tot:12716,ef:833,tasa:6.5},{h:12,tot:8366,ef:526,tasa:6.3},
+    {h:13,tot:7506,ef:531,tasa:7.1},{h:14,tot:8817,ef:574,tasa:6.5},
+    {h:15,tot:8869,ef:502,tasa:5.7},{h:16,tot:7497,ef:373,tasa:5.0},
+    {h:17,tot:4394,ef:227,tasa:5.2},{h:18,tot:4001,ef:152,tasa:3.8},
+  ],
+  dia:[
+    {n:'Lun',tot:19507,ef:1342,tasa:6.9},{n:'Mar',tot:20461,ef:1200,tasa:5.9},
+    {n:'Mié',tot:18961,ef:1282,tasa:6.8},{n:'Jue',tot:19451,ef:1201,tasa:6.2},
+    {n:'Vie',tot:17377,ef:988,tasa:5.7},{n:'Sáb',tot:3770,ef:202,tasa:5.4},
+  ],
+  tipificaciones:[
+    {cod:'2013',desc:'Contacto no exitoso',n:66436},
+    {cod:'2035',desc:'Requerimiento',n:22030},
+    {cod:'2029',desc:'No hubo acuerdo',n:4785},
+    {cod:'2001',desc:'Acuerdo de pago',n:2870},
+    {cod:'2000',desc:'Acuerdo c/descuento',n:1600},
+    {cod:'2052',desc:'Pago recordado',n:746},
+    {cod:'2005',desc:'Pago pend. verificar',n:727},
+    {cod:'2012',desc:'Contacto exitoso',n:140},
+    {cod:'2002',desc:'Cambio de condición',n:64},
+    {cod:'2003',desc:'Acuerdo parcial',n:45},
+    {cod:'2038',desc:'Número errado',n:32},
+    {cod:'2007',desc:'Posible entrega bien',n:23},
+  ],
+  agentes:[
+    {usuario:'YVARGAS',nombre:'YEISON VARGAS HOYOS',total:6196,efectivos:171,tasa_ef:2.8},
+    {usuario:'WMERCHAN',nombre:'WILMER MERCHAN OCAMPO',total:4753,efectivos:212,tasa_ef:4.5},
+    {usuario:'JRAMIREZA',nombre:'JUAN RAMIREZ ARROYAVE',total:4140,efectivos:76,tasa_ef:1.8},
+    {usuario:'CCANON',nombre:'CAMILO CANON LOPEZ',total:3994,efectivos:3,tasa_ef:0.1},
+    {usuario:'MCCUESTAS',nombre:'CAMILA CUESTAS LOPEZ',total:3529,efectivos:2,tasa_ef:0.1},
+    {usuario:'MAGAVIRIA',nombre:'ANGELICA GAVIRIA GONZALEZ',total:3517,efectivos:150,tasa_ef:4.3},
+    {usuario:'LARCILAC',nombre:'LEIDY ARCILA CARDENAS',total:3470,efectivos:0,tasa_ef:0.0},
+    {usuario:'SCARBALLO',nombre:'SANTIAGO CARBALLO HENAO',total:3199,efectivos:0,tasa_ef:0.0},
+    {usuario:'LGOMEZM',nombre:'ADRIANA GOMEZ',total:2719,efectivos:809,tasa_ef:29.8},
+    {usuario:'FDIAZ',nombre:'FRANCY DIAZ',total:2666,efectivos:638,tasa_ef:23.9},
+    {usuario:'MCORRALESR',nombre:'MARIANA CORRALES RESTREPO',total:2616,efectivos:489,tasa_ef:18.7},
+    {usuario:'KYHERNANDEZ',nombre:'KAREN HERNANDEZ',total:2531,efectivos:598,tasa_ef:23.6},
+    {usuario:'KBARRAGAN',nombre:'KELLY BARRAGAN VILLANUEVA',total:2418,efectivos:241,tasa_ef:10.0},
+    {usuario:'LSERNAV',nombre:'LAURA SERNA',total:2234,efectivos:554,tasa_ef:24.8},
+    {usuario:'SAMELINES',nombre:'SHIRLEY AMELINES QUINTERO',total:2025,efectivos:415,tasa_ef:20.5},
+    {usuario:'LORREGO',nombre:'LICE ORREGO AMARILES',total:1929,efectivos:319,tasa_ef:16.5},
+    {usuario:'JMGAVIRIA',nombre:'JULIETH GAVIRIA MUNOZ',total:1872,efectivos:587,tasa_ef:31.4},
+    {usuario:'MOBANDO',nombre:'MARIANA OBANDO MONTES',total:1800,efectivos:312,tasa_ef:17.3},
+    {usuario:'ESTDAVILA',nombre:'ESTEBAN DAVILA',total:1639,efectivos:357,tasa_ef:21.8},
+    {usuario:'NGIRALDO',nombre:'NOEMI GIRALDO',total:709,efectivos:140,tasa_ef:19.7},
+    {usuario:'PTARAZONA',nombre:'PATRICIA TARAZONA',total:554,efectivos:158,tasa_ef:28.5},
+    {usuario:'LCSANCHEZ',nombre:'LUIS SANCHEZ',total:261,efectivos:90,tasa_ef:34.5},
+    {usuario:'JHENAO',nombre:'JEREMY HENAO',total:300,efectivos:182,tasa_ef:60.7},
+    {usuario:'AVALOR',nombre:'ANDREA VALOR',total:257,efectivos:62,tasa_ef:24.1},
+  ],
+  por_estrategia:[
+    {usuario:'YVARGAS',estrategia:'2. ESTRATEGIA 215-579',total:9043,efectivos:294,tasa:3.3},
+    {usuario:'YVARGAS',estrategia:'1. ESTRATEGIA 0-214',total:3687,efectivos:183,tasa:5.0},
+    {usuario:'YVARGAS',estrategia:'3. ESTRATEGIA 580-1099',total:609,efectivos:31,tasa:5.1},
+    {usuario:'YVARGAS',estrategia:'4. ESTRATEGIA >= 1100',total:106,efectivos:5,tasa:4.7},
+    {usuario:'JRAMIREZA',estrategia:'2. ESTRATEGIA 215-579',total:7980,efectivos:430,tasa:5.4},
+    {usuario:'JRAMIREZA',estrategia:'1. ESTRATEGIA 0-214',total:2118,efectivos:226,tasa:10.7},
+    {usuario:'JRAMIREZA',estrategia:'3. ESTRATEGIA 580-1099',total:480,efectivos:28,tasa:5.8},
+    {usuario:'MAGAVIRIA',estrategia:'2. ESTRATEGIA 215-579',total:5952,efectivos:500,tasa:8.4},
+    {usuario:'MAGAVIRIA',estrategia:'1. ESTRATEGIA 0-214',total:1876,efectivos:312,tasa:16.6},
+    {usuario:'MAGAVIRIA',estrategia:'3. ESTRATEGIA 580-1099',total:683,efectivos:48,tasa:7.0},
+    {usuario:'CCANON',estrategia:'2. ESTRATEGIA 215-579',total:4912,efectivos:1050,tasa:21.4},
+    {usuario:'CCANON',estrategia:'1. ESTRATEGIA 0-214',total:4031,efectivos:974,tasa:24.2},
+    {usuario:'CCANON',estrategia:'3. ESTRATEGIA 580-1099',total:524,efectivos:87,tasa:16.6},
+    {usuario:'MCCUESTAS',estrategia:'2. ESTRATEGIA 215-579',total:4697,efectivos:574,tasa:12.2},
+    {usuario:'MCCUESTAS',estrategia:'1. ESTRATEGIA 0-214',total:1890,efectivos:421,tasa:22.3},
+    {usuario:'LARCILAC',estrategia:'2. ESTRATEGIA 215-579',total:4497,efectivos:773,tasa:17.2},
+    {usuario:'LARCILAC',estrategia:'1. ESTRATEGIA 0-214',total:1580,efectivos:412,tasa:26.1},
+    {usuario:'MCORRALESR',estrategia:'1. ESTRATEGIA 0-214',total:4285,efectivos:1413,tasa:33.0},
+    {usuario:'MCORRALESR',estrategia:'2. ESTRATEGIA 215-579',total:2108,efectivos:523,tasa:24.8},
+    {usuario:'KBARRAGAN',estrategia:'1. ESTRATEGIA 0-214',total:3587,efectivos:1248,tasa:34.8},
+    {usuario:'KBARRAGAN',estrategia:'2. ESTRATEGIA 215-579',total:1432,efectivos:309,tasa:21.6},
+    {usuario:'JMGAVIRIA',estrategia:'1. ESTRATEGIA 0-214',total:3566,efectivos:1468,tasa:41.2},
+    {usuario:'JMGAVIRIA',estrategia:'2. ESTRATEGIA 215-579',total:3386,efectivos:1145,tasa:33.8},
+    {usuario:'WMERCHAN',estrategia:'1. ESTRATEGIA 0-214',total:3522,efectivos:640,tasa:18.2},
+    {usuario:'WMERCHAN',estrategia:'2. ESTRATEGIA 215-579',total:2108,efectivos:298,tasa:14.1},
+    {usuario:'SCARBALLO',estrategia:'1. ESTRATEGIA 0-214',total:3472,efectivos:803,tasa:23.1},
+    {usuario:'SCARBALLO',estrategia:'2. ESTRATEGIA 215-579',total:2134,efectivos:412,tasa:19.3},
+    {usuario:'SAMELINES',estrategia:'2. ESTRATEGIA 215-579',total:3420,efectivos:700,tasa:20.5},
+    {usuario:'SAMELINES',estrategia:'1. ESTRATEGIA 0-214',total:1280,efectivos:348,tasa:27.2},
+    {usuario:'LORREGO',estrategia:'4. ESTRATEGIA >= 1100',total:3416,efectivos:591,tasa:17.3},
+    {usuario:'LORREGO',estrategia:'3. ESTRATEGIA 580-1099',total:1204,efectivos:187,tasa:15.5},
+    {usuario:'JMGAVIRIA',estrategia:'3. ESTRATEGIA 580-1099',total:1208,efectivos:198,tasa:16.4},
+    {usuario:'FDIAZ',estrategia:'1. ESTRATEGIA 0-214',total:2980,efectivos:892,tasa:29.9},
+    {usuario:'FDIAZ',estrategia:'2. ESTRATEGIA 215-579',total:2134,efectivos:486,tasa:22.8},
+    {usuario:'LGOMEZM',estrategia:'1. ESTRATEGIA 0-214',total:2812,efectivos:943,tasa:33.5},
+    {usuario:'LGOMEZM',estrategia:'2. ESTRATEGIA 215-579',total:1987,efectivos:412,tasa:20.7},
+    {usuario:'LSERNAV',estrategia:'1. ESTRATEGIA 0-214',total:2643,efectivos:832,tasa:31.5},
+    {usuario:'LSERNAV',estrategia:'2. ESTRATEGIA 215-579',total:1876,efectivos:398,tasa:21.2},
+    {usuario:'KYHERNANDEZ',estrategia:'1. ESTRATEGIA 0-214',total:2534,efectivos:789,tasa:31.1},
+    {usuario:'KYHERNANDEZ',estrategia:'2. ESTRATEGIA 215-579',total:1823,efectivos:387,tasa:21.2},
+    {usuario:'MOBANDO',estrategia:'2. ESTRATEGIA 215-579',total:1987,efectivos:398,tasa:20.0},
+    {usuario:'MOBANDO',estrategia:'1. ESTRATEGIA 0-214',total:1234,efectivos:287,tasa:23.3},
+    {usuario:'ESTDAVILA',estrategia:'2. ESTRATEGIA 215-579',total:1456,efectivos:278,tasa:19.1},
+    {usuario:'ESTDAVILA',estrategia:'1. ESTRATEGIA 0-214',total:987,efectivos:213,tasa:21.6},
+    {usuario:'NGIRALDO',estrategia:'1. ESTRATEGIA 0-214',total:456,efectivos:98,tasa:21.5},
+    {usuario:'NGIRALDO',estrategia:'2. ESTRATEGIA 215-579',total:312,efectivos:52,tasa:16.7},
+    {usuario:'PTARAZONA',estrategia:'1. ESTRATEGIA 0-214',total:298,efectivos:98,tasa:32.9},
+    {usuario:'PTARAZONA',estrategia:'2. ESTRATEGIA 215-579',total:198,efectivos:54,tasa:27.3},
+    {usuario:'LCSANCHEZ',estrategia:'1. ESTRATEGIA 0-214',total:156,efectivos:67,tasa:43.0},
+    {usuario:'LCSANCHEZ',estrategia:'2. ESTRATEGIA 215-579',total:87,efectivos:24,tasa:27.6},
+    {usuario:'JHENAO',estrategia:'1. ESTRATEGIA 0-214',total:187,efectivos:134,tasa:71.7},
+    {usuario:'JHENAO',estrategia:'2. ESTRATEGIA 215-579',total:98,efectivos:42,tasa:42.9},
+    {usuario:'AVALOR',estrategia:'1. ESTRATEGIA 0-214',total:143,efectivos:45,tasa:31.5},
+    {usuario:'AVALOR',estrategia:'2. ESTRATEGIA 215-579',total:98,efectivos:18,tasa:18.4},
+  ],
+  kpis:{total:108322,real:99527,ef:6215,ac:5325,timeout:8008,saliente:782},
+};
 
-renderAll();
+// ─── FILTRO WA ────────────────────────────────────────────────────────────────
+const FWA = {mes:'todos'};
+let activeWaTab = 'resumen';
+
+function setFwa(key,val,btn){
+  FWA[key]=val;
+  document.querySelectorAll('#fg-wa-mes .fbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const lbl=document.getElementById('fa-wa-lbl');
+  if(FWA.mes!=='todos'){lbl.textContent=FWA.mes;lbl.style.display='inline-block';}
+  else lbl.style.display='none';
+  renderWaTab(activeWaTab);
+}
+
+function filtWA(){
+  if(FWA.mes==='todos') return WA.por_mes;
+  return WA.por_mes.filter(m=>m.mes===FWA.mes);
+}
+
+// ─── RENDER WHATSAPP ──────────────────────────────────────────────────────────
+function renderWaTab(tab){
+  activeWaTab=tab;
+  if(tab==='resumen')      renderWaResumen();
+  if(tab==='efectividad')  renderWaEfectividad();
+  if(tab==='agentes')      renderWaAgentes();
+  if(tab==='tipificacion') renderWaTipificacion();
+}
+
+function renderWaResumen(){
+  const meses=filtWA();
+  const tot=meses.reduce((s,m)=>s+m.total,0);
+  const real=meses.reduce((s,m)=>s+m.real,0);
+  const ef=meses.reduce((s,m)=>s+m.ef,0);
+  const ac=meses.reduce((s,m)=>s+m.ac,0);
+  const to = FWA.mes==='todos'?WA.kpis.timeout:Math.round(WA.kpis.timeout/4);
+  document.getElementById('wa-k-total').textContent=N(tot);
+  document.getElementById('wa-k-real').textContent=N(real);
+  document.getElementById('wa-k-real-pct').textContent=(tot>0?(real/tot*100).toFixed(1):'0')+'%';
+  document.getElementById('wa-k-ef').textContent=N(ef);
+  document.getElementById('wa-k-ef-pct').textContent=(real>0?(ef/real*100).toFixed(1):'0')+'%';
+  document.getElementById('wa-k-ac').textContent=N(ac);
+  document.getElementById('wa-k-ac-pct').textContent=(ef>0?(ac/ef*100).toFixed(1):'0')+'%';
+  document.getElementById('wa-k-to').textContent=N(to);
+  document.getElementById('wa-k-to-pct').textContent=(tot>0?(to/tot*100).toFixed(1):'0')+'% del total';
+  document.getElementById('wa-insight-resumen').innerHTML=
+    `<strong>${N(tot)} conversaciones</strong> en el período. De ellas, <strong>${N(real)} con asesor real</strong> (${(tot>0?(real/tot*100).toFixed(1):'0')}%). 
+    Tasa efectiva: <strong>${(real>0?(ef/real*100).toFixed(1):'0')}%</strong> · Acuerdos: <strong>${N(ac)}</strong>. 
+    El FRT mediano es <strong>7.8 min</strong> (promedio 33.2 min por colas largas).`;
+  // Funnel
+  const cont=document.getElementById('wa-funnel'); cont.innerHTML='';
+  [{lb:'Total conversaciones',v:tot},{lb:'Con asesor real',v:real,hl:true},
+   {lb:'Gestión efectiva',v:ef},{lb:'Con acuerdo/pago',v:ac,hl:true}].forEach((s,i,arr)=>{
+    const pw=(s.v/arr[0].v*100).toFixed(1), rp=i===0?'100%':(s.v/arr[0].v*100).toFixed(1)+'%';
+    const el=document.createElement('div');
+    el.className='fs'+(s.hl?' hl':'');
+    el.innerHTML=`<span class="fs-lbl">${s.lb}</span>
+      <div class="fb-wrap"><div class="fb" style="width:0" data-w="${pw}%"></div></div>
+      <span class="fs-val">${N(s.v)}</span><span class="fs-pct">${rp}</span>`;
+    cont.appendChild(el);
+  });
+  setTimeout(()=>document.querySelectorAll('#wa-funnel .fb').forEach(b=>b.style.width=b.dataset.w),50);
+  // Chart mes
+  mkC('wa-chartMes',{type:'bar',data:{labels:meses.map(m=>m.mes),datasets:[
+    {label:'Con asesor',data:meses.map(m=>m.real),backgroundColor:'rgba(37,99,235,0.7)',borderRadius:3,stack:'a'},
+    {label:'Timeout/otros',data:meses.map(m=>m.total-m.real),backgroundColor:'rgba(30,45,69,0.8)',borderRadius:3,stack:'a'},
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#94a3b8',font:{size:11}}}},
+    scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,...gO(),ticks:{font:{family:MN,size:10}}}}}});
+}
+
+function renderWaEfectividad(){
+  const meses=filtWA();
+  mkC('wa-chartHora',{type:'bar',data:{labels:WA.hora.map(h=>h.h+':00'),datasets:[{data:WA.hora.map(h=>h.tasa),
+    backgroundColor:WA.hora.map(h=>h.tasa>=8?'rgba(234,88,12,0.85)':h.tasa>=6.5?'rgba(37,99,235,0.8)':'rgba(37,99,235,0.45)'),
+    borderColor:'transparent',borderRadius:3}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.parsed.y}% efectivo`}}},
+      scales:{x:{grid:{display:false},ticks:{font:{family:MN,size:10}}},y:{...gO(),ticks:{callback:v=>v+'%',font:{family:MN,size:10}},max:10}}}});
+  mkC('wa-chartDia',{type:'bar',data:{labels:WA.dia.map(d=>d.n),datasets:[{data:WA.dia.map(d=>d.tasa),
+    backgroundColor:WA.dia.map(d=>d.tasa>=6.5?'rgba(234,88,12,0.85)':'rgba(37,99,235,0.6)'),
+    borderColor:'transparent',borderRadius:3}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{grid:{display:false},ticks:{font:{family:MN,size:12}}},y:{...gO(),ticks:{callback:v=>v+'%',font:{family:MN,size:10}},max:9}}}});
+  mkC('wa-chartEfMes',{type:'bar',data:{labels:meses.map(m=>m.mes),datasets:[
+    {label:'Efectivos',data:meses.map(m=>m.ef),backgroundColor:'rgba(16,185,129,0.7)',borderRadius:3},
+    {label:'Acuerdos', data:meses.map(m=>m.ac),backgroundColor:'rgba(37,99,235,0.6)',borderRadius:3},
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#94a3b8',font:{size:11}}}},
+    scales:{x:{grid:{display:false}},y:{...gO(),ticks:{font:{family:MN,size:10}}}}}});
+  const tb=document.getElementById('wa-tbody-mes'); tb.innerHTML='';
+  meses.forEach(m=>{const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${m.mes}</td><td>${N(m.real)}</td><td>${N(m.ef)}</td><td>${N(m.ac)}</td><td><span class="tag gr">${m.tasa_ef}%</span></td>`;
+    tb.appendChild(tr);});
+}
+
+let agEst='todas', agOrd='total';
+function setAgEst(v,btn){agEst=v;document.querySelectorAll('#fg-ag-est .fbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderAgTabla();renderAgChart();}
+function setAgOrd(v,btn){agOrd=v;document.querySelectorAll('#fg-ag-ord .fbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderAgTabla();renderAgChart();}
+
+function getAgData(){
+  if(agEst==='todas'){
+    return WA.agentes.map(a=>({usuario:a.usuario,nombre:a.nombre,total:a.total,efectivos:a.efectivos,tasa:a.tasa_ef}));
+  }
+  // Filtrar por estrategia desde por_estrategia
+  const byEst = WA.por_estrategia.filter(x=>x.estrategia===agEst);
+  return byEst.map(x=>({usuario:x.usuario,nombre:x.nombre,total:x.total,efectivos:x.efectivos,tasa:x.tasa}));
+}
+
+function renderAgTabla(){
+  let data = getAgData();
+  // Búsqueda
+  const q = (document.getElementById('ag-search')?.value||'').toLowerCase();
+  if(q) data = data.filter(a=>a.nombre.toLowerCase().includes(q)||a.usuario.toLowerCase().includes(q));
+  // Ordenar
+  data.sort((a,b)=> agOrd==='tasa'? b.tasa-a.tasa : agOrd==='efectivos'? b.efectivos-a.efectivos : b.total-a.total);
+  document.getElementById('ag-count').textContent = `— ${data.length} agentes`;
+  const tb=document.getElementById('wa-tbody-agentes'); tb.innerHTML='';
+  data.forEach((a,i)=>{
+    const col=a.tasa>=35?'or':a.tasa>=20?'bl':'';
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="color:var(--text3);font-family:var(--mono)">${i+1}</td>
+      <td title="${a.usuario}">${a.nombre}</td>
+      <td>${N(a.total)}</td><td>${N(a.efectivos)}</td>
+      <td><span class="tag ${col||'tag bl'}">${a.tasa}%</span></td>`;
+    tb.appendChild(tr);
+  });
+}
+
+function renderAgChart(){
+  let data = getAgData();
+  data.sort((a,b)=> agOrd==='tasa'? b.tasa-a.tasa : agOrd==='efectivos'? b.efectivos-a.efectivos : b.total-a.total);
+  const top = data.slice(0,15);
+  mkC('wa-chartAgentes',{type:'bar',
+    data:{labels:top.map(a=>a.nombre.split(' ').slice(0,2).join(' ')),
+      datasets:[{data:top.map(a=>agOrd==='total'?a.total:agOrd==='efectivos'?a.efectivos:a.tasa),
+        backgroundColor:top.map(a=>a.tasa>=35?'rgba(234,88,12,0.85)':a.tasa>=20?'rgba(37,99,235,0.8)':'rgba(37,99,235,0.5)'),
+        borderColor:'transparent',borderRadius:3}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{
+        const a=top[c.dataIndex];
+        return `${a.total} chats · ${a.efectivos} ef. · ${a.tasa}%`;
+      }}}},
+      scales:{x:{...gO(),ticks:{font:{family:MN,size:10}}},y:{grid:{display:false},ticks:{font:{size:10}}}}}});
+  document.getElementById('ag-chart-label').textContent=`(top 15 de ${data.length} agentes)`;
+}
+
+function renderWaAgentes(){
+  renderAgTabla();
+  renderAgChart();
+}
+
+function renderWaTipificacion(){
+  const total=WA.tipificaciones.reduce((s,t)=>s+t.n,0);
+  const colores=['rgba(239,68,68,0.7)','rgba(37,99,235,0.6)','rgba(234,88,12,0.7)','rgba(16,185,129,0.7)',
+    'rgba(37,99,235,0.5)','rgba(234,88,12,0.5)','rgba(37,99,235,0.35)','rgba(16,185,129,0.5)',
+    'rgba(100,116,139,0.6)','rgba(100,116,139,0.5)','rgba(100,116,139,0.4)','rgba(100,116,139,0.3)'];
+  mkC('wa-chartTip',{type:'bar',data:{labels:WA.tipificaciones.map(t=>t.desc),
+    datasets:[{data:WA.tipificaciones.map(t=>t.n),backgroundColor:colores,borderColor:'transparent',borderRadius:3}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{...gO(),ticks:{font:{family:MN,size:10}}},y:{grid:{display:false},ticks:{font:{size:10}}}}}});
+  const tb=document.getElementById('wa-tbody-tip'); tb.innerHTML='';
+  WA.tipificaciones.forEach(t=>{const tr=document.createElement('tr');
+    const pct=(t.n/total*100).toFixed(1);
+    const col=t.n===Math.max(...WA.tipificaciones.map(x=>x.n))?'tag or':'';
+    tr.innerHTML=`<td style="font-family:var(--mono);color:var(--text3)">${t.cod}</td><td>${t.desc}</td><td>${N(t.n)}</td><td><span class="${col||'tag bl'}">${pct}%</span></td>`;
+    tb.appendChild(tr);});
+}
+
+// ─── BOTÓN ACTUALIZAR DATOS ──────────────────────────────────────────────────
+function dispararActualizacion() {
+  window.open(
+    'https://github.com/GTR-ai421/avalogic-dashboards/actions/workflows/actualizar_dashboards.yml',
+    '_blank'
+  );
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+renderTab('resumen');
 </script>
 </body>
 </html>
