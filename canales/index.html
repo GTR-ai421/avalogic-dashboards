@@ -162,6 +162,11 @@ tbody td:first-child{font-family:var(--sans);color:var(--text);font-size:12px}
     <button class="ctab active" onclick="showCanal('voz',this)">Canal Voz</button>
     <button class="ctab" onclick="showCanal('wa',this)">Canal WhatsApp</button>
   </div>
+  <button id="btn-actualizar" onclick="dispararActualizacion()"
+    style="margin-left:12px;padding:6px 14px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--acc);border:none;border-radius:4px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:opacity .2s;font-family:var(--sans)">
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+    <span id="btn-actualizar-txt">Actualizar datos</span>
+  </button>
   <a href="/avalogic-dashboards/" class="nav1-ext">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
     Dashboard Predictivo
@@ -1072,6 +1077,14 @@ function renderWaTipificacion(){
     const col=t.n===Math.max(...WA.tipificaciones.map(x=>x.n))?'tag or':'';
     tr.innerHTML=`<td style="font-family:var(--mono);color:var(--text3)">${t.cod}</td><td>${t.desc}</td><td>${N(t.n)}</td><td><span class="${col||'tag bl'}">${pct}%</span></td>`;
     tb.appendChild(tr);});
+}
+
+// ─── BOTÓN ACTUALIZAR DATOS ──────────────────────────────────────────────────
+function dispararActualizacion() {
+  window.open(
+    'https://github.com/GTR-ai421/avalogic-dashboards/actions/workflows/actualizar_dashboards.yml',
+    '_blank'
+  );
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
