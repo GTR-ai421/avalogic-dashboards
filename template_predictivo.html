@@ -449,23 +449,32 @@ function setF(key,val,btn){
 
 function passDate(fecha_str, mes){
   const hoy=new Date();
-  const fd=new Date(fecha_str);
+  const hoyStr=hoy.toISOString().slice(0,10);
+  const fd=new Date(fecha_str+'T12:00:00'); // mediodía para evitar problemas de zona horaria
   if(isNaN(fd)) return false;
+
   if(F.periodo==='hoy'){
-    const h=hoy.toISOString().slice(0,10);
-    return fecha_str===h;
+    return fecha_str===hoyStr;
   }
   if(F.periodo==='semana'){
-    const d=new Date(hoy);d.setDate(d.getDate()-d.getDay()+1);
-    return fd>=d&&fd<=hoy;
+    // Lunes de esta semana
+    const lun=new Date(hoy);
+    const dia=hoy.getDay()===0?6:hoy.getDay()-1; // 0=Lun...6=Dom
+    lun.setDate(hoy.getDate()-dia);
+    lun.setHours(0,0,0,0);
+    return fd>=lun && fd<=hoy;
   }
   if(F.periodo==='semana_ant'){
-    const lun=new Date(hoy);lun.setDate(lun.getDate()-lun.getDay()-6);
-    const dom=new Date(lun);dom.setDate(dom.getDate()+6);
-    return fd>=lun&&fd<=dom;
+    const lun=new Date(hoy);
+    const dia=hoy.getDay()===0?6:hoy.getDay()-1;
+    lun.setDate(hoy.getDate()-dia-7);
+    lun.setHours(0,0,0,0);
+    const dom=new Date(lun);dom.setDate(dom.getDate()+6);dom.setHours(23,59,59,0);
+    return fd>=lun && fd<=dom;
   }
   if(F.periodo==='mes_actual'){
-    return mes===`${hoy.getFullYear()}-${String(hoy.getMonth()+1).padStart(2,'0')}`;
+    const mesActual=`${hoy.getFullYear()}-${String(hoy.getMonth()+1).padStart(2,'0')}`;
+    return mes===mesActual;
   }
   if(F.mes!=='todos') return mes===F.mes;
   return true;
