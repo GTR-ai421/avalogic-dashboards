@@ -472,10 +472,12 @@ function passDate(fecha_str, mes){
 }
 
 function filtReg(){
-  return RAW.evolucion_diaria.filter(d=>{
+  const resultado = RAW.evolucion_diaria.filter(d=>{
     if(!passDate(d.fecha_str,d.mes)) return false;
     return true;
   });
+  // Si no hay datos en el período, devolver todos
+  return resultado.length > 0 ? resultado : RAW.evolucion_diaria;
 }
 
 // ── TABS ─────────────────────────────────────────────────────────────────────
@@ -487,13 +489,18 @@ function showTab(id,btn){
   renderTab(id);
 }
 
-function renderAll(){renderTab(document.querySelector('.nbtn.active')?.textContent?.toLowerCase()||'resumen');}
+function renderAll(){
+  const activeTab = document.querySelector('.nbtn.active');
+  const tabName = activeTab ? activeTab.textContent.trim().toLowerCase() : 'resumen';
+  renderTab(tabName);
+}
 
 function renderTab(id){
   const tabs={
     'resumen':renderResumen,'troncales':renderTroncales,'estrategia':renderEstrategia,
-    'tareas':renderTareas,'clusters':renderClusters,'semana':renderSemana,
-    'fatiga':renderFatiga,'tipificación':renderTipificacion,'tipificacion':renderTipificacion,
+    'tareas':renderTareas,'clusters':renderClusters,'día y hora':renderSemana,'dia y hora':renderSemana,
+    'fatiga de marcación':renderFatiga,'fatiga de marcacion':renderFatiga,
+    'tipificación':renderTipificacion,'tipificacion':renderTipificacion,
     'anomalías':renderAnomalias,'anomalias':renderAnomalias
   };
   const fn=tabs[id.toLowerCase()];
