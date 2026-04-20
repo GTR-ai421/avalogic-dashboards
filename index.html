@@ -1,107 +1,164 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard Predictivo - Avalogic</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<title>Dashboard Predictivo · Avalogic GTR</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
+:root{
+  --blue:#2563eb;--blue2:#3b82f6;--green:#10b981;--red:#ef4444;--orange:#f59e0b;
+  --acc:#ea580c;--purple:#8b5cf6;--teal:#14b8a6;--gray:#6b7280;
+  --bg:#0a0f1a;--bg2:#0f1623;--bg3:#141d2e;--bg4:#1a2540;
+  --border:#1e2d45;--border2:#243352;
+  --text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;--text4:#475569;
+  --font:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace;
+}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#0d1117;--bg2:#161c26;--bg3:#1c2333;--bg4:#242d3e;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);--text:#dde1eb;--text2:#8892a4;--text3:#4a5568;--blue:#3b82f6;--blue2:#60a5fa;--green:#22c55e;--amber:#f59e0b;--red:#ef4444;--teal:#14b8a6;--purple:#a78bfa;--orange:#f97316;--font:'DM Sans',system-ui,sans-serif;--mono:'DM Mono',monospace}
-body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
-.hdr{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:200}
-.hdr-l{display:flex;align-items:center;gap:10px}
-.logo{width:26px;height:26px;background:var(--blue);border-radius:6px;display:flex;align-items:center;justify-content:center}
-.hdr h1{font-size:14px;font-weight:600;letter-spacing:-0.01em}
-.badge{font-size:10px;font-family:var(--mono);background:rgba(59,130,246,0.15);color:var(--blue2);padding:2px 7px;border-radius:3px;border:1px solid rgba(59,130,246,0.2)}
-.hdr-r{font-size:11px;color:var(--text2);font-family:var(--mono)}
-.filtros-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:10px 1.5rem;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.filtros-label{font-size:11px;color:var(--text3);font-weight:500;text-transform:uppercase;letter-spacing:0.05em;white-space:nowrap}
-.filter-group{display:flex;gap:4px;flex-wrap:wrap}
-.fbtn{padding:4px 10px;font-size:11px;font-family:var(--font);font-weight:500;color:var(--text2);background:var(--bg3);border:1px solid var(--border2);border-radius:4px;cursor:pointer;transition:all 0.12s;white-space:nowrap}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--font);background:var(--bg);color:var(--text);display:flex;flex-direction:column}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(37,99,235,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(37,99,235,0.03) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0}
+
+/* ── HEADER ── */
+.hdr{position:relative;z-index:10;background:rgba(10,15,26,0.97);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;gap:12px;height:48px;flex-shrink:0}
+.hdr-brand{display:flex;align-items:center;gap:8px;margin-right:8px}
+.hdr-dot{width:7px;height:7px;border-radius:50%;background:var(--acc);box-shadow:0 0 6px var(--acc);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+.hdr-title{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text2)}
+.hdr-title strong{color:var(--text)}
+.hdr-r{font-size:11px;font-family:var(--mono);color:var(--text3);margin-left:auto}
+.upd-btn{padding:5px 12px;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);background:none;border:1px solid var(--border);border-radius:4px;cursor:pointer;transition:all .2s;font-family:var(--font);margin-left:8px}
+.upd-btn:hover{color:var(--text);border-color:var(--text3)}
+.canal-link{padding:5px 12px;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);border:1px solid var(--border);border-radius:4px;text-decoration:none;display:flex;align-items:center;gap:5px;transition:all .2s;margin-left:4px}
+.canal-link:hover{color:var(--text);border-color:var(--text3)}
+.canal-link svg{width:11px;height:11px}
+
+/* ── FILTROS ── */
+.filtros-bar{position:relative;z-index:9;background:rgba(15,22,35,0.98);border-bottom:1px solid var(--border);padding:8px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex-shrink:0}
+.filtros-label{font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap}
+.filter-group{display:flex;gap:3px;flex-wrap:wrap}
+.fbtn{padding:4px 9px;font-size:11px;font-family:var(--font);font-weight:500;color:var(--text2);background:var(--bg3);border:1px solid var(--border);border-radius:4px;cursor:pointer;transition:all .12s;white-space:nowrap}
 .fbtn:hover{color:var(--text);background:var(--bg4)}
 .fbtn.active{color:#fff;background:var(--blue);border-color:var(--blue)}
-.sep{width:1px;height:20px;background:var(--border2);margin:0 4px}
-select.fsel{padding:4px 8px;font-size:11px;font-family:var(--font);color:var(--text);background:var(--bg3);border:1px solid var(--border2);border-radius:4px;cursor:pointer;outline:none}
-.filtro-activo{font-size:11px;font-family:var(--mono);color:var(--blue2);background:rgba(59,130,246,0.1);padding:3px 8px;border-radius:3px;border:1px solid rgba(59,130,246,0.2)}
-.nav{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;gap:0;overflow-x:auto}
+.sep{width:1px;height:18px;background:var(--border2);margin:0 4px;flex-shrink:0}
+select.fsel{padding:4px 8px;font-size:11px;font-family:var(--font);color:var(--text);background:var(--bg3);border:1px solid var(--border);border-radius:4px;cursor:pointer;outline:none}
+select.fsel option{background:var(--bg2)}
+.filtro-activo{font-size:10px;font-family:var(--mono);color:var(--blue2);background:rgba(59,130,246,.1);padding:2px 7px;border-radius:3px;border:1px solid rgba(59,130,246,.2);display:none}
+
+/* ── NAV TABS ── */
+.nav{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 24px;display:flex;gap:0;overflow-x:auto;flex-shrink:0;position:relative;z-index:8}
 .nav::-webkit-scrollbar{height:2px}.nav::-webkit-scrollbar-thumb{background:var(--bg4)}
-.nbtn{padding:11px 14px;font-size:12px;font-weight:500;color:var(--text2);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:color 0.12s;font-family:var(--font);white-space:nowrap}
-.nbtn:hover{color:var(--text)}.nbtn.active{color:var(--blue2);border-bottom-color:var(--blue)}
-.main{padding:1.25rem 1.5rem;max-width:1440px;margin:0 auto}
+.nbtn{padding:10px 14px;font-size:12px;font-weight:500;color:var(--text3);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:color .12s;font-family:var(--font);white-space:nowrap}
+.nbtn:hover{color:var(--text2)}.nbtn.active{color:var(--blue2);border-bottom-color:var(--blue)}
+
+/* ── MAIN ── */
+.main{flex:1;overflow-y:auto;padding:16px 24px 48px;position:relative;z-index:1}
 .sec{display:none}.sec.active{display:block}
-.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:1.25rem}
-.kpi{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px;position:relative;overflow:hidden}
-.kpi::after{content:'';position:absolute;top:0;left:0;right:0;height:2px}
-.kpi.k-blue::after{background:var(--blue)}.kpi.k-green::after{background:var(--green)}.kpi.k-amber::after{background:var(--amber)}.kpi.k-red::after{background:var(--red)}.kpi.k-teal::after{background:var(--teal)}
-.kpi-lbl{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;font-weight:500}
-.kpi-val{font-size:24px;font-weight:600;letter-spacing:-0.02em;line-height:1;margin-bottom:3px}
-.kpi-sub{font-size:11px;color:var(--text2)}
-.kpi.k-blue .kpi-val{color:var(--blue2)}.kpi.k-green .kpi-val{color:var(--green)}.kpi.k-amber .kpi-val{color:var(--amber)}.kpi.k-red .kpi-val{color:var(--red)}.kpi.k-teal .kpi-val{color:var(--teal)}
+
+/* ── KPI ROW ── */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:16px}
+.kpi{background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:14px 16px;position:relative;overflow:hidden;transition:border-color .2s,transform .15s}
+.kpi:hover{border-color:var(--blue);transform:translateY(-1px)}
+.kpi::after{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--blue);opacity:0;transition:opacity .2s}
+.kpi:hover::after{opacity:1}
+.kpi-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:6px}
+.kpi-val{font-family:var(--mono);font-size:24px;font-weight:500;color:var(--text);line-height:1;margin-bottom:3px}
+.kpi-sub{font-size:10px;color:var(--text3);font-family:var(--mono)}
+.k-blue{--kc:var(--blue2)}.k-green{--kc:var(--green)}.k-red{--kc:var(--red)}.k-orange{--kc:var(--orange)}
+.kpi-val[style]{color:var(--kc)}
+
+/* ── GRID ── */
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
-.g65{display:grid;grid-template-columns:1.7fr 1fr;gap:14px;margin-bottom:14px}
-.g73{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px}
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:18px}
-.card-t{font-size:12px;font-weight:600;color:var(--text);margin-bottom:3px}
-.card-s{font-size:11px;color:var(--text3);margin-bottom:14px}
-.cw{position:relative}
-table{width:100%;border-collapse:collapse;font-size:11px}
-th{color:var(--text3);font-weight:500;text-align:left;padding:5px 8px;border-bottom:1px solid var(--border);text-transform:uppercase;font-size:9px;letter-spacing:0.05em}
-td{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,0.03);color:var(--text)}
-tr:hover td{background:rgba(255,255,255,0.02)}
-.num{font-family:var(--mono);font-size:10px;text-align:right}
-.tscroll{overflow-y:auto;max-height:280px}.tscroll::-webkit-scrollbar{width:3px}.tscroll::-webkit-scrollbar-thumb{background:var(--bg4)}
-.b{display:inline-block;padding:2px 6px;border-radius:3px;font-size:10px;font-weight:600;font-family:var(--mono)}
-.bg{background:rgba(34,197,94,0.12);color:var(--green)}.ba{background:rgba(245,158,11,0.12);color:var(--amber)}.br{background:rgba(239,68,68,0.12);color:var(--red)}
-.bw{display:flex;align-items:center;gap:6px}.bt{flex:1;height:3px;background:var(--bg4);border-radius:2px;overflow:hidden}.bf{height:100%;border-radius:2px}
-.cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.cmp-card{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:14px}
-.cmp-card.win{border-color:rgba(34,197,94,0.25);background:rgba(34,197,94,0.04)}
-.cmp-big{font-size:32px;font-weight:600;letter-spacing:-0.03em;line-height:1;margin:8px 0 4px}
-.cmp-card.win .cmp-big{color:var(--green)}.cmp-card:not(.win) .cmp-big{color:var(--blue2)}
-.cmp-lbl{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:0.05em;font-weight:500}
-.cmp-d{font-size:11px;color:var(--text2);margin-top:4px}
-.fat-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.g12{display:grid;grid-template-columns:1fr 2fr;gap:14px;margin-bottom:14px}
+.g21{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px}
+.g13{display:grid;grid-template-columns:1fr 3fr;gap:14px;margin-bottom:14px}
+@media(max-width:900px){.g2,.g3,.g12,.g21,.g13{grid-template-columns:1fr}}
+
+/* ── CARD ── */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:16px;margin-bottom:14px}
+.card-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text2);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card-title::before{content:'';width:3px;height:12px;background:var(--blue);border-radius:2px;flex-shrink:0}
+.chart-wrap{position:relative}
+
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead th{padding:8px 10px;text-align:left;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);border-bottom:1px solid var(--border);white-space:nowrap}
+tbody td{padding:8px 10px;border-bottom:1px solid rgba(30,45,69,.5);color:var(--text2);font-family:var(--mono);font-size:11px}
+tbody tr:hover td{background:rgba(37,99,235,.04);color:var(--text)}
+tbody td:first-child{font-family:var(--font);font-size:12px;color:var(--text)}
+td.num{text-align:right}
+
+/* ── SEMÁFORO ── */
+.sem{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:600;font-family:var(--mono)}
+.sem-g{background:rgba(16,185,129,.15);color:var(--green)}
+.sem-y{background:rgba(245,158,11,.15);color:var(--orange)}
+.sem-r{background:rgba(239,68,68,.15);color:var(--red)}
+
+/* ── BAR WIDTH ── */
+.bw{display:flex;align-items:center;gap:6px}
+.bt{flex:1;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;min-width:40px}
+.bf{height:100%;border-radius:2px}
+
+/* ── HEATMAP ── */
+.heatmap{display:grid;grid-template-columns:40px repeat(12,1fr);gap:2px;font-size:10px}
+.hm-head{text-align:center;color:var(--text3);font-family:var(--mono);padding:2px}
+.hm-row-lbl{display:flex;align-items:center;color:var(--text3);font-size:10px;font-family:var(--mono)}
+.hm-cell{border-radius:3px;padding:4px 2px;text-align:center;font-family:var(--mono);font-size:10px;font-weight:500;cursor:default;transition:opacity .15s}
+.hm-cell:hover{opacity:.8}
+
+/* ── FAT STATS ── */
+.fat-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
 .fat-stat{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:12px;text-align:center}
-.fat-val{font-size:22px;font-weight:600;font-family:var(--mono);color:var(--amber)}.fat-lbl{font-size:10px;color:var(--text2);margin-top:3px}
-.hm-wrap{overflow-x:auto}
-.hm-grid{display:grid;grid-template-columns:80px repeat(12,1fr);gap:3px;min-width:600px}
-.hm-head{font-size:10px;color:var(--text3);font-family:var(--mono);display:flex;align-items:center;justify-content:center;padding:4px}
-.hm-row-lbl{font-size:11px;color:var(--text2);display:flex;align-items:center;padding:0 6px}
-.hm-cell{height:36px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;font-family:var(--mono);cursor:default;transition:transform 0.1s}
-.hm-cell:hover{transform:scale(1.08)}
-.an-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
-.an-card{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:14px}
-.an-val{font-size:22px;font-weight:600;font-family:var(--mono);margin:6px 0 3px}
-.an-lbl{font-size:11px;font-weight:600}.an-d{font-size:11px;color:var(--text2);margin-top:3px}
-.info{padding:10px 12px;border-radius:6px;font-size:11px;margin-bottom:12px}
-.info-blue{background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.15);color:var(--text2)}
-.info-amber{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.15);color:var(--text2)}
-.info-title{font-weight:600;margin-bottom:3px}
-.info-blue .info-title{color:var(--blue2)}.info-amber .info-title{color:var(--amber)}
-@media(max-width:1100px){.kpi-row{grid-template-columns:repeat(3,1fr)}.g2,.g65,.g73{grid-template-columns:1fr}}
+.fat-val{font-family:var(--mono);font-size:20px;color:var(--blue2);margin-bottom:4px}
+.fat-lbl{font-size:10px;color:var(--text3)}
+
+/* ── COMPARE CARDS ── */
+.cmp-marcacion{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.cmp-card{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:16px;transition:border-color .2s}
+.cmp-card.win{border-color:var(--green);background:rgba(16,185,129,.05)}
+.cmp-lbl{font-size:11px;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em}
+.cmp-big{font-family:var(--mono);font-size:36px;font-weight:500;color:var(--text);line-height:1;margin-bottom:6px}
+.cmp-d{font-size:11px;color:var(--text2)}
+
+/* ── ANOMALIAS ── */
+.anomalia-list{display:flex;flex-direction:column;gap:8px}
+.anomalia{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:12px 14px;display:flex;align-items:flex-start;gap:12px}
+.anomalia.warn{border-left:3px solid var(--orange)}
+.anomalia.info{border-left:3px solid var(--blue)}
+.anomalia.ok{border-left:3px solid var(--green)}
+.anomalia-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.anomalia-text{font-size:12px;line-height:1.5;color:var(--text2)}
+.anomalia-text strong{color:var(--text)}
 </style>
 </head>
 <body>
-<header class="hdr">
-  <div class="hdr-l">
-    <div class="logo"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" fill="white"/><rect x="8" y="1" width="5" height="5" rx="1" fill="white" opacity=".6"/><rect x="1" y="8" width="5" height="5" rx="1" fill="white" opacity=".6"/><rect x="8" y="8" width="5" height="5" rx="1" fill="white" opacity=".3"/></svg></div>
-    <h1>Predictivo Avalogic</h1>
-    <span class="badge">GTR v3</span>
-  </div>
-  <span class="hdr-r" id="hdr-upd">Actualizado: 20/04/2026 16:32</span>
-</header>
 
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-brand">
+    <div class="hdr-dot"></div>
+    <span class="hdr-title"><strong>Avalogic</strong> GTR · Predictivo</span>
+  </div>
+  <span class="hdr-r" id="hdr-upd">Actualizado: 20/04/2026 16:50</span>
+  <button class="upd-btn" id="upd-btn" onclick="actualizarDashboard()">↻ Actualizar</button>
+  <a href="https://gtr-ai421.github.io/avalogic-dashboards/canales/" class="canal-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+    Canal Voz
+  </a>
+</div>
+
+<!-- FILTROS -->
 <div class="filtros-bar">
-  <span class="filtros-label">Periodo</span>
+  <span class="filtros-label">Período</span>
   <div class="filter-group" id="fg-periodo">
     <button class="fbtn active" onclick="setF('periodo','todo',this)">Todo</button>
     <button class="fbtn" onclick="setF('periodo','hoy',this)">Hoy</button>
     <button class="fbtn" onclick="setF('periodo','semana',this)">Esta semana</button>
-    <button class="fbtn" onclick="setF('periodo','semana_ant',this)">Semana pasada</button>
+    <button class="fbtn" onclick="setF('periodo','semana_ant',this)">Sem. pasada</button>
     <button class="fbtn" onclick="setF('periodo','mes_actual',this)">Este mes</button>
-    <button class="fbtn" onclick="setF('periodo','mes_ant',this)">Mes anterior</button>
   </div>
   <div class="sep"></div>
   <span class="filtros-label">Mes</span>
@@ -113,7 +170,7 @@ tr:hover td{background:rgba(255,255,255,0.02)}
     <button class="fbtn" onclick="setF('mes','2026-04',this)">Abr</button>
   </div>
   <div class="sep"></div>
-  <span class="filtros-label">Campana</span>
+  <span class="filtros-label">Campaña</span>
   <div class="filter-group" id="fg-campana">
     <button class="fbtn active" onclick="setF('campana','todas',this)">Todas</button>
     <button class="fbtn" onclick="setF('campana','Pre1',this)">Pre1</button>
@@ -127,367 +184,617 @@ tr:hover td{background:rgba(255,255,255,0.02)}
     <option value="mora_temprana_0_214">Mora temprana</option>
     <option value="mora_intermedia_215_a_579">Mora intermedia</option>
     <option value="mora_alta_580_1099">Mora alta</option>
-    <option value="mora_alta_1100">Mora alta +1100d</option>
+    <option value="mora_alta_1100">Mora alta 1100+</option>
   </select>
-  <span id="fa-lbl" class="filtro-activo" style="display:none"></span>
+  <span id="fa-lbl" class="filtro-activo"></span>
 </div>
 
+<!-- NAV TABS -->
 <nav class="nav">
   <button class="nbtn active" onclick="showTab('resumen',this)">Resumen</button>
   <button class="nbtn" onclick="showTab('troncales',this)">Troncales</button>
   <button class="nbtn" onclick="showTab('estrategia',this)">Estrategia</button>
   <button class="nbtn" onclick="showTab('tareas',this)">Tipo de tarea</button>
   <button class="nbtn" onclick="showTab('clusters',this)">Clusters</button>
-  <button class="nbtn" onclick="showTab('semana',this)">Dia y hora</button>
-  <button class="nbtn" onclick="showTab('fatiga',this)">Fatiga de marcacion</button>
-  <button class="nbtn" onclick="showTab('tipificacion',this)">Tipificacion</button>
-  <button class="nbtn" onclick="showTab('anomalias',this)">Anomalias</button>
+  <button class="nbtn" onclick="showTab('semana',this)">Día y hora</button>
+  <button class="nbtn" onclick="showTab('fatiga',this)">Fatiga de marcación</button>
+  <button class="nbtn" onclick="showTab('tipificacion',this)">Tipificación</button>
+  <button class="nbtn" onclick="showTab('anomalias',this)">Anomalías</button>
 </nav>
 
+<!-- MAIN -->
 <main class="main">
+
+<!-- RESUMEN -->
 <div id="tab-resumen" class="sec active">
   <div class="kpi-row">
-    <div class="kpi k-blue"><div class="kpi-lbl">Registros</div><div class="kpi-val" id="k-total">-</div><div class="kpi-sub" id="k-tocados">-</div></div>
-    <div class="kpi k-green"><div class="kpi-lbl">ANSWER</div><div class="kpi-val" id="k-answer">-</div><div class="kpi-sub" id="k-pct-answer">-</div></div>
-    <div class="kpi k-amber"><div class="kpi-lbl">ABANDON</div><div class="kpi-val" id="k-abandon">-</div><div class="kpi-sub" id="k-pct-abandon">-</div></div>
-    <div class="kpi k-red"><div class="kpi-lbl">Tasa de contacto</div><div class="kpi-val" id="k-tasa">-</div><div class="kpi-sub">ANSWER / total tocados</div></div>
-    <div class="kpi k-teal"><div class="kpi-lbl">Timeout ACW</div><div class="kpi-val" id="k-timeout">-</div><div class="kpi-sub">sin tipificar</div></div>
-  </div>
-  <div class="g65">
-    <div class="card"><div class="card-t">Evolucion diaria - tasa de contacto %</div><div class="card-s">verde &gt;=12% · amarillo &gt;=9% · rojo &lt;9%</div><div class="cw" style="height:200px"><canvas id="cEvo" role="img" aria-label="Evolucion diaria"></canvas></div></div>
-    <div class="card"><div class="card-t">Distribucion de resultados</div><div class="card-s">Total registros por tipo</div><div class="cw" style="height:200px"><canvas id="cRes" role="img" aria-label="Resultados"></canvas></div></div>
+    <div class="kpi k-blue"><div class="kpi-lbl">Registros</div><div class="kpi-val" id="k-total" style="color:var(--blue2)">-</div><div class="kpi-sub" id="k-tocados">-</div></div>
+    <div class="kpi k-green"><div class="kpi-lbl">ANSWER</div><div class="kpi-val" id="k-answer" style="color:var(--green)">-</div><div class="kpi-sub" id="k-pct-answer">-</div></div>
+    <div class="kpi k-red"><div class="kpi-lbl">ABANDON</div><div class="kpi-val" id="k-abandon" style="color:var(--red)">-</div><div class="kpi-sub" id="k-pct-abandon">-</div></div>
+    <div class="kpi"><div class="kpi-lbl">Intentos</div><div class="kpi-val" id="k-intentos">-</div><div class="kpi-sub" id="k-tasa-intentos">-</div></div>
+    <div class="kpi"><div class="kpi-lbl">Timeout</div><div class="kpi-val" id="k-timeout">-</div><div class="kpi-sub">del total ANSWER</div></div>
   </div>
   <div class="g2">
-    <div class="card"><div class="card-t">Contactabilidad mensual</div><div class="card-s">ANSWER y tasa % por mes</div><div class="cw" style="height:160px"><canvas id="cMeses" role="img" aria-label="Meses"></canvas></div></div>
-    <div class="card"><div class="card-t">Por dia de semana</div><div class="card-s">Tasa % lunes a sabado</div><div class="cw" style="height:160px"><canvas id="cDias" role="img" aria-label="Dias"></canvas></div></div>
+    <div class="card">
+      <div class="card-title">Evolución diaria</div>
+      <div class="chart-wrap" style="height:200px"><canvas id="cEvo"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Distribución resultados</div>
+      <div class="chart-wrap" style="height:200px"><canvas id="cRes"></canvas></div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">Por mes</div>
+      <div class="chart-wrap" style="height:180px"><canvas id="cMeses"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Por día de semana</div>
+      <div class="chart-wrap" style="height:180px"><canvas id="cDias"></canvas></div>
+    </div>
   </div>
 </div>
 
+<!-- TRONCALES -->
 <div id="tab-troncales" class="sec">
-  <div class="kpi-row" style="grid-template-columns:repeat(4,1fr)" id="kpi-tronc"></div>
+  <div class="kpi-row" id="kpi-troncales"></div>
   <div class="g2">
-    <div class="card"><div class="card-t">Contactabilidad por troncal</div><div class="card-s">Tasa ANSWER %</div><div class="cw" style="height:180px"><canvas id="cTronc" role="img" aria-label="Troncales"></canvas></div></div>
-    <div class="card"><div class="card-t">Celular vs fijo por troncal</div><div class="card-s">Intentos por tipo de numero</div><div class="cw" style="height:180px"><canvas id="cTipoNum" role="img" aria-label="Celular fijo"></canvas></div></div>
+    <div class="card">
+      <div class="card-title">Tasa contacto por troncal</div>
+      <div class="chart-wrap" style="height:200px"><canvas id="cTronc"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Tipo de número por troncal</div>
+      <div class="chart-wrap" style="height:200px"><canvas id="cTipoNum"></canvas></div>
+    </div>
   </div>
-  <div class="card"><div class="card-t">Detalle por troncal</div>
-    <table style="margin-top:8px"><thead><tr><th>Troncal</th><th class="num">Intentos</th><th class="num">ANSWER</th><th class="num">ABANDON</th><th class="num">Celular</th><th class="num">Fijo</th><th class="num">Tasa</th></tr></thead><tbody id="tbTronc"></tbody></table>
-    <div class="info info-amber" style="margin-top:12px"><div class="info-title">Fijos vs celulares</div>Los telefonos fijos tienen contactabilidad de ~2% vs ~6% en celulares.</div>
+  <div class="card">
+    <div class="card-title">Detalle por troncal</div>
+    <div class="tbl-wrap">
+      <table><thead><tr><th>Troncal</th><th>Intentos</th><th>ANSWER</th><th>ABANDON</th><th>Celular</th><th>Fijo</th><th>Tasa</th></tr></thead>
+      <tbody id="tbTronc"></tbody></table>
+    </div>
   </div>
 </div>
 
+<!-- ESTRATEGIA -->
 <div id="tab-estrategia" class="sec">
-  <div class="card" style="margin-bottom:14px"><div class="card-t">Marcacion columna vs fila</div><div class="card-s">La marcacion en fila es mas efectiva</div><div class="cmp" style="margin-top:10px" id="cmp-marc"></div></div>
+  <div class="cmp-marcacion" id="cmp-marcacion"></div>
   <div class="g2">
-    <div class="card"><div class="card-t">Tasa por estrategia de cartera</div><div class="card-s">% ANSWER segun rango de mora</div><div class="cw" style="height:180px"><canvas id="cEst" role="img" aria-label="Estrategia"></canvas></div></div>
-    <div class="card"><div class="card-t">Volumen por estrategia</div><div class="card-s">Total registros procesados</div><div class="cw" style="height:180px"><canvas id="cEstVol" role="img" aria-label="Vol estrategia"></canvas></div></div>
+    <div class="card">
+      <div class="card-title">Tasa contacto por estrategia</div>
+      <div class="chart-wrap" style="height:200px"><canvas id="cEst"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Volumen por estrategia</div>
+      <div class="chart-wrap" style="height:200px"><canvas id="cEstVol"></canvas></div>
+    </div>
   </div>
-  <div class="card"><div class="card-t">Detalle estrategias</div>
-    <table style="margin-top:10px"><thead><tr><th>Estrategia</th><th class="num">Total</th><th class="num">ANSWER</th><th class="num">Tasa</th><th style="width:160px">Barra</th></tr></thead><tbody id="tbEst"></tbody></table>
+  <div class="card">
+    <div class="card-title">Detalle por estrategia</div>
+    <div class="tbl-wrap">
+      <table><thead><tr><th>Estrategia</th><th>Total</th><th>ANSWER</th><th>Tasa</th><th>Barra</th></tr></thead>
+      <tbody id="tbEst"></tbody></table>
+    </div>
   </div>
 </div>
 
+<!-- TIPO DE TAREA -->
 <div id="tab-tareas" class="sec">
-  <div class="g73">
-    <div class="card"><div class="card-t">Tasa por tipo de tarea</div><div class="card-s">Top focos - % ANSWER</div><div class="cw" style="height:300px"><canvas id="cTareas" role="img" aria-label="Tareas"></canvas></div></div>
-    <div class="card"><div class="card-t">Ranking por efectividad</div><div class="tscroll" style="margin-top:6px"><table><thead><tr><th>Foco</th><th class="num">Total</th><th class="num">Tasa</th></tr></thead><tbody id="tbTareas"></tbody></table></div></div>
+  <div class="g21">
+    <div class="card">
+      <div class="card-title">Top 14 tareas por tasa contacto</div>
+      <div class="chart-wrap" style="height:300px"><canvas id="cTareas"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Ranking tareas</div>
+      <div class="tbl-wrap" style="max-height:340px;overflow-y:auto">
+        <table><thead><tr><th>Tarea</th><th>Total</th><th>Tasa</th></tr></thead>
+        <tbody id="tbTareas"></tbody></table>
+      </div>
+    </div>
   </div>
 </div>
 
+<!-- CLUSTERS -->
 <div id="tab-clusters" class="sec">
   <div class="g2">
-    <div class="card"><div class="card-t">Contactabilidad por cluster</div><div class="card-s">Clusters 1-5: prob. pago · 6-10: tipo producto</div><div class="cw" style="height:240px"><canvas id="cClust" role="img" aria-label="Clusters"></canvas></div></div>
-    <div class="card"><div class="card-t">Volumen por cluster</div><div class="cw" style="height:240px"><canvas id="cClustVol" role="img" aria-label="Vol cluster"></canvas></div></div>
+    <div class="card">
+      <div class="card-title">Tasa contacto por cluster</div>
+      <div class="chart-wrap" style="height:220px"><canvas id="cClust"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Volumen por cluster</div>
+      <div class="chart-wrap" style="height:220px"><canvas id="cClustVol"></canvas></div>
+    </div>
   </div>
-  <div class="card"><div class="card-t">Detalle por cluster</div>
-    <table style="margin-top:10px"><thead><tr><th>Cluster</th><th class="num">Total</th><th class="num">ANSWER</th><th class="num">Tasa</th><th style="width:180px">Barra</th></tr></thead><tbody id="tbClust"></tbody></table>
+  <div class="card">
+    <div class="card-title">Detalle por cluster</div>
+    <div class="tbl-wrap">
+      <table><thead><tr><th>Cluster</th><th>Total</th><th>ANSWER</th><th>Tasa</th><th>Barra</th></tr></thead>
+      <tbody id="tbClust"></tbody></table>
+    </div>
   </div>
 </div>
 
+<!-- DÍA Y HORA -->
 <div id="tab-semana" class="sec">
-  <div class="g2" style="margin-bottom:14px">
-    <div class="card"><div class="card-t">Heatmap dia x hora</div><div class="card-s">Tasa % - verde = mejor franja</div><div class="hm-wrap" style="margin-top:8px"><div class="hm-grid" id="heatmap"></div></div></div>
-    <div class="card"><div class="card-t">Tasa por dia de semana</div><div class="cw" style="height:200px"><canvas id="cDiaSem" role="img" aria-label="Dia semana"></canvas></div></div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">Tasa por día de semana</div>
+      <div class="chart-wrap" style="height:200px"><canvas id="cDiaSem"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Tasa por hora (intentos)</div>
+      <div class="chart-wrap" style="height:200px"><canvas id="cHora"></canvas></div>
+    </div>
   </div>
-  <div class="card"><div class="card-t">Hora pico por estrategia</div><div class="card-s">A que hora contesta mas cada segmento</div><div class="cw" style="height:200px"><canvas id="cHoraEst" role="img" aria-label="Hora estrategia"></canvas></div></div>
+  <div class="card">
+    <div class="card-title">Mapa de calor: Día × Hora</div>
+    <div id="heatmap" class="heatmap" style="margin-top:8px"></div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <div class="card-title">Tasa contacto por hora y estrategia</div>
+    <div class="chart-wrap" style="height:220px"><canvas id="cHoraEst"></canvas></div>
+  </div>
 </div>
 
+<!-- FATIGA -->
 <div id="tab-fatiga" class="sec">
-  <div class="info info-amber"><div class="info-title">Hallazgo importante</div>Promedio de 22 intentos para lograr el primer contacto. El 32% de los creditos nunca contestaron.</div>
   <div class="fat-stats" id="fat-stats"></div>
   <div class="g2">
-    <div class="card"><div class="card-t">Intentos hasta primer ANSWER</div><div class="cw" style="height:220px"><canvas id="cFatiga" role="img" aria-label="Fatiga"></canvas></div></div>
-    <div class="card"><div class="card-t">Creditos por contactabilidad</div><div class="cw" style="height:220px"><canvas id="cFatigaDona" role="img" aria-label="Dona fatiga"></canvas></div></div>
+    <div class="card">
+      <div class="card-title">Distribución intentos hasta ANSWER</div>
+      <div class="chart-wrap" style="height:220px"><canvas id="cFatiga"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Créditos con/sin ANSWER</div>
+      <div class="chart-wrap" style="height:220px"><canvas id="cFatigaDona"></canvas></div>
+    </div>
   </div>
 </div>
 
+<!-- TIPIFICACIÓN -->
 <div id="tab-tipificacion" class="sec">
-  <div class="info info-blue"><div class="info-title">Nota</div>TIMEOUTACW = asesor no tipifico a tiempo. En Fase 2 se cruzara con productividad.</div>
   <div class="g2">
-    <div class="card"><div class="card-t">Distribucion de tipificaciones</div><div class="cw" style="height:260px"><canvas id="cTipif" role="img" aria-label="Tipif"></canvas></div></div>
-    <div class="card"><div class="card-t">Detalle</div><div class="tscroll" style="margin-top:8px"><table><thead><tr><th>Codigo</th><th>Descripcion</th><th class="num">N</th><th class="num">%</th></tr></thead><tbody id="tbTipif"></tbody></table></div></div>
+    <div class="card">
+      <div class="card-title">Distribución tipificaciones</div>
+      <div class="chart-wrap" style="height:280px"><canvas id="cTipif"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Detalle tipificaciones</div>
+      <div class="tbl-wrap">
+        <table><thead><tr><th>Código</th><th>Descripción</th><th>N</th><th>%</th></tr></thead>
+        <tbody id="tbTipif"></tbody></table>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">ANSWER vs ABANDON por mes</div>
+    <div class="chart-wrap" style="height:200px"><canvas id="cAban"></canvas></div>
   </div>
 </div>
 
+<!-- ANOMALÍAS -->
 <div id="tab-anomalias" class="sec">
-  <div class="an-grid">
-    <div class="an-card"><div class="an-lbl">Timeout ACW</div><div class="an-val" style="color:var(--amber)" id="an-timeout">-</div><div class="an-d">% de ANSWER sin tipificar</div></div>
-    <div class="an-card"><div class="an-lbl">ABANDON</div><div class="an-val" style="color:var(--red)" id="an-abandon">-</div><div class="an-d">Contestaron pero no se conectaron</div></div>
-    <div class="an-card"><div class="an-lbl">DO-NOT-CALL</div><div class="an-val" style="color:var(--purple)" id="an-dnc">-</div><div class="an-d">Numeros marcados como no llamar</div></div>
-  </div>
-  <div class="card"><div class="card-t">ABANDON por mes</div><div class="cw" style="height:180px"><canvas id="cAban" role="img" aria-label="Abandon"></canvas></div></div>
+  <div class="anomalia-list" id="anomalia-list"></div>
 </div>
+
 </main>
 
 <script>
-const RAW = {"kpis": {"total_registros": 881331, "total_tocados": 854902, "pct_tocados": 97.0, "total_answer": 90069, "pct_answer": 10.5, "total_abandon": 7978, "pct_abandon": 0.9, "total_intentos": 1794550, "tasa_contacto_intentos": 6.0, "pct_timeout": 19.6, "ultima_actualizacion": "20/04/2026 16:32"}, "evolucion_diaria": [{"fecha_str": "2026-01-19", "total": 4242, "answer": 554, "abandon": 21, "tasa": 13.1, "dia_semana": 0, "semana_iso": 4, "ano": 2026, "mes": "2026-01"}, {"fecha_str": "2026-01-20", "total": 5865, "answer": 544, "abandon": 24, "tasa": 9.3, "dia_semana": 1, "semana_iso": 4, "ano": 2026, "mes": "2026-01"}, {"fecha_str": "2026-01-21", "total": 11810, "answer": 1308, "abandon": 30, "tasa": 11.1, "dia_semana": 2, "semana_iso": 4, "ano": 2026, "mes": "2026-01"}, {"fecha_str": "2026-01-22", "total": 4959, "answer": 661, "abandon": 21, "tasa": 13.3, "dia_semana": 3, "semana_iso": 4, "ano": 2026, "mes": "2026-01"}, {"fecha_str": "2026-01-23", "total": 5159, "answer": 710, "abandon": 12, "tasa": 13.8, "dia_semana": 4, "semana_iso": 4, "ano": 2026, "mes": "2026-01"}, {"fecha_str": "2026-01-24", "total": 5808, "answer": 670, "abandon": 30, "tasa": 11.5, "dia_semana": 5, "semana_iso": 4, "ano": 2026, "mes": "2026-01"}, {"fecha_str": "2026-01-26", "total": 11634, "answer": 1372, "abandon": 21, "tasa": 11.8, "dia_semana": 0, "semana_iso": 5, "ano": 2026, "mes": "2026-01"}, {"fecha_str": "2026-01-27", "total": 7505, "answer": 998, "abandon": 29, "tasa": 13.3, "dia_semana": 1, "semana_iso": 5, "ano": 2026, "mes": "2026-01"}, {"fecha_str": "2026-01-28", "total": 10682, "answer": 1584, "abandon": 50, "tasa": 14.8, "dia_semana": 2, "semana_iso": 5, "ano": 2026, "mes": "2026-01"}, {"fecha_str": "2026-01-29", "total": 16718, "answer": 2612, "abandon": 215, "tasa": 15.6, "dia_semana": 3, "semana_iso": 5, "ano": 2026, "mes": "2026-01"}, {"fecha_str": "2026-01-30", "total": 7989, "answer": 1532, "abandon": 34, "tasa": 19.2, "dia_semana": 4, "semana_iso": 5, "ano": 2026, "mes": "2026-01"}, {"fecha_str": "2026-01-31", "total": 580, "answer": 76, "abandon": 0, "tasa": 13.1, "dia_semana": 5, "semana_iso": 5, "ano": 2026, "mes": "2026-01"}, {"fecha_str": "2026-02-02", "total": 13917, "answer": 1224, "abandon": 48, "tasa": 8.8, "dia_semana": 0, "semana_iso": 6, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-03", "total": 7739, "answer": 1007, "abandon": 14, "tasa": 13.0, "dia_semana": 1, "semana_iso": 6, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-04", "total": 3687, "answer": 696, "abandon": 18, "tasa": 18.9, "dia_semana": 2, "semana_iso": 6, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-05", "total": 4543, "answer": 501, "abandon": 11, "tasa": 11.0, "dia_semana": 3, "semana_iso": 6, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-06", "total": 114, "answer": 9, "abandon": 0, "tasa": 7.9, "dia_semana": 4, "semana_iso": 6, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-07", "total": 1708, "answer": 363, "abandon": 0, "tasa": 21.3, "dia_semana": 5, "semana_iso": 6, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-09", "total": 9756, "answer": 1222, "abandon": 164, "tasa": 12.5, "dia_semana": 0, "semana_iso": 7, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-10", "total": 13899, "answer": 1458, "abandon": 177, "tasa": 10.5, "dia_semana": 1, "semana_iso": 7, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-11", "total": 10935, "answer": 1197, "abandon": 152, "tasa": 10.9, "dia_semana": 2, "semana_iso": 7, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-12", "total": 15791, "answer": 1192, "abandon": 137, "tasa": 7.5, "dia_semana": 3, "semana_iso": 7, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-13", "total": 6647, "answer": 1007, "abandon": 60, "tasa": 15.1, "dia_semana": 4, "semana_iso": 7, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-14", "total": 5930, "answer": 297, "abandon": 43, "tasa": 5.0, "dia_semana": 5, "semana_iso": 7, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-16", "total": 17367, "answer": 1270, "abandon": 150, "tasa": 7.3, "dia_semana": 0, "semana_iso": 8, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-17", "total": 10489, "answer": 1170, "abandon": 103, "tasa": 11.2, "dia_semana": 1, "semana_iso": 8, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-18", "total": 26253, "answer": 3215, "abandon": 83, "tasa": 12.2, "dia_semana": 2, "semana_iso": 8, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-19", "total": 6922, "answer": 815, "abandon": 34, "tasa": 11.8, "dia_semana": 3, "semana_iso": 8, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-20", "total": 11678, "answer": 1477, "abandon": 45, "tasa": 12.6, "dia_semana": 4, "semana_iso": 8, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-21", "total": 2814, "answer": 356, "abandon": 9, "tasa": 12.7, "dia_semana": 5, "semana_iso": 8, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-23", "total": 15574, "answer": 1100, "abandon": 167, "tasa": 7.1, "dia_semana": 0, "semana_iso": 9, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-24", "total": 15414, "answer": 1480, "abandon": 156, "tasa": 9.6, "dia_semana": 1, "semana_iso": 9, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-25", "total": 19334, "answer": 2020, "abandon": 215, "tasa": 10.4, "dia_semana": 2, "semana_iso": 9, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-26", "total": 22680, "answer": 1717, "abandon": 172, "tasa": 7.6, "dia_semana": 3, "semana_iso": 9, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-27", "total": 12099, "answer": 1550, "abandon": 96, "tasa": 12.8, "dia_semana": 4, "semana_iso": 9, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-03-02", "total": 10400, "answer": 1431, "abandon": 47, "tasa": 13.8, "dia_semana": 0, "semana_iso": 10, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-03", "total": 10466, "answer": 1712, "abandon": 22, "tasa": 16.4, "dia_semana": 1, "semana_iso": 10, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-04", "total": 14389, "answer": 1685, "abandon": 37, "tasa": 11.7, "dia_semana": 2, "semana_iso": 10, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-05", "total": 9339, "answer": 1134, "abandon": 114, "tasa": 12.1, "dia_semana": 3, "semana_iso": 10, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-06", "total": 11534, "answer": 1080, "abandon": 116, "tasa": 9.4, "dia_semana": 4, "semana_iso": 10, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-09", "total": 7572, "answer": 1199, "abandon": 145, "tasa": 15.8, "dia_semana": 0, "semana_iso": 11, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-10", "total": 17205, "answer": 1824, "abandon": 272, "tasa": 10.6, "dia_semana": 1, "semana_iso": 11, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-11", "total": 19241, "answer": 2100, "abandon": 197, "tasa": 10.9, "dia_semana": 2, "semana_iso": 11, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-12", "total": 21175, "answer": 2027, "abandon": 225, "tasa": 9.6, "dia_semana": 3, "semana_iso": 11, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-13", "total": 16019, "answer": 1565, "abandon": 167, "tasa": 9.8, "dia_semana": 4, "semana_iso": 11, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-14", "total": 14189, "answer": 1123, "abandon": 70, "tasa": 7.9, "dia_semana": 5, "semana_iso": 11, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-16", "total": 15130, "answer": 1168, "abandon": 105, "tasa": 7.7, "dia_semana": 0, "semana_iso": 12, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-17", "total": 38862, "answer": 4081, "abandon": 196, "tasa": 10.5, "dia_semana": 1, "semana_iso": 12, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-18", "total": 10459, "answer": 805, "abandon": 64, "tasa": 7.7, "dia_semana": 2, "semana_iso": 12, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-19", "total": 22462, "answer": 1987, "abandon": 157, "tasa": 8.8, "dia_semana": 3, "semana_iso": 12, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-20", "total": 8016, "answer": 653, "abandon": 62, "tasa": 8.1, "dia_semana": 4, "semana_iso": 12, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-24", "total": 3766, "answer": 547, "abandon": 13, "tasa": 14.5, "dia_semana": 1, "semana_iso": 13, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-25", "total": 8092, "answer": 1028, "abandon": 146, "tasa": 12.7, "dia_semana": 2, "semana_iso": 13, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-26", "total": 8171, "answer": 921, "abandon": 120, "tasa": 11.3, "dia_semana": 3, "semana_iso": 13, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-27", "total": 14349, "answer": 1518, "abandon": 95, "tasa": 10.6, "dia_semana": 4, "semana_iso": 13, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-28", "total": 9798, "answer": 627, "abandon": 72, "tasa": 6.4, "dia_semana": 5, "semana_iso": 13, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-30", "total": 47148, "answer": 4150, "abandon": 295, "tasa": 8.8, "dia_semana": 0, "semana_iso": 14, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-31", "total": 18227, "answer": 1436, "abandon": 181, "tasa": 7.9, "dia_semana": 1, "semana_iso": 14, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-04-01", "total": 24005, "answer": 1821, "abandon": 194, "tasa": 7.6, "dia_semana": 2, "semana_iso": 14, "ano": 2026, "mes": "2026-04"}, {"fecha_str": "2026-04-06", "total": 21252, "answer": 1803, "abandon": 185, "tasa": 8.5, "dia_semana": 0, "semana_iso": 15, "ano": 2026, "mes": "2026-04"}, {"fecha_str": "2026-04-07", "total": 19313, "answer": 1266, "abandon": 161, "tasa": 6.6, "dia_semana": 1, "semana_iso": 15, "ano": 2026, "mes": "2026-04"}, {"fecha_str": "2026-04-08", "total": 16333, "answer": 1075, "abandon": 149, "tasa": 6.6, "dia_semana": 2, "semana_iso": 15, "ano": 2026, "mes": "2026-04"}, {"fecha_str": "2026-04-09", "total": 6735, "answer": 703, "abandon": 76, "tasa": 10.4, "dia_semana": 3, "semana_iso": 15, "ano": 2026, "mes": "2026-04"}, {"fecha_str": "2026-04-10", "total": 10312, "answer": 930, "abandon": 236, "tasa": 9.0, "dia_semana": 4, "semana_iso": 15, "ano": 2026, "mes": "2026-04"}, {"fecha_str": "2026-04-13", "total": 4498, "answer": 883, "abandon": 67, "tasa": 19.6, "dia_semana": 0, "semana_iso": 16, "ano": 2026, "mes": "2026-04"}, {"fecha_str": "2026-04-14", "total": 16915, "answer": 1718, "abandon": 363, "tasa": 10.2, "dia_semana": 1, "semana_iso": 16, "ano": 2026, "mes": "2026-04"}, {"fecha_str": "2026-04-15", "total": 12510, "answer": 1306, "abandon": 240, "tasa": 10.4, "dia_semana": 2, "semana_iso": 16, "ano": 2026, "mes": "2026-04"}, {"fecha_str": "2026-04-16", "total": 8960, "answer": 671, "abandon": 170, "tasa": 7.5, "dia_semana": 3, "semana_iso": 16, "ano": 2026, "mes": "2026-04"}, {"fecha_str": "2026-04-17", "total": 19311, "answer": 2095, "abandon": 561, "tasa": 10.8, "dia_semana": 4, "semana_iso": 16, "ano": 2026, "mes": "2026-04"}, {"fecha_str": "2026-04-18", "total": 9761, "answer": 685, "abandon": 87, "tasa": 7.0, "dia_semana": 5, "semana_iso": 16, "ano": 2026, "mes": "2026-04"}, {"fecha_str": "2026-04-20", "total": 3292, "answer": 348, "abandon": 30, "tasa": 10.6, "dia_semana": 0, "semana_iso": 17, "ano": 2026, "mes": "2026-04"}], "por_mes": [{"mes": "2026-01", "total": 92951, "answer": 12621, "abandon": 487, "tasa": 13.6}, {"mes": "2026-02", "total": 255290, "answer": 26343, "abandon": 2054, "tasa": 10.3}, {"mes": "2026-03", "total": 356009, "answer": 35801, "abandon": 2918, "tasa": 10.1}, {"mes": "2026-04", "total": 173197, "answer": 15304, "abandon": 2519, "tasa": 8.8}], "por_dia_semana": [{"dia_semana": 0.0, "total": 181782, "answer": 17724, "abandon": 1445, "tasa": 9.8, "nombre": "Lunes"}, {"dia_semana": 1.0, "total": 185665, "answer": 19241, "abandon": 1711, "tasa": 10.4, "nombre": "Martes"}, {"dia_semana": 2.0, "total": 187730, "answer": 19840, "abandon": 1575, "tasa": 10.6, "nombre": "Miercoles"}, {"dia_semana": 3.0, "total": 148455, "answer": 14941, "abandon": 1452, "tasa": 10.1, "nombre": "Jueves"}, {"dia_semana": 4.0, "total": 123227, "answer": 14126, "abandon": 1484, "tasa": 11.5, "nombre": "Viernes"}, {"dia_semana": 5.0, "total": 50588, "answer": 4197, "abandon": 311, "tasa": 8.3, "nombre": "Sabado"}], "por_hora": [{"hora_intento": 7, "intentos": 33771, "answer": 1982, "abandon": 397, "tasa": 5.9}, {"hora_intento": 8, "intentos": 174670, "answer": 10738, "abandon": 1509, "tasa": 6.1}, {"hora_intento": 9, "intentos": 159136, "answer": 10228, "abandon": 1136, "tasa": 6.4}, {"hora_intento": 10, "intentos": 245602, "answer": 14363, "abandon": 1340, "tasa": 5.8}, {"hora_intento": 11, "intentos": 252478, "answer": 16417, "abandon": 1356, "tasa": 6.5}, {"hora_intento": 12, "intentos": 158984, "answer": 9732, "abandon": 911, "tasa": 6.1}, {"hora_intento": 13, "intentos": 135303, "answer": 8371, "abandon": 817, "tasa": 6.2}, {"hora_intento": 14, "intentos": 174756, "answer": 10901, "abandon": 1164, "tasa": 6.2}, {"hora_intento": 15, "intentos": 219714, "answer": 11712, "abandon": 919, "tasa": 5.3}, {"hora_intento": 16, "intentos": 141481, "answer": 7634, "abandon": 657, "tasa": 5.4}, {"hora_intento": 17, "intentos": 53668, "answer": 2832, "abandon": 369, "tasa": 5.3}, {"hora_intento": 18, "intentos": 44965, "answer": 2788, "abandon": 353, "tasa": 6.2}, {"hora_intento": 19, "intentos": 22, "answer": 1, "abandon": 1, "tasa": 4.5}], "por_troncal": [{"troncal": 9, "intentos": 1002370, "answer": 57804, "abandon": 5658, "celular": 979303, "fijo": 23066, "tasa": 5.8}, {"troncal": 91, "intentos": 102809, "answer": 7170, "abandon": 758, "celular": 100197, "fijo": 2603, "tasa": 7.0}, {"troncal": 92, "intentos": 354823, "answer": 21185, "abandon": 2460, "celular": 346876, "fijo": 7943, "tasa": 6.0}, {"troncal": 900, "intentos": 334548, "answer": 21540, "abandon": 2053, "celular": 325438, "fijo": 9108, "tasa": 6.4}], "columna_vs_fila": [{"estrategia_marcacion": "columna", "total": 640637, "answer": 58711, "llamadas_prom": 1.3, "tasa": 9.2}, {"estrategia_marcacion": "fila", "total": 240693, "answer": 31358, "llamadas_prom": 4.2, "tasa": 13.0}], "por_estrategia": [{"estrategia": "1099", "total": 131603, "answer": 15049, "abandon": 1453, "tasa": 11.4}, {"estrategia": "1100", "total": 49495, "answer": 5232, "abandon": 315, "tasa": 10.6}, {"estrategia": "214", "total": 238310, "answer": 27241, "abandon": 2407, "tasa": 11.4}, {"estrategia": "579", "total": 438962, "answer": 40695, "abandon": 3542, "tasa": 9.3}, {"estrategia": "tempranas", "total": 22960, "answer": 1852, "abandon": 261, "tasa": 8.1}], "por_tarea": [{"tipoid_norm": "Resto base", "total": 157417, "answer": 14267, "abandon": 1105, "tasa": 9.1}, {"tipoid_norm": "Localizado", "total": 119655, "answer": 14076, "abandon": 1198, "tasa": 11.8}, {"tipoid_norm": "Clusters principales", "total": 89901, "answer": 8175, "abandon": 641, "tasa": 9.1}, {"tipoid_norm": "Sin foco registrado", "total": 81473, "answer": 10870, "abandon": 1099, "tasa": 13.3}, {"tipoid_norm": "Barrido base", "total": 75399, "answer": 6904, "abandon": 549, "tasa": 9.2}, {"tipoid_norm": "Incumplidos", "total": 52474, "answer": 5294, "abandon": 427, "tasa": 10.1}, {"tipoid_norm": "No hubo acuerdo", "total": 46631, "answer": 4797, "abandon": 536, "tasa": 10.3}, {"tipoid_norm": "Tarea", "total": 42121, "answer": 3778, "abandon": 480, "tasa": 9.0}, {"tipoid_norm": "Recien ejecutados", "total": 38883, "answer": 3252, "abandon": 278, "tasa": 8.4}, {"tipoid_norm": "Proximos a rodar", "total": 34672, "answer": 2819, "abandon": 305, "tasa": 8.1}, {"tipoid_norm": "Daciones", "total": 24658, "answer": 3471, "abandon": 186, "tasa": 14.1}, {"tipoid_norm": "Piloto", "total": 20734, "answer": 1922, "abandon": 125, "tasa": 9.3}, {"tipoid_norm": "Cotizantes", "total": 18823, "answer": 1695, "abandon": 214, "tasa": 9.0}, {"tipoid_norm": "Menos vueltas", "total": 13053, "answer": 1306, "abandon": 252, "tasa": 10.0}, {"tipoid_norm": "SOAT vigente", "total": 12040, "answer": 1388, "abandon": 52, "tasa": 11.5}, {"tipoid_norm": "Localizacion media", "total": 11151, "answer": 956, "abandon": 202, "tasa": 8.6}, {"tipoid_norm": "Segmento por mora", "total": 7055, "answer": 797, "abandon": 9, "tasa": 11.3}, {"tipoid_norm": "Subsidiados", "total": 5404, "answer": 379, "abandon": 55, "tasa": 7.0}, {"tipoid_norm": "Últimos pagos", "total": 4079, "answer": 637, "abandon": 13, "tasa": 15.6}, {"tipoid_norm": "Normal", "total": 3773, "answer": 481, "abandon": 20, "tasa": 12.7}, {"tipoid_norm": "Asignacion asesor", "total": 3744, "answer": 409, "abandon": 62, "tasa": 10.9}, {"tipoid_norm": "Ejecutados", "total": 3449, "answer": 417, "abandon": 36, "tasa": 12.1}, {"tipoid_norm": "Codeudores", "total": 3095, "answer": 427, "abandon": 38, "tasa": 13.8}, {"tipoid_norm": "Cartera juridica", "total": 2902, "answer": 415, "abandon": 8, "tasa": 14.3}, {"tipoid_norm": "Asignacion", "total": 2752, "answer": 126, "abandon": 21, "tasa": 4.6}, {"tipoid_norm": "Predictivo mora", "total": 1964, "answer": 373, "abandon": 16, "tasa": 19.0}, {"tipoid_norm": "Sin asignacion", "total": 1458, "answer": 201, "abandon": 14, "tasa": 13.8}, {"tipoid_norm": "Referencia cliente", "total": 1169, "answer": 291, "abandon": 25, "tasa": 24.9}, {"tipoid_norm": "Seguros de vida", "total": 772, "answer": 63, "abandon": 9, "tasa": 8.2}, {"tipoid_norm": "Incumplidos + No hubo acuerdo", "total": 512, "answer": 67, "abandon": 2, "tasa": 13.1}, {"tipoid_norm": "Se van a juridica", "total": 117, "answer": 16, "abandon": 1, "tasa": 13.7}], "por_cluster": [{"cluster_clean": "Cluster 10: LibreInv", "total": 1714, "answer": 235, "abandon": 13, "tasa": 13.7}, {"cluster_clean": "Cluster 1: 75 - 100%", "total": 11470, "answer": 1167, "abandon": 115, "tasa": 10.2}, {"cluster_clean": "Cluster 2: 50 - 75%", "total": 90108, "answer": 8872, "abandon": 768, "tasa": 9.8}, {"cluster_clean": "Cluster 3: 25 - 50%", "total": 220652, "answer": 20923, "abandon": 1794, "tasa": 9.5}, {"cluster_clean": "Cluster 4: 0 - 25%", "total": 192780, "answer": 17943, "abandon": 1617, "tasa": 9.3}, {"cluster_clean": "Cluster 5: Sin prenda", "total": 108423, "answer": 11103, "abandon": 991, "tasa": 10.2}, {"cluster_clean": "Cluster 6: CEP", "total": 44561, "answer": 4173, "abandon": 394, "tasa": 9.4}, {"cluster_clean": "Cluster 7: GPS", "total": 23570, "answer": 2240, "abandon": 168, "tasa": 9.5}, {"cluster_clean": "Cluster 8: Comprada micro", "total": 53003, "answer": 5458, "abandon": 440, "tasa": 10.3}, {"cluster_clean": "Cluster 9: Comprada CEP", "total": 8378, "answer": 833, "abandon": 53, "tasa": 9.9}], "tipificaciones": [{"cod01": "2013", "desc1": "CBZ_CONTACTO_NO_EXITOSO", "n": 73229}, {"cod01": "TIMEOUTACW", "desc1": "TIMEOUTACW", "n": 17668}, {"cod01": "2012", "desc1": "CBZ_CONTACTO_EXITOSO", "n": 4301}, {"cod01": "2029", "desc1": "CBZ_NO_HUBO_ACUERDO", "n": 1611}, {"cod01": "2035", "desc1": "CBZ_REQUERIMIENTO", "n": 1478}, {"cod01": "2000", "desc1": "CBZ_ACUERDO_CON_DESCUENTO", "n": 504}, {"cod01": "2001", "desc1": "CBZ_ACUERDO_DE_PAGO", "n": 412}, {"cod01": "4444", "desc1": "Fallas_Ruido_Llamadas", "n": 228}, {"cod01": "2095", "desc1": "CBZ-BUSQUEDA_WEB-CONTACTO_NO_EXITOSO", "n": 91}, {"cod01": "2052", "desc1": "CBZ_PAGO_RECORDADO", "n": 82}, {"cod01": "2047", "desc1": "CBZ_BUSQUEDA_WEB", "n": 75}, {"cod01": "2014", "desc1": "CBZ_DATOS_ACTUALIZADOS", "n": 52}, {"cod01": "2038", "desc1": "CBZ_NUMERO_ERRADO", "n": 45}, {"cod01": "2007", "desc1": "CBZ_POSIBLE_ENTREGA_BIEN", "n": 41}, {"cod01": "2005", "desc1": "CBZ_PAGO_PENDIENTE_POR_VERIFICAR", "n": 41}], "fatiga_marcacion": [{"intentos": 1, "creditos": 3811}, {"intentos": 2, "creditos": 847}, {"intentos": 3, "creditos": 1029}, {"intentos": 4, "creditos": 914}, {"intentos": 5, "creditos": 1150}, {"intentos": 6, "creditos": 443}, {"intentos": 7, "creditos": 653}, {"intentos": 8, "creditos": 393}, {"intentos": 9, "creditos": 614}, {"intentos": 10, "creditos": 359}, {"intentos": 11, "creditos": 414}, {"intentos": 12, "creditos": 319}, {"intentos": 13, "creditos": 433}, {"intentos": 14, "creditos": 261}, {"intentos": 15, "creditos": 259}], "fatiga_stats": {"prom_intentos": 20.2, "mediana": 8.0, "creditos_con_answer": 18119, "creditos_sin_answer": 9374, "total_creditos": 27493}, "heatmap_hora_dia": [{"dia_semana": 0, "hora_intento": 7, "intentos": 7989, "answer": 455, "tasa": 5.7, "dia_nombre": "Lunes"}, {"dia_semana": 0, "hora_intento": 8, "intentos": 38535, "answer": 1954, "tasa": 5.1, "dia_nombre": "Lunes"}, {"dia_semana": 0, "hora_intento": 9, "intentos": 14152, "answer": 890, "tasa": 6.3, "dia_nombre": "Lunes"}, {"dia_semana": 0, "hora_intento": 10, "intentos": 41801, "answer": 2243, "tasa": 5.4, "dia_nombre": "Lunes"}, {"dia_semana": 0, "hora_intento": 11, "intentos": 54837, "answer": 3727, "tasa": 6.8, "dia_nombre": "Lunes"}, {"dia_semana": 0, "hora_intento": 12, "intentos": 35170, "answer": 2419, "tasa": 6.9, "dia_nombre": "Lunes"}, {"dia_semana": 0, "hora_intento": 13, "intentos": 18264, "answer": 1415, "tasa": 7.7, "dia_nombre": "Lunes"}, {"dia_semana": 0, "hora_intento": 14, "intentos": 34870, "answer": 2464, "tasa": 7.1, "dia_nombre": "Lunes"}, {"dia_semana": 0, "hora_intento": 15, "intentos": 41662, "answer": 2534, "tasa": 6.1, "dia_nombre": "Lunes"}, {"dia_semana": 0, "hora_intento": 16, "intentos": 31047, "answer": 1687, "tasa": 5.4, "dia_nombre": "Lunes"}, {"dia_semana": 0, "hora_intento": 17, "intentos": 9279, "answer": 532, "tasa": 5.7, "dia_nombre": "Lunes"}, {"dia_semana": 0, "hora_intento": 18, "intentos": 11706, "answer": 845, "tasa": 7.2, "dia_nombre": "Lunes"}, {"dia_semana": 0, "hora_intento": 19, "intentos": 7, "answer": 1, "tasa": 14.3, "dia_nombre": "Lunes"}, {"dia_semana": 1, "hora_intento": 7, "intentos": 4397, "answer": 332, "tasa": 7.6, "dia_nombre": "Martes"}, {"dia_semana": 1, "hora_intento": 8, "intentos": 34305, "answer": 2255, "tasa": 6.6, "dia_nombre": "Martes"}, {"dia_semana": 1, "hora_intento": 9, "intentos": 34102, "answer": 2280, "tasa": 6.7, "dia_nombre": "Martes"}, {"dia_semana": 1, "hora_intento": 10, "intentos": 43429, "answer": 2677, "tasa": 6.2, "dia_nombre": "Martes"}, {"dia_semana": 1, "hora_intento": 11, "intentos": 38485, "answer": 2935, "tasa": 7.6, "dia_nombre": "Martes"}, {"dia_semana": 1, "hora_intento": 12, "intentos": 25178, "answer": 1834, "tasa": 7.3, "dia_nombre": "Martes"}, {"dia_semana": 1, "hora_intento": 13, "intentos": 13244, "answer": 1110, "tasa": 8.4, "dia_nombre": "Martes"}, {"dia_semana": 1, "hora_intento": 14, "intentos": 30379, "answer": 2320, "tasa": 7.6, "dia_nombre": "Martes"}, {"dia_semana": 1, "hora_intento": 15, "intentos": 60682, "answer": 3470, "tasa": 5.7, "dia_nombre": "Martes"}, {"dia_semana": 1, "hora_intento": 16, "intentos": 50941, "answer": 2741, "tasa": 5.4, "dia_nombre": "Martes"}, {"dia_semana": 1, "hora_intento": 17, "intentos": 15896, "answer": 815, "tasa": 5.1, "dia_nombre": "Martes"}, {"dia_semana": 1, "hora_intento": 18, "intentos": 10835, "answer": 604, "tasa": 5.6, "dia_nombre": "Martes"}, {"dia_semana": 1, "hora_intento": 19, "intentos": 11, "answer": 0, "tasa": 0.0, "dia_nombre": "Martes"}, {"dia_semana": 2, "hora_intento": 7, "intentos": 10115, "answer": 409, "tasa": 4.0, "dia_nombre": "Miercoles"}, {"dia_semana": 2, "hora_intento": 8, "intentos": 31610, "answer": 1620, "tasa": 5.1, "dia_nombre": "Miercoles"}, {"dia_semana": 2, "hora_intento": 9, "intentos": 22626, "answer": 1524, "tasa": 6.7, "dia_nombre": "Miercoles"}, {"dia_semana": 2, "hora_intento": 10, "intentos": 65590, "answer": 3839, "tasa": 5.9, "dia_nombre": "Miercoles"}, {"dia_semana": 2, "hora_intento": 11, "intentos": 65707, "answer": 4819, "tasa": 7.3, "dia_nombre": "Miercoles"}, {"dia_semana": 2, "hora_intento": 12, "intentos": 46302, "answer": 2987, "tasa": 6.5, "dia_nombre": "Miercoles"}, {"dia_semana": 2, "hora_intento": 13, "intentos": 36473, "answer": 2121, "tasa": 5.8, "dia_nombre": "Miercoles"}, {"dia_semana": 2, "hora_intento": 14, "intentos": 45270, "answer": 2757, "tasa": 6.1, "dia_nombre": "Miercoles"}, {"dia_semana": 2, "hora_intento": 15, "intentos": 42055, "answer": 2399, "tasa": 5.7, "dia_nombre": "Miercoles"}, {"dia_semana": 2, "hora_intento": 16, "intentos": 16285, "answer": 1006, "tasa": 6.2, "dia_nombre": "Miercoles"}, {"dia_semana": 2, "hora_intento": 17, "intentos": 2963, "answer": 301, "tasa": 10.2, "dia_nombre": "Miercoles"}, {"dia_semana": 2, "hora_intento": 18, "intentos": 2697, "answer": 274, "tasa": 10.2, "dia_nombre": "Miercoles"}, {"dia_semana": 2, "hora_intento": 19, "intentos": 2, "answer": 0, "tasa": 0.0, "dia_nombre": "Miercoles"}, {"dia_semana": 3, "hora_intento": 7, "intentos": 5306, "answer": 352, "tasa": 6.6, "dia_nombre": "Jueves"}, {"dia_semana": 3, "hora_intento": 8, "intentos": 24504, "answer": 1937, "tasa": 7.9, "dia_nombre": "Jueves"}, {"dia_semana": 3, "hora_intento": 9, "intentos": 24545, "answer": 1891, "tasa": 7.7, "dia_nombre": "Jueves"}, {"dia_semana": 3, "hora_intento": 10, "intentos": 27114, "answer": 2084, "tasa": 7.7, "dia_nombre": "Jueves"}, {"dia_semana": 3, "hora_intento": 11, "intentos": 38559, "answer": 2389, "tasa": 6.2, "dia_nombre": "Jueves"}, {"dia_semana": 3, "hora_intento": 12, "intentos": 27855, "answer": 1701, "tasa": 6.1, "dia_nombre": "Jueves"}, {"dia_semana": 3, "hora_intento": 13, "intentos": 18826, "answer": 1379, "tasa": 7.3, "dia_nombre": "Jueves"}, {"dia_semana": 3, "hora_intento": 14, "intentos": 25386, "answer": 1584, "tasa": 6.2, "dia_nombre": "Jueves"}, {"dia_semana": 3, "hora_intento": 15, "intentos": 25074, "answer": 1111, "tasa": 4.4, "dia_nombre": "Jueves"}, {"dia_semana": 3, "hora_intento": 16, "intentos": 23994, "answer": 1106, "tasa": 4.6, "dia_nombre": "Jueves"}, {"dia_semana": 3, "hora_intento": 17, "intentos": 5517, "answer": 270, "tasa": 4.9, "dia_nombre": "Jueves"}, {"dia_semana": 3, "hora_intento": 18, "intentos": 7600, "answer": 335, "tasa": 4.4, "dia_nombre": "Jueves"}, {"dia_semana": 3, "hora_intento": 19, "intentos": 2, "answer": 0, "tasa": 0.0, "dia_nombre": "Jueves"}, {"dia_semana": 4, "hora_intento": 7, "intentos": 5964, "answer": 434, "tasa": 7.3, "dia_nombre": "Viernes"}, {"dia_semana": 4, "hora_intento": 8, "intentos": 28651, "answer": 1890, "tasa": 6.6, "dia_nombre": "Viernes"}, {"dia_semana": 4, "hora_intento": 9, "intentos": 32301, "answer": 1792, "tasa": 5.5, "dia_nombre": "Viernes"}, {"dia_semana": 4, "hora_intento": 10, "intentos": 40453, "answer": 1988, "tasa": 4.9, "dia_nombre": "Viernes"}, {"dia_semana": 4, "hora_intento": 11, "intentos": 42027, "answer": 1763, "tasa": 4.2, "dia_nombre": "Viernes"}, {"dia_semana": 4, "hora_intento": 12, "intentos": 24479, "answer": 791, "tasa": 3.2, "dia_nombre": "Viernes"}, {"dia_semana": 4, "hora_intento": 13, "intentos": 48496, "answer": 2346, "tasa": 4.8, "dia_nombre": "Viernes"}, {"dia_semana": 4, "hora_intento": 14, "intentos": 38851, "answer": 1776, "tasa": 4.6, "dia_nombre": "Viernes"}, {"dia_semana": 4, "hora_intento": 15, "intentos": 50241, "answer": 2198, "tasa": 4.4, "dia_nombre": "Viernes"}, {"dia_semana": 4, "hora_intento": 16, "intentos": 19214, "answer": 1094, "tasa": 5.7, "dia_nombre": "Viernes"}, {"dia_semana": 4, "hora_intento": 17, "intentos": 20013, "answer": 914, "tasa": 4.6, "dia_nombre": "Viernes"}, {"dia_semana": 4, "hora_intento": 18, "intentos": 12127, "answer": 730, "tasa": 6.0, "dia_nombre": "Viernes"}], "hora_por_estrategia": [{"estrategia": "1099", "hora_intento": 7, "intentos": 7455, "answer": 462, "abandon": 112, "tasa": 6.2}, {"estrategia": "1099", "hora_intento": 8, "intentos": 26729, "answer": 1903, "abandon": 343, "tasa": 7.1}, {"estrategia": "1099", "hora_intento": 9, "intentos": 18755, "answer": 1489, "abandon": 191, "tasa": 7.9}, {"estrategia": "1099", "hora_intento": 10, "intentos": 30865, "answer": 2228, "abandon": 208, "tasa": 7.2}, {"estrategia": "1099", "hora_intento": 11, "intentos": 27672, "answer": 2286, "abandon": 191, "tasa": 8.3}, {"estrategia": "1099", "hora_intento": 12, "intentos": 23412, "answer": 1763, "abandon": 149, "tasa": 7.5}, {"estrategia": "1099", "hora_intento": 13, "intentos": 16664, "answer": 1024, "abandon": 107, "tasa": 6.1}, {"estrategia": "1099", "hora_intento": 14, "intentos": 28779, "answer": 2490, "abandon": 237, "tasa": 8.7}, {"estrategia": "1099", "hora_intento": 15, "intentos": 31073, "answer": 2093, "abandon": 163, "tasa": 6.7}, {"estrategia": "1099", "hora_intento": 16, "intentos": 25665, "answer": 1639, "abandon": 139, "tasa": 6.4}, {"estrategia": "1099", "hora_intento": 17, "intentos": 9188, "answer": 576, "abandon": 92, "tasa": 6.3}, {"estrategia": "1099", "hora_intento": 18, "intentos": 10481, "answer": 756, "abandon": 66, "tasa": 7.2}, {"estrategia": "1099", "hora_intento": 19, "intentos": 4, "answer": 1, "abandon": 1, "tasa": 25.0}, {"estrategia": "1100", "hora_intento": 7, "intentos": 1022, "answer": 71, "abandon": 16, "tasa": 6.9}, {"estrategia": "1100", "hora_intento": 8, "intentos": 4951, "answer": 327, "abandon": 28, "tasa": 6.6}, {"estrategia": "1100", "hora_intento": 9, "intentos": 1811, "answer": 147, "abandon": 41, "tasa": 8.1}, {"estrategia": "1100", "hora_intento": 10, "intentos": 9539, "answer": 773, "abandon": 56, "tasa": 8.1}, {"estrategia": "1100", "hora_intento": 11, "intentos": 15867, "answer": 1217, "abandon": 70, "tasa": 7.7}, {"estrategia": "1100", "hora_intento": 12, "intentos": 10912, "answer": 733, "abandon": 62, "tasa": 6.7}, {"estrategia": "1100", "hora_intento": 13, "intentos": 6681, "answer": 448, "abandon": 26, "tasa": 6.7}, {"estrategia": "1100", "hora_intento": 14, "intentos": 15655, "answer": 1237, "abandon": 95, "tasa": 7.9}, {"estrategia": "1100", "hora_intento": 15, "intentos": 16780, "answer": 1114, "abandon": 66, "tasa": 6.6}, {"estrategia": "1100", "hora_intento": 16, "intentos": 10304, "answer": 774, "abandon": 31, "tasa": 7.5}, {"estrategia": "1100", "hora_intento": 17, "intentos": 428, "answer": 32, "abandon": 0, "tasa": 7.5}, {"estrategia": "1100", "hora_intento": 18, "intentos": 142, "answer": 16, "abandon": 0, "tasa": 11.3}, {"estrategia": "214", "hora_intento": 7, "intentos": 6265, "answer": 517, "abandon": 135, "tasa": 8.3}, {"estrategia": "214", "hora_intento": 8, "intentos": 55017, "answer": 3823, "abandon": 632, "tasa": 6.9}, {"estrategia": "214", "hora_intento": 9, "intentos": 57009, "answer": 3655, "abandon": 411, "tasa": 6.4}, {"estrategia": "214", "hora_intento": 10, "intentos": 76435, "answer": 4694, "abandon": 481, "tasa": 6.1}, {"estrategia": "214", "hora_intento": 11, "intentos": 76074, "answer": 5263, "abandon": 448, "tasa": 6.9}, {"estrategia": "214", "hora_intento": 12, "intentos": 33046, "answer": 2209, "abandon": 215, "tasa": 6.7}, {"estrategia": "214", "hora_intento": 13, "intentos": 49145, "answer": 3121, "abandon": 361, "tasa": 6.4}, {"estrategia": "214", "hora_intento": 14, "intentos": 43952, "answer": 2659, "abandon": 339, "tasa": 6.0}, {"estrategia": "214", "hora_intento": 15, "intentos": 43275, "answer": 2327, "abandon": 219, "tasa": 5.4}, {"estrategia": "214", "hora_intento": 16, "intentos": 29000, "answer": 1679, "abandon": 118, "tasa": 5.8}, {"estrategia": "214", "hora_intento": 17, "intentos": 20831, "answer": 1133, "abandon": 106, "tasa": 5.4}, {"estrategia": "214", "hora_intento": 18, "intentos": 14765, "answer": 960, "abandon": 85, "tasa": 6.5}, {"estrategia": "214", "hora_intento": 19, "intentos": 10, "answer": 0, "abandon": 0, "tasa": 0.0}, {"estrategia": "579", "hora_intento": 7, "intentos": 19029, "answer": 932, "abandon": 134, "tasa": 4.9}, {"estrategia": "579", "hora_intento": 8, "intentos": 85459, "answer": 4470, "abandon": 423, "tasa": 5.2}, {"estrategia": "579", "hora_intento": 9, "intentos": 77689, "answer": 4613, "abandon": 434, "tasa": 5.9}, {"estrategia": "579", "hora_intento": 10, "intentos": 117679, "answer": 6275, "abandon": 499, "tasa": 5.3}, {"estrategia": "579", "hora_intento": 11, "intentos": 118194, "answer": 7192, "abandon": 606, "tasa": 6.1}, {"estrategia": "579", "hora_intento": 12, "intentos": 86911, "answer": 4954, "abandon": 469, "tasa": 5.7}, {"estrategia": "579", "hora_intento": 13, "intentos": 62813, "answer": 3778, "abandon": 323, "tasa": 6.0}, {"estrategia": "579", "hora_intento": 14, "intentos": 83032, "answer": 4365, "abandon": 483, "tasa": 5.3}, {"estrategia": "579", "hora_intento": 15, "intentos": 122586, "answer": 5938, "abandon": 456, "tasa": 4.8}, {"estrategia": "579", "hora_intento": 16, "intentos": 71366, "answer": 3378, "abandon": 330, "tasa": 4.7}, {"estrategia": "579", "hora_intento": 17, "intentos": 21746, "answer": 1064, "abandon": 169, "tasa": 4.9}, {"estrategia": "579", "hora_intento": 18, "intentos": 19470, "answer": 1053, "abandon": 202, "tasa": 5.4}, {"estrategia": "579", "hora_intento": 19, "intentos": 8, "answer": 0, "abandon": 0, "tasa": 0.0}, {"estrategia": "tempranas", "hora_intento": 8, "intentos": 2514, "answer": 215, "abandon": 83, "tasa": 8.6}, {"estrategia": "tempranas", "hora_intento": 9, "intentos": 3872, "answer": 324, "abandon": 59, "tasa": 8.4}, {"estrategia": "tempranas", "hora_intento": 10, "intentos": 11084, "answer": 393, "abandon": 96, "tasa": 3.5}, {"estrategia": "tempranas", "hora_intento": 11, "intentos": 14671, "answer": 459, "abandon": 41, "tasa": 3.1}, {"estrategia": "tempranas", "hora_intento": 12, "intentos": 4703, "answer": 73, "abandon": 16, "tasa": 1.6}, {"estrategia": "tempranas", "hora_intento": 14, "intentos": 3338, "answer": 150, "abandon": 10, "tasa": 4.5}, {"estrategia": "tempranas", "hora_intento": 15, "intentos": 6000, "answer": 240, "abandon": 15, "tasa": 4.0}, {"estrategia": "tempranas", "hora_intento": 16, "intentos": 5146, "answer": 164, "abandon": 39, "tasa": 3.2}, {"estrategia": "tempranas", "hora_intento": 17, "intentos": 1475, "answer": 27, "abandon": 2, "tasa": 1.8}, {"estrategia": "tempranas", "hora_intento": 18, "intentos": 107, "answer": 3, "abandon": 0, "tasa": 2.8}], "distribucion_resultados": [{"resultado_clean": "ABANDON", "n": 7978}, {"resultado_clean": "ANSWER", "n": 90069}, {"resultado_clean": "ANSWER-MACHINE", "n": 352627}, {"resultado_clean": "BUSY", "n": 96592}, {"resultado_clean": "CLEAN", "n": 26429}, {"resultado_clean": "CONGESTION", "n": 23551}, {"resultado_clean": "DO-NOT-CALL", "n": 4204}, {"resultado_clean": "FAILED", "n": 145083}, {"resultado_clean": "NO-ANSWER", "n": 134231}]};
-const C={b:'#3b82f6',b2:'#60a5fa',g:'#22c55e',a:'#f59e0b',r:'#ef4444',t:'#14b8a6',p:'#a78bfa',o:'#f97316',gy:'#6b7280'};
-const DIAS=['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'];
-const EL={'mora_alta_1100':'Alta +1100d','mora_alta_580_1099':'Alta 580-1099d','mora_intermedia_215_a_579':'Intermedia 215-579d','mora_temprana_0_214':'Temprana 0-214d'};
-const MN={'01':'Ene','02':'Feb','03':'Mar','04':'Abr','05':'May','06':'Jun','07':'Jul','08':'Ago','09':'Sep','10':'Oct','11':'Nov','12':'Dic'};
+const RAW = {"kpis": {"total_registros": 881331, "total_tocados": 854902, "pct_tocados": 97.0, "total_answer": 90069, "pct_answer": 10.5, "total_abandon": 7978, "pct_abandon": 0.9, "total_intentos": 1794550, "tasa_contacto_intentos": 6.0, "pct_timeout": 19.6, "ultima_actualizacion": "20/04/2026 16:50"}, "evolucion_diaria": [{"fecha_str": "2026-01-19", "total": 4242, "answer": 554, "abandon": 21, "tasa": 13.1, "dia_semana": 0, "semana_iso": 4, "ano": 2026, "mes": "2026-01"}, {"fecha_str": "2026-01-20", "total": 5865, "answer": 544, "abandon": 24, "tasa": 9.3, "dia_semana": 1, "semana_iso": 4, "ano": 2026, "mes": "2026-01"}, {"fecha_str": "2026-01-21", "total": 11810, "answer": 1308, "abandon": 30, "tasa": 11.1, "dia_semana": 2, "semana_iso": 4, "ano": 2026, "mes": "2026-01"}, {"fecha_str": "2026-01-22", "total": 4959, "answer": 661, "abandon": 21, "tasa": 13.3, "dia_semana": 3, "semana_iso": 4, "ano": 2026, "mes": "2026-01"}, {"fecha_str": "2026-01-23", "total": 5159, "answer": 710, "abandon": 12, "tasa": 13.8, "dia_semana": 4, "semana_iso": 4, "ano": 2026, "mes": "2026-01"}, {"fecha_str": "2026-01-24", "total": 5808, "answer": 670, "abandon": 30, "tasa": 11.5, "dia_semana": 5, "semana_iso": 4, "ano": 2026, "mes": "2026-01"}, {"fecha_str": "2026-01-26", "total": 11634, "answer": 1372, "abandon": 21, "tasa": 11.8, "dia_semana": 0, "semana_iso": 5, "ano": 2026, "mes": "2026-01"}, {"fecha_str": "2026-01-27", "total": 7505, "answer": 998, "abandon": 29, "tasa": 13.3, "dia_semana": 1, "semana_iso": 5, "ano": 2026, "mes": "2026-01"}, {"fecha_str": "2026-01-28", "total": 10682, "answer": 1584, "abandon": 50, "tasa": 14.8, "dia_semana": 2, "semana_iso": 5, "ano": 2026, "mes": "2026-01"}, {"fecha_str": "2026-01-29", "total": 16718, "answer": 2612, "abandon": 215, "tasa": 15.6, "dia_semana": 3, "semana_iso": 5, "ano": 2026, "mes": "2026-01"}, {"fecha_str": "2026-01-30", "total": 7989, "answer": 1532, "abandon": 34, "tasa": 19.2, "dia_semana": 4, "semana_iso": 5, "ano": 2026, "mes": "2026-01"}, {"fecha_str": "2026-01-31", "total": 580, "answer": 76, "abandon": 0, "tasa": 13.1, "dia_semana": 5, "semana_iso": 5, "ano": 2026, "mes": "2026-01"}, {"fecha_str": "2026-02-02", "total": 13917, "answer": 1224, "abandon": 48, "tasa": 8.8, "dia_semana": 0, "semana_iso": 6, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-03", "total": 7739, "answer": 1007, "abandon": 14, "tasa": 13.0, "dia_semana": 1, "semana_iso": 6, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-04", "total": 3687, "answer": 696, "abandon": 18, "tasa": 18.9, "dia_semana": 2, "semana_iso": 6, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-05", "total": 4543, "answer": 501, "abandon": 11, "tasa": 11.0, "dia_semana": 3, "semana_iso": 6, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-06", "total": 114, "answer": 9, "abandon": 0, "tasa": 7.9, "dia_semana": 4, "semana_iso": 6, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-07", "total": 1708, "answer": 363, "abandon": 0, "tasa": 21.3, "dia_semana": 5, "semana_iso": 6, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-09", "total": 9756, "answer": 1222, "abandon": 164, "tasa": 12.5, "dia_semana": 0, "semana_iso": 7, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-10", "total": 13899, "answer": 1458, "abandon": 177, "tasa": 10.5, "dia_semana": 1, "semana_iso": 7, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-11", "total": 10935, "answer": 1197, "abandon": 152, "tasa": 10.9, "dia_semana": 2, "semana_iso": 7, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-12", "total": 15791, "answer": 1192, "abandon": 137, "tasa": 7.5, "dia_semana": 3, "semana_iso": 7, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-13", "total": 6647, "answer": 1007, "abandon": 60, "tasa": 15.1, "dia_semana": 4, "semana_iso": 7, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-14", "total": 5930, "answer": 297, "abandon": 43, "tasa": 5.0, "dia_semana": 5, "semana_iso": 7, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-16", "total": 17367, "answer": 1270, "abandon": 150, "tasa": 7.3, "dia_semana": 0, "semana_iso": 8, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-17", "total": 10489, "answer": 1170, "abandon": 103, "tasa": 11.2, "dia_semana": 1, "semana_iso": 8, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-18", "total": 26253, "answer": 3215, "abandon": 83, "tasa": 12.2, "dia_semana": 2, "semana_iso": 8, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-19", "total": 6922, "answer": 815, "abandon": 34, "tasa": 11.8, "dia_semana": 3, "semana_iso": 8, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-20", "total": 11678, "answer": 1477, "abandon": 45, "tasa": 12.6, "dia_semana": 4, "semana_iso": 8, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-21", "total": 2814, "answer": 356, "abandon": 9, "tasa": 12.7, "dia_semana": 5, "semana_iso": 8, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-23", "total": 15574, "answer": 1100, "abandon": 167, "tasa": 7.1, "dia_semana": 0, "semana_iso": 9, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-24", "total": 15414, "answer": 1480, "abandon": 156, "tasa": 9.6, "dia_semana": 1, "semana_iso": 9, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-25", "total": 19334, "answer": 2020, "abandon": 215, "tasa": 10.4, "dia_semana": 2, "semana_iso": 9, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-26", "total": 22680, "answer": 1717, "abandon": 172, "tasa": 7.6, "dia_semana": 3, "semana_iso": 9, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-02-27", "total": 12099, "answer": 1550, "abandon": 96, "tasa": 12.8, "dia_semana": 4, "semana_iso": 9, "ano": 2026, "mes": "2026-02"}, {"fecha_str": "2026-03-02", "total": 10400, "answer": 1431, "abandon": 47, "tasa": 13.8, "dia_semana": 0, "semana_iso": 10, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-03", "total": 10466, "answer": 1712, "abandon": 22, "tasa": 16.4, "dia_semana": 1, "semana_iso": 10, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-04", "total": 14389, "answer": 1685, "abandon": 37, "tasa": 11.7, "dia_semana": 2, "semana_iso": 10, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-05", "total": 9339, "answer": 1134, "abandon": 114, "tasa": 12.1, "dia_semana": 3, "semana_iso": 10, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-06", "total": 11534, "answer": 1080, "abandon": 116, "tasa": 9.4, "dia_semana": 4, "semana_iso": 10, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-09", "total": 7572, "answer": 1199, "abandon": 145, "tasa": 15.8, "dia_semana": 0, "semana_iso": 11, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-10", "total": 17205, "answer": 1824, "abandon": 272, "tasa": 10.6, "dia_semana": 1, "semana_iso": 11, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-11", "total": 19241, "answer": 2100, "abandon": 197, "tasa": 10.9, "dia_semana": 2, "semana_iso": 11, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-12", "total": 21175, "answer": 2027, "abandon": 225, "tasa": 9.6, "dia_semana": 3, "semana_iso": 11, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-13", "total": 16019, "answer": 1565, "abandon": 167, "tasa": 9.8, "dia_semana": 4, "semana_iso": 11, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-14", "total": 14189, "answer": 1123, "abandon": 70, "tasa": 7.9, "dia_semana": 5, "semana_iso": 11, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-16", "total": 15130, "answer": 1168, "abandon": 105, "tasa": 7.7, "dia_semana": 0, "semana_iso": 12, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-17", "total": 38862, "answer": 4081, "abandon": 196, "tasa": 10.5, "dia_semana": 1, "semana_iso": 12, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-18", "total": 10459, "answer": 805, "abandon": 64, "tasa": 7.7, "dia_semana": 2, "semana_iso": 12, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-19", "total": 22462, "answer": 1987, "abandon": 157, "tasa": 8.8, "dia_semana": 3, "semana_iso": 12, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-20", "total": 8016, "answer": 653, "abandon": 62, "tasa": 8.1, "dia_semana": 4, "semana_iso": 12, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-24", "total": 3766, "answer": 547, "abandon": 13, "tasa": 14.5, "dia_semana": 1, "semana_iso": 13, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-25", "total": 8092, "answer": 1028, "abandon": 146, "tasa": 12.7, "dia_semana": 2, "semana_iso": 13, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-26", "total": 8171, "answer": 921, "abandon": 120, "tasa": 11.3, "dia_semana": 3, "semana_iso": 13, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-27", "total": 14349, "answer": 1518, "abandon": 95, "tasa": 10.6, "dia_semana": 4, "semana_iso": 13, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-28", "total": 9798, "answer": 627, "abandon": 72, "tasa": 6.4, "dia_semana": 5, "semana_iso": 13, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-30", "total": 47148, "answer": 4150, "abandon": 295, "tasa": 8.8, "dia_semana": 0, "semana_iso": 14, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-03-31", "total": 18227, "answer": 1436, "abandon": 181, "tasa": 7.9, "dia_semana": 1, "semana_iso": 14, "ano": 2026, "mes": "2026-03"}, {"fecha_str": "2026-04-01", "total": 24005, "answer": 1821, "abandon": 194, "tasa": 7.6, "dia_semana": 2, "semana_iso": 14, "ano": 2026, "mes": "2026-04"}, {"fecha_str": "2026-04-06", "total": 21252, "answer": 1803, "abandon": 185, "tasa": 8.5, "dia_semana": 0, "semana_iso": 15, "ano": 2026, "mes": "2026-04"}, {"fecha_str": "2026-04-07", "total": 19313, "answer": 1266, "abandon": 161, "tasa": 6.6, "dia_semana": 1, "semana_iso": 15, "ano": 2026, "mes": "2026-04"}, {"fecha_str": "2026-04-08", "total": 16333, "answer": 1075, "abandon": 149, "tasa": 6.6, "dia_semana": 2, "semana_iso": 15, "ano": 2026, "mes": "2026-04"}, {"fecha_str": "2026-04-09", "total": 6735, "answer": 703, "abandon": 76, "tasa": 10.4, "dia_semana": 3, "semana_iso": 15, "ano": 2026, "mes": "2026-04"}, {"fecha_str": "2026-04-10", "total": 10312, "answer": 930, "abandon": 236, "tasa": 9.0, "dia_semana": 4, "semana_iso": 15, "ano": 2026, "mes": "2026-04"}, {"fecha_str": "2026-04-13", "total": 4498, "answer": 883, "abandon": 67, "tasa": 19.6, "dia_semana": 0, "semana_iso": 16, "ano": 2026, "mes": "2026-04"}, {"fecha_str": "2026-04-14", "total": 16915, "answer": 1718, "abandon": 363, "tasa": 10.2, "dia_semana": 1, "semana_iso": 16, "ano": 2026, "mes": "2026-04"}, {"fecha_str": "2026-04-15", "total": 12510, "answer": 1306, "abandon": 240, "tasa": 10.4, "dia_semana": 2, "semana_iso": 16, "ano": 2026, "mes": "2026-04"}, {"fecha_str": "2026-04-16", "total": 8960, "answer": 671, "abandon": 170, "tasa": 7.5, "dia_semana": 3, "semana_iso": 16, "ano": 2026, "mes": "2026-04"}, {"fecha_str": "2026-04-17", "total": 19311, "answer": 2095, "abandon": 561, "tasa": 10.8, "dia_semana": 4, "semana_iso": 16, "ano": 2026, "mes": "2026-04"}, {"fecha_str": "2026-04-18", "total": 9761, "answer": 685, "abandon": 87, "tasa": 7.0, "dia_semana": 5, "semana_iso": 16, "ano": 2026, "mes": "2026-04"}, {"fecha_str": "2026-04-20", "total": 3292, "answer": 348, "abandon": 30, "tasa": 10.6, "dia_semana": 0, "semana_iso": 17, "ano": 2026, "mes": "2026-04"}], "por_mes": [{"mes": "2026-01", "total": 92951, "answer": 12621, "abandon": 487, "tasa": 13.6}, {"mes": "2026-02", "total": 255290, "answer": 26343, "abandon": 2054, "tasa": 10.3}, {"mes": "2026-03", "total": 356009, "answer": 35801, "abandon": 2918, "tasa": 10.1}, {"mes": "2026-04", "total": 173197, "answer": 15304, "abandon": 2519, "tasa": 8.8}], "por_dia_semana": [{"dia_semana": 0.0, "total": 181782, "answer": 17724, "abandon": 1445, "tasa": 9.8, "nombre": "Lunes"}, {"dia_semana": 1.0, "total": 185665, "answer": 19241, "abandon": 1711, "tasa": 10.4, "nombre": "Martes"}, {"dia_semana": 2.0, "total": 187730, "answer": 19840, "abandon": 1575, "tasa": 10.6, "nombre": "Miercoles"}, {"dia_semana": 3.0, "total": 148455, "answer": 14941, "abandon": 1452, "tasa": 10.1, "nombre": "Jueves"}, {"dia_semana": 4.0, "total": 123227, "answer": 14126, "abandon": 1484, "tasa": 11.5, "nombre": "Viernes"}, {"dia_semana": 5.0, "total": 50588, "answer": 4197, "abandon": 311, "tasa": 8.3, "nombre": "Sabado"}], "por_hora": [{"hora_intento": 7, "intentos": 33771, "answer": 1982, "abandon": 397, "tasa": 5.9}, {"hora_intento": 8, "intentos": 174670, "answer": 10738, "abandon": 1509, "tasa": 6.1}, {"hora_intento": 9, "intentos": 159136, "answer": 10228, "abandon": 1136, "tasa": 6.4}, {"hora_intento": 10, "intentos": 245602, "answer": 14363, "abandon": 1340, "tasa": 5.8}, {"hora_intento": 11, "intentos": 252478, "answer": 16417, "abandon": 1356, "tasa": 6.5}, {"hora_intento": 12, "intentos": 158984, "answer": 9732, "abandon": 911, "tasa": 6.1}, {"hora_intento": 13, "intentos": 135303, "answer": 8371, "abandon": 817, "tasa": 6.2}, {"hora_intento": 14, "intentos": 174756, "answer": 10901, "abandon": 1164, "tasa": 6.2}, {"hora_intento": 15, "intentos": 219714, "answer": 11712, "abandon": 919, "tasa": 5.3}, {"hora_intento": 16, "intentos": 141481, "answer": 7634, "abandon": 657, "tasa": 5.4}, {"hora_intento": 17, "intentos": 53668, "answer": 2832, "abandon": 369, "tasa": 5.3}, {"hora_intento": 18, "intentos": 44965, "answer": 2788, "abandon": 353, "tasa": 6.2}, {"hora_intento": 19, "intentos": 22, "answer": 1, "abandon": 1, "tasa": 4.5}], "por_troncal": [{"troncal": 9, "intentos": 1002370, "answer": 57804, "abandon": 5658, "celular": 979303, "fijo": 23066, "tasa": 5.8}, {"troncal": 91, "intentos": 102809, "answer": 7170, "abandon": 758, "celular": 100197, "fijo": 2603, "tasa": 7.0}, {"troncal": 92, "intentos": 354823, "answer": 21185, "abandon": 2460, "celular": 346876, "fijo": 7943, "tasa": 6.0}, {"troncal": 900, "intentos": 334548, "answer": 21540, "abandon": 2053, "celular": 325438, "fijo": 9108, "tasa": 6.4}], "columna_vs_fila": [{"estrategia_marcacion": "columna", "total": 640637, "answer": 58711, "llamadas_prom": 1.3, "tasa": 9.2}, {"estrategia_marcacion": "fila", "total": 240693, "answer": 31358, "llamadas_prom": 4.2, "tasa": 13.0}], "por_estrategia": [{"estrategia": "1099", "total": 131603, "answer": 15049, "abandon": 1453, "tasa": 11.4}, {"estrategia": "1100", "total": 49495, "answer": 5232, "abandon": 315, "tasa": 10.6}, {"estrategia": "214", "total": 238310, "answer": 27241, "abandon": 2407, "tasa": 11.4}, {"estrategia": "579", "total": 438962, "answer": 40695, "abandon": 3542, "tasa": 9.3}, {"estrategia": "tempranas", "total": 22960, "answer": 1852, "abandon": 261, "tasa": 8.1}], "por_tarea": [{"tipoid_norm": "Resto base", "total": 157417, "answer": 14267, "abandon": 1105, "tasa": 9.1}, {"tipoid_norm": "Localizado", "total": 119655, "answer": 14076, "abandon": 1198, "tasa": 11.8}, {"tipoid_norm": "Clusters principales", "total": 89901, "answer": 8175, "abandon": 641, "tasa": 9.1}, {"tipoid_norm": "Sin foco registrado", "total": 81473, "answer": 10870, "abandon": 1099, "tasa": 13.3}, {"tipoid_norm": "Barrido base", "total": 75399, "answer": 6904, "abandon": 549, "tasa": 9.2}, {"tipoid_norm": "Incumplidos", "total": 52474, "answer": 5294, "abandon": 427, "tasa": 10.1}, {"tipoid_norm": "No hubo acuerdo", "total": 46631, "answer": 4797, "abandon": 536, "tasa": 10.3}, {"tipoid_norm": "Tarea", "total": 42121, "answer": 3778, "abandon": 480, "tasa": 9.0}, {"tipoid_norm": "Recien ejecutados", "total": 38883, "answer": 3252, "abandon": 278, "tasa": 8.4}, {"tipoid_norm": "Proximos a rodar", "total": 34672, "answer": 2819, "abandon": 305, "tasa": 8.1}, {"tipoid_norm": "Daciones", "total": 24658, "answer": 3471, "abandon": 186, "tasa": 14.1}, {"tipoid_norm": "Piloto", "total": 20734, "answer": 1922, "abandon": 125, "tasa": 9.3}, {"tipoid_norm": "Cotizantes", "total": 18823, "answer": 1695, "abandon": 214, "tasa": 9.0}, {"tipoid_norm": "Menos vueltas", "total": 13053, "answer": 1306, "abandon": 252, "tasa": 10.0}, {"tipoid_norm": "SOAT vigente", "total": 12040, "answer": 1388, "abandon": 52, "tasa": 11.5}, {"tipoid_norm": "Localizacion media", "total": 11151, "answer": 956, "abandon": 202, "tasa": 8.6}, {"tipoid_norm": "Segmento por mora", "total": 7055, "answer": 797, "abandon": 9, "tasa": 11.3}, {"tipoid_norm": "Subsidiados", "total": 5404, "answer": 379, "abandon": 55, "tasa": 7.0}, {"tipoid_norm": "Últimos pagos", "total": 4079, "answer": 637, "abandon": 13, "tasa": 15.6}, {"tipoid_norm": "Normal", "total": 3773, "answer": 481, "abandon": 20, "tasa": 12.7}, {"tipoid_norm": "Asignacion asesor", "total": 3744, "answer": 409, "abandon": 62, "tasa": 10.9}, {"tipoid_norm": "Ejecutados", "total": 3449, "answer": 417, "abandon": 36, "tasa": 12.1}, {"tipoid_norm": "Codeudores", "total": 3095, "answer": 427, "abandon": 38, "tasa": 13.8}, {"tipoid_norm": "Cartera juridica", "total": 2902, "answer": 415, "abandon": 8, "tasa": 14.3}, {"tipoid_norm": "Asignacion", "total": 2752, "answer": 126, "abandon": 21, "tasa": 4.6}, {"tipoid_norm": "Predictivo mora", "total": 1964, "answer": 373, "abandon": 16, "tasa": 19.0}, {"tipoid_norm": "Sin asignacion", "total": 1458, "answer": 201, "abandon": 14, "tasa": 13.8}, {"tipoid_norm": "Referencia cliente", "total": 1169, "answer": 291, "abandon": 25, "tasa": 24.9}, {"tipoid_norm": "Seguros de vida", "total": 772, "answer": 63, "abandon": 9, "tasa": 8.2}, {"tipoid_norm": "Incumplidos + No hubo acuerdo", "total": 512, "answer": 67, "abandon": 2, "tasa": 13.1}, {"tipoid_norm": "Se van a juridica", "total": 117, "answer": 16, "abandon": 1, "tasa": 13.7}], "por_cluster": [{"cluster_clean": "Cluster 10: LibreInv", "total": 1714, "answer": 235, "abandon": 13, "tasa": 13.7}, {"cluster_clean": "Cluster 1: 75 - 100%", "total": 11470, "answer": 1167, "abandon": 115, "tasa": 10.2}, {"cluster_clean": "Cluster 2: 50 - 75%", "total": 90108, "answer": 8872, "abandon": 768, "tasa": 9.8}, {"cluster_clean": "Cluster 3: 25 - 50%", "total": 220652, "answer": 20923, "abandon": 1794, "tasa": 9.5}, {"cluster_clean": "Cluster 4: 0 - 25%", "total": 192780, "answer": 17943, "abandon": 1617, "tasa": 9.3}, {"cluster_clean": "Cluster 5: Sin prenda", "total": 108423, "answer": 11103, "abandon": 991, "tasa": 10.2}, {"cluster_clean": "Cluster 6: CEP", "total": 44561, "answer": 4173, "abandon": 394, "tasa": 9.4}, {"cluster_clean": "Cluster 7: GPS", "total": 23570, "answer": 2240, "abandon": 168, "tasa": 9.5}, {"cluster_clean": "Cluster 8: Comprada micro", "total": 53003, "answer": 5458, "abandon": 440, "tasa": 10.3}, {"cluster_clean": "Cluster 9: Comprada CEP", "total": 8378, "answer": 833, "abandon": 53, "tasa": 9.9}], "tipificaciones": [{"cod01": "2013", "desc1": "CBZ_CONTACTO_NO_EXITOSO", "n": 73229}, {"cod01": "TIMEOUTACW", "desc1": "TIMEOUTACW", "n": 17668}, {"cod01": "2012", "desc1": "CBZ_CONTACTO_EXITOSO", "n": 4301}, {"cod01": "2029", "desc1": "CBZ_NO_HUBO_ACUERDO", "n": 1611}, {"cod01": "2035", "desc1": "CBZ_REQUERIMIENTO", "n": 1478}, {"cod01": "2000", "desc1": "CBZ_ACUERDO_CON_DESCUENTO", "n": 504}, {"cod01": "2001", "desc1": "CBZ_ACUERDO_DE_PAGO", "n": 412}, {"cod01": "4444", "desc1": "Fallas_Ruido_Llamadas", "n": 228}, {"cod01": "2095", "desc1": "CBZ-BUSQUEDA_WEB-CONTACTO_NO_EXITOSO", "n": 91}, {"cod01": "2052", "desc1": "CBZ_PAGO_RECORDADO", "n": 82}, {"cod01": "2047", "desc1": "CBZ_BUSQUEDA_WEB", "n": 75}, {"cod01": "2014", "desc1": "CBZ_DATOS_ACTUALIZADOS", "n": 52}, {"cod01": "2038", "desc1": "CBZ_NUMERO_ERRADO", "n": 45}, {"cod01": "2007", "desc1": "CBZ_POSIBLE_ENTREGA_BIEN", "n": 41}, {"cod01": "2005", "desc1": "CBZ_PAGO_PENDIENTE_POR_VERIFICAR", "n": 41}], "fatiga_marcacion": [{"intentos": 1, "creditos": 3811}, {"intentos": 2, "creditos": 847}, {"intentos": 3, "creditos": 1029}, {"intentos": 4, "creditos": 914}, {"intentos": 5, "creditos": 1150}, {"intentos": 6, "creditos": 443}, {"intentos": 7, "creditos": 653}, {"intentos": 8, "creditos": 393}, {"intentos": 9, "creditos": 614}, {"intentos": 10, "creditos": 359}, {"intentos": 11, "creditos": 414}, {"intentos": 12, "creditos": 319}, {"intentos": 13, "creditos": 433}, {"intentos": 14, "creditos": 261}, {"intentos": 15, "creditos": 259}], "fatiga_stats": {"prom_intentos": 20.2, "mediana": 8.0, "creditos_con_answer": 18119, "creditos_sin_answer": 9374, "total_creditos": 27493}, "heatmap_hora_dia": [{"dia_semana": 0, "hora_intento": 7, "intentos": 7989, "answer": 455, "tasa": 5.7, "dia_nombre": "Lunes"}, {"dia_semana": 0, "hora_intento": 8, "intentos": 38535, "answer": 1954, "tasa": 5.1, "dia_nombre": "Lunes"}, {"dia_semana": 0, "hora_intento": 9, "intentos": 14152, "answer": 890, "tasa": 6.3, "dia_nombre": "Lunes"}, {"dia_semana": 0, "hora_intento": 10, "intentos": 41801, "answer": 2243, "tasa": 5.4, "dia_nombre": "Lunes"}, {"dia_semana": 0, "hora_intento": 11, "intentos": 54837, "answer": 3727, "tasa": 6.8, "dia_nombre": "Lunes"}, {"dia_semana": 0, "hora_intento": 12, "intentos": 35170, "answer": 2419, "tasa": 6.9, "dia_nombre": "Lunes"}, {"dia_semana": 0, "hora_intento": 13, "intentos": 18264, "answer": 1415, "tasa": 7.7, "dia_nombre": "Lunes"}, {"dia_semana": 0, "hora_intento": 14, "intentos": 34870, "answer": 2464, "tasa": 7.1, "dia_nombre": "Lunes"}, {"dia_semana": 0, "hora_intento": 15, "intentos": 41662, "answer": 2534, "tasa": 6.1, "dia_nombre": "Lunes"}, {"dia_semana": 0, "hora_intento": 16, "intentos": 31047, "answer": 1687, "tasa": 5.4, "dia_nombre": "Lunes"}, {"dia_semana": 0, "hora_intento": 17, "intentos": 9279, "answer": 532, "tasa": 5.7, "dia_nombre": "Lunes"}, {"dia_semana": 0, "hora_intento": 18, "intentos": 11706, "answer": 845, "tasa": 7.2, "dia_nombre": "Lunes"}, {"dia_semana": 0, "hora_intento": 19, "intentos": 7, "answer": 1, "tasa": 14.3, "dia_nombre": "Lunes"}, {"dia_semana": 1, "hora_intento": 7, "intentos": 4397, "answer": 332, "tasa": 7.6, "dia_nombre": "Martes"}, {"dia_semana": 1, "hora_intento": 8, "intentos": 34305, "answer": 2255, "tasa": 6.6, "dia_nombre": "Martes"}, {"dia_semana": 1, "hora_intento": 9, "intentos": 34102, "answer": 2280, "tasa": 6.7, "dia_nombre": "Martes"}, {"dia_semana": 1, "hora_intento": 10, "intentos": 43429, "answer": 2677, "tasa": 6.2, "dia_nombre": "Martes"}, {"dia_semana": 1, "hora_intento": 11, "intentos": 38485, "answer": 2935, "tasa": 7.6, "dia_nombre": "Martes"}, {"dia_semana": 1, "hora_intento": 12, "intentos": 25178, "answer": 1834, "tasa": 7.3, "dia_nombre": "Martes"}, {"dia_semana": 1, "hora_intento": 13, "intentos": 13244, "answer": 1110, "tasa": 8.4, "dia_nombre": "Martes"}, {"dia_semana": 1, "hora_intento": 14, "intentos": 30379, "answer": 2320, "tasa": 7.6, "dia_nombre": "Martes"}, {"dia_semana": 1, "hora_intento": 15, "intentos": 60682, "answer": 3470, "tasa": 5.7, "dia_nombre": "Martes"}, {"dia_semana": 1, "hora_intento": 16, "intentos": 50941, "answer": 2741, "tasa": 5.4, "dia_nombre": "Martes"}, {"dia_semana": 1, "hora_intento": 17, "intentos": 15896, "answer": 815, "tasa": 5.1, "dia_nombre": "Martes"}, {"dia_semana": 1, "hora_intento": 18, "intentos": 10835, "answer": 604, "tasa": 5.6, "dia_nombre": "Martes"}, {"dia_semana": 1, "hora_intento": 19, "intentos": 11, "answer": 0, "tasa": 0.0, "dia_nombre": "Martes"}, {"dia_semana": 2, "hora_intento": 7, "intentos": 10115, "answer": 409, "tasa": 4.0, "dia_nombre": "Miercoles"}, {"dia_semana": 2, "hora_intento": 8, "intentos": 31610, "answer": 1620, "tasa": 5.1, "dia_nombre": "Miercoles"}, {"dia_semana": 2, "hora_intento": 9, "intentos": 22626, "answer": 1524, "tasa": 6.7, "dia_nombre": "Miercoles"}, {"dia_semana": 2, "hora_intento": 10, "intentos": 65590, "answer": 3839, "tasa": 5.9, "dia_nombre": "Miercoles"}, {"dia_semana": 2, "hora_intento": 11, "intentos": 65707, "answer": 4819, "tasa": 7.3, "dia_nombre": "Miercoles"}, {"dia_semana": 2, "hora_intento": 12, "intentos": 46302, "answer": 2987, "tasa": 6.5, "dia_nombre": "Miercoles"}, {"dia_semana": 2, "hora_intento": 13, "intentos": 36473, "answer": 2121, "tasa": 5.8, "dia_nombre": "Miercoles"}, {"dia_semana": 2, "hora_intento": 14, "intentos": 45270, "answer": 2757, "tasa": 6.1, "dia_nombre": "Miercoles"}, {"dia_semana": 2, "hora_intento": 15, "intentos": 42055, "answer": 2399, "tasa": 5.7, "dia_nombre": "Miercoles"}, {"dia_semana": 2, "hora_intento": 16, "intentos": 16285, "answer": 1006, "tasa": 6.2, "dia_nombre": "Miercoles"}, {"dia_semana": 2, "hora_intento": 17, "intentos": 2963, "answer": 301, "tasa": 10.2, "dia_nombre": "Miercoles"}, {"dia_semana": 2, "hora_intento": 18, "intentos": 2697, "answer": 274, "tasa": 10.2, "dia_nombre": "Miercoles"}, {"dia_semana": 2, "hora_intento": 19, "intentos": 2, "answer": 0, "tasa": 0.0, "dia_nombre": "Miercoles"}, {"dia_semana": 3, "hora_intento": 7, "intentos": 5306, "answer": 352, "tasa": 6.6, "dia_nombre": "Jueves"}, {"dia_semana": 3, "hora_intento": 8, "intentos": 24504, "answer": 1937, "tasa": 7.9, "dia_nombre": "Jueves"}, {"dia_semana": 3, "hora_intento": 9, "intentos": 24545, "answer": 1891, "tasa": 7.7, "dia_nombre": "Jueves"}, {"dia_semana": 3, "hora_intento": 10, "intentos": 27114, "answer": 2084, "tasa": 7.7, "dia_nombre": "Jueves"}, {"dia_semana": 3, "hora_intento": 11, "intentos": 38559, "answer": 2389, "tasa": 6.2, "dia_nombre": "Jueves"}, {"dia_semana": 3, "hora_intento": 12, "intentos": 27855, "answer": 1701, "tasa": 6.1, "dia_nombre": "Jueves"}, {"dia_semana": 3, "hora_intento": 13, "intentos": 18826, "answer": 1379, "tasa": 7.3, "dia_nombre": "Jueves"}, {"dia_semana": 3, "hora_intento": 14, "intentos": 25386, "answer": 1584, "tasa": 6.2, "dia_nombre": "Jueves"}, {"dia_semana": 3, "hora_intento": 15, "intentos": 25074, "answer": 1111, "tasa": 4.4, "dia_nombre": "Jueves"}, {"dia_semana": 3, "hora_intento": 16, "intentos": 23994, "answer": 1106, "tasa": 4.6, "dia_nombre": "Jueves"}, {"dia_semana": 3, "hora_intento": 17, "intentos": 5517, "answer": 270, "tasa": 4.9, "dia_nombre": "Jueves"}, {"dia_semana": 3, "hora_intento": 18, "intentos": 7600, "answer": 335, "tasa": 4.4, "dia_nombre": "Jueves"}, {"dia_semana": 3, "hora_intento": 19, "intentos": 2, "answer": 0, "tasa": 0.0, "dia_nombre": "Jueves"}, {"dia_semana": 4, "hora_intento": 7, "intentos": 5964, "answer": 434, "tasa": 7.3, "dia_nombre": "Viernes"}, {"dia_semana": 4, "hora_intento": 8, "intentos": 28651, "answer": 1890, "tasa": 6.6, "dia_nombre": "Viernes"}, {"dia_semana": 4, "hora_intento": 9, "intentos": 32301, "answer": 1792, "tasa": 5.5, "dia_nombre": "Viernes"}, {"dia_semana": 4, "hora_intento": 10, "intentos": 40453, "answer": 1988, "tasa": 4.9, "dia_nombre": "Viernes"}, {"dia_semana": 4, "hora_intento": 11, "intentos": 42027, "answer": 1763, "tasa": 4.2, "dia_nombre": "Viernes"}, {"dia_semana": 4, "hora_intento": 12, "intentos": 24479, "answer": 791, "tasa": 3.2, "dia_nombre": "Viernes"}, {"dia_semana": 4, "hora_intento": 13, "intentos": 48496, "answer": 2346, "tasa": 4.8, "dia_nombre": "Viernes"}, {"dia_semana": 4, "hora_intento": 14, "intentos": 38851, "answer": 1776, "tasa": 4.6, "dia_nombre": "Viernes"}, {"dia_semana": 4, "hora_intento": 15, "intentos": 50241, "answer": 2198, "tasa": 4.4, "dia_nombre": "Viernes"}, {"dia_semana": 4, "hora_intento": 16, "intentos": 19214, "answer": 1094, "tasa": 5.7, "dia_nombre": "Viernes"}, {"dia_semana": 4, "hora_intento": 17, "intentos": 20013, "answer": 914, "tasa": 4.6, "dia_nombre": "Viernes"}, {"dia_semana": 4, "hora_intento": 18, "intentos": 12127, "answer": 730, "tasa": 6.0, "dia_nombre": "Viernes"}], "hora_por_estrategia": [{"estrategia": "1099", "hora_intento": 7, "intentos": 7455, "answer": 462, "abandon": 112, "tasa": 6.2}, {"estrategia": "1099", "hora_intento": 8, "intentos": 26729, "answer": 1903, "abandon": 343, "tasa": 7.1}, {"estrategia": "1099", "hora_intento": 9, "intentos": 18755, "answer": 1489, "abandon": 191, "tasa": 7.9}, {"estrategia": "1099", "hora_intento": 10, "intentos": 30865, "answer": 2228, "abandon": 208, "tasa": 7.2}, {"estrategia": "1099", "hora_intento": 11, "intentos": 27672, "answer": 2286, "abandon": 191, "tasa": 8.3}, {"estrategia": "1099", "hora_intento": 12, "intentos": 23412, "answer": 1763, "abandon": 149, "tasa": 7.5}, {"estrategia": "1099", "hora_intento": 13, "intentos": 16664, "answer": 1024, "abandon": 107, "tasa": 6.1}, {"estrategia": "1099", "hora_intento": 14, "intentos": 28779, "answer": 2490, "abandon": 237, "tasa": 8.7}, {"estrategia": "1099", "hora_intento": 15, "intentos": 31073, "answer": 2093, "abandon": 163, "tasa": 6.7}, {"estrategia": "1099", "hora_intento": 16, "intentos": 25665, "answer": 1639, "abandon": 139, "tasa": 6.4}, {"estrategia": "1099", "hora_intento": 17, "intentos": 9188, "answer": 576, "abandon": 92, "tasa": 6.3}, {"estrategia": "1099", "hora_intento": 18, "intentos": 10481, "answer": 756, "abandon": 66, "tasa": 7.2}, {"estrategia": "1099", "hora_intento": 19, "intentos": 4, "answer": 1, "abandon": 1, "tasa": 25.0}, {"estrategia": "1100", "hora_intento": 7, "intentos": 1022, "answer": 71, "abandon": 16, "tasa": 6.9}, {"estrategia": "1100", "hora_intento": 8, "intentos": 4951, "answer": 327, "abandon": 28, "tasa": 6.6}, {"estrategia": "1100", "hora_intento": 9, "intentos": 1811, "answer": 147, "abandon": 41, "tasa": 8.1}, {"estrategia": "1100", "hora_intento": 10, "intentos": 9539, "answer": 773, "abandon": 56, "tasa": 8.1}, {"estrategia": "1100", "hora_intento": 11, "intentos": 15867, "answer": 1217, "abandon": 70, "tasa": 7.7}, {"estrategia": "1100", "hora_intento": 12, "intentos": 10912, "answer": 733, "abandon": 62, "tasa": 6.7}, {"estrategia": "1100", "hora_intento": 13, "intentos": 6681, "answer": 448, "abandon": 26, "tasa": 6.7}, {"estrategia": "1100", "hora_intento": 14, "intentos": 15655, "answer": 1237, "abandon": 95, "tasa": 7.9}, {"estrategia": "1100", "hora_intento": 15, "intentos": 16780, "answer": 1114, "abandon": 66, "tasa": 6.6}, {"estrategia": "1100", "hora_intento": 16, "intentos": 10304, "answer": 774, "abandon": 31, "tasa": 7.5}, {"estrategia": "1100", "hora_intento": 17, "intentos": 428, "answer": 32, "abandon": 0, "tasa": 7.5}, {"estrategia": "1100", "hora_intento": 18, "intentos": 142, "answer": 16, "abandon": 0, "tasa": 11.3}, {"estrategia": "214", "hora_intento": 7, "intentos": 6265, "answer": 517, "abandon": 135, "tasa": 8.3}, {"estrategia": "214", "hora_intento": 8, "intentos": 55017, "answer": 3823, "abandon": 632, "tasa": 6.9}, {"estrategia": "214", "hora_intento": 9, "intentos": 57009, "answer": 3655, "abandon": 411, "tasa": 6.4}, {"estrategia": "214", "hora_intento": 10, "intentos": 76435, "answer": 4694, "abandon": 481, "tasa": 6.1}, {"estrategia": "214", "hora_intento": 11, "intentos": 76074, "answer": 5263, "abandon": 448, "tasa": 6.9}, {"estrategia": "214", "hora_intento": 12, "intentos": 33046, "answer": 2209, "abandon": 215, "tasa": 6.7}, {"estrategia": "214", "hora_intento": 13, "intentos": 49145, "answer": 3121, "abandon": 361, "tasa": 6.4}, {"estrategia": "214", "hora_intento": 14, "intentos": 43952, "answer": 2659, "abandon": 339, "tasa": 6.0}, {"estrategia": "214", "hora_intento": 15, "intentos": 43275, "answer": 2327, "abandon": 219, "tasa": 5.4}, {"estrategia": "214", "hora_intento": 16, "intentos": 29000, "answer": 1679, "abandon": 118, "tasa": 5.8}, {"estrategia": "214", "hora_intento": 17, "intentos": 20831, "answer": 1133, "abandon": 106, "tasa": 5.4}, {"estrategia": "214", "hora_intento": 18, "intentos": 14765, "answer": 960, "abandon": 85, "tasa": 6.5}, {"estrategia": "214", "hora_intento": 19, "intentos": 10, "answer": 0, "abandon": 0, "tasa": 0.0}, {"estrategia": "579", "hora_intento": 7, "intentos": 19029, "answer": 932, "abandon": 134, "tasa": 4.9}, {"estrategia": "579", "hora_intento": 8, "intentos": 85459, "answer": 4470, "abandon": 423, "tasa": 5.2}, {"estrategia": "579", "hora_intento": 9, "intentos": 77689, "answer": 4613, "abandon": 434, "tasa": 5.9}, {"estrategia": "579", "hora_intento": 10, "intentos": 117679, "answer": 6275, "abandon": 499, "tasa": 5.3}, {"estrategia": "579", "hora_intento": 11, "intentos": 118194, "answer": 7192, "abandon": 606, "tasa": 6.1}, {"estrategia": "579", "hora_intento": 12, "intentos": 86911, "answer": 4954, "abandon": 469, "tasa": 5.7}, {"estrategia": "579", "hora_intento": 13, "intentos": 62813, "answer": 3778, "abandon": 323, "tasa": 6.0}, {"estrategia": "579", "hora_intento": 14, "intentos": 83032, "answer": 4365, "abandon": 483, "tasa": 5.3}, {"estrategia": "579", "hora_intento": 15, "intentos": 122586, "answer": 5938, "abandon": 456, "tasa": 4.8}, {"estrategia": "579", "hora_intento": 16, "intentos": 71366, "answer": 3378, "abandon": 330, "tasa": 4.7}, {"estrategia": "579", "hora_intento": 17, "intentos": 21746, "answer": 1064, "abandon": 169, "tasa": 4.9}, {"estrategia": "579", "hora_intento": 18, "intentos": 19470, "answer": 1053, "abandon": 202, "tasa": 5.4}, {"estrategia": "579", "hora_intento": 19, "intentos": 8, "answer": 0, "abandon": 0, "tasa": 0.0}, {"estrategia": "tempranas", "hora_intento": 8, "intentos": 2514, "answer": 215, "abandon": 83, "tasa": 8.6}, {"estrategia": "tempranas", "hora_intento": 9, "intentos": 3872, "answer": 324, "abandon": 59, "tasa": 8.4}, {"estrategia": "tempranas", "hora_intento": 10, "intentos": 11084, "answer": 393, "abandon": 96, "tasa": 3.5}, {"estrategia": "tempranas", "hora_intento": 11, "intentos": 14671, "answer": 459, "abandon": 41, "tasa": 3.1}, {"estrategia": "tempranas", "hora_intento": 12, "intentos": 4703, "answer": 73, "abandon": 16, "tasa": 1.6}, {"estrategia": "tempranas", "hora_intento": 14, "intentos": 3338, "answer": 150, "abandon": 10, "tasa": 4.5}, {"estrategia": "tempranas", "hora_intento": 15, "intentos": 6000, "answer": 240, "abandon": 15, "tasa": 4.0}, {"estrategia": "tempranas", "hora_intento": 16, "intentos": 5146, "answer": 164, "abandon": 39, "tasa": 3.2}, {"estrategia": "tempranas", "hora_intento": 17, "intentos": 1475, "answer": 27, "abandon": 2, "tasa": 1.8}, {"estrategia": "tempranas", "hora_intento": 18, "intentos": 107, "answer": 3, "abandon": 0, "tasa": 2.8}], "distribucion_resultados": [{"resultado_clean": "ABANDON", "n": 7978}, {"resultado_clean": "ANSWER", "n": 90069}, {"resultado_clean": "ANSWER-MACHINE", "n": 352627}, {"resultado_clean": "BUSY", "n": 96592}, {"resultado_clean": "CLEAN", "n": 26429}, {"resultado_clean": "CONGESTION", "n": 23551}, {"resultado_clean": "DO-NOT-CALL", "n": 4204}, {"resultado_clean": "FAILED", "n": 145083}, {"resultado_clean": "NO-ANSWER", "n": 134231}]};
+const F = {periodo:'todo', mes:'todos', campana:'todas', estrategia:'todas'};
+const DIAS = ['Lun','Mar','Mié','Jue','Vie'];
+const EST_L = {
+  mora_temprana_0_214:'Mora temprana',
+  mora_intermedia_215_a_579:'Mora intermedia',
+  mora_alta_580_1099:'Mora alta',
+  mora_alta_1100:'Mora alta 1100+',
+  fusionado_tempranas:'Fusionado temprana'
+};
+const C = {
+  b:'#3b82f6',b2:'#2563eb',g:'#10b981',r:'#ef4444',
+  a:'#ea580c',o:'#f59e0b',p:'#8b5cf6',t:'#14b8a6',
+  gy:'#6b7280'
+};
 
-let F={periodo:'todo',mes:'todos',campana:'todas',estrategia:'todas'};
-let CH={};
+Chart.defaults.color='#64748b';
+Chart.defaults.font.family="'IBM Plex Sans',sans-serif";
+Chart.defaults.font.size=11;
 
-function N(n){return new Intl.NumberFormat('es-CO').format(Math.round(n))}
-function sem(v){if(v>=12)return`<span class="b bg">${v.toFixed(1)}%</span>`;if(v>=9)return`<span class="b ba">${v.toFixed(1)}%</span>`;return`<span class="b br">${v.toFixed(1)}%</span>`;}
-function bc(v){return v>=12?C.g:v>=9?C.a:C.r}
+const N=n=>Math.round(+n).toLocaleString('es-CO');
+const MN="'IBM Plex Mono',monospace";
+const charts={};
 
-function getFechas(){
-  const hoy=new Date();const hoyStr=hoy.toISOString().slice(0,10);
-  const lun=new Date(hoy);lun.setDate(hoy.getDate()-((hoy.getDay()+6)%7));
-  const lunStr=lun.toISOString().slice(0,10);
-  const lunA=new Date(lun);lunA.setDate(lun.getDate()-7);
-  const lunAStr=lunA.toISOString().slice(0,10);
-  const vieA=new Date(lunA);vieA.setDate(lunA.getDate()+4);
-  const vieAStr=vieA.toISOString().slice(0,10);
-  return{hoy:hoyStr,lun:lunStr,lunA:lunAStr,vieA:vieAStr,
-    mesActual:hoyStr.slice(0,7),
-    mesAnt:new Date(hoy.getFullYear(),hoy.getMonth()-1,1).toISOString().slice(0,7)};
+function mkChart(id,cfg){
+  if(charts[id])charts[id].destroy();
+  charts[id]=new Chart(document.getElementById(id),cfg);
 }
 
-function passDate(fecha_str,mes){
-  const {hoy,lun,lunA,vieA,mesActual,mesAnt}=getFechas();
-  if(F.mes!=='todos'&&mes!==F.mes)return false;
-  if(F.periodo==='hoy')return fecha_str===hoy;
-  if(F.periodo==='semana'){const d=new Date(fecha_str).getDay();return fecha_str>=lun&&fecha_str<=hoy&&d>=1&&d<=5;}
-  if(F.periodo==='semana_ant'){const d=new Date(fecha_str).getDay();return fecha_str>=lunA&&fecha_str<=vieA&&d>=1&&d<=5;}
-  if(F.periodo==='mes_actual')return mes===mesActual;
-  if(F.periodo==='mes_ant')return mes===mesAnt;
+const cdO={
+  responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{display:false}},
+  scales:{
+    x:{grid:{color:'rgba(30,45,69,0.5)',drawBorder:false},ticks:{color:'#64748b',font:{family:MN,size:10}}},
+    y:{grid:{color:'rgba(30,45,69,0.5)',drawBorder:false},ticks:{color:'#64748b',font:{family:MN,size:10}}}
+  }
+};
+
+function bc(v){return v>=11?C.g:v>=9?C.b:v>=7?C.o:C.r;}
+function sem(v){
+  const cls=v>=11?'sem-g':v>=9?'sem-y':'sem-r';
+  return `<span class="sem ${cls}">${v}%</span>`;
+}
+
+// ── FILTROS ──────────────────────────────────────────────────────────────────
+function setF(key,val,btn){
+  F[key]=val;
+  if(btn && btn.tagName==='BUTTON'){
+    const gid={periodo:'fg-periodo',mes:'fg-mes',campana:'fg-campana'}[key];
+    if(gid) document.querySelectorAll('#'+gid+' .fbtn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  const act=[];
+  if(F.periodo!=='todo') act.push(F.periodo);
+  if(F.mes!=='todos') act.push(F.mes);
+  if(F.campana!=='todas') act.push(F.campana);
+  if(F.estrategia!=='todas') act.push(F.estrategia.replace(/_/g,' '));
+  const lbl=document.getElementById('fa-lbl');
+  if(act.length){lbl.textContent=act.join(' · ');lbl.style.display='inline-block';}
+  else lbl.style.display='none';
+  renderAll();
+}
+
+function passDate(fecha_str, mes){
+  const hoy=new Date();
+  const fd=new Date(fecha_str);
+  if(isNaN(fd)) return false;
+  if(F.periodo==='hoy'){
+    const h=hoy.toISOString().slice(0,10);
+    return fecha_str===h;
+  }
+  if(F.periodo==='semana'){
+    const d=new Date(hoy);d.setDate(d.getDate()-d.getDay()+1);
+    return fd>=d&&fd<=hoy;
+  }
+  if(F.periodo==='semana_ant'){
+    const lun=new Date(hoy);lun.setDate(lun.getDate()-lun.getDay()-6);
+    const dom=new Date(lun);dom.setDate(dom.getDate()+6);
+    return fd>=lun&&fd<=dom;
+  }
+  if(F.periodo==='mes_actual'){
+    return mes===`${hoy.getFullYear()}-${String(hoy.getMonth()+1).padStart(2,'0')}`;
+  }
+  if(F.mes!=='todos') return mes===F.mes;
   return true;
 }
 
-function filtrar(arr,campos){
-  return arr.filter(d=>{
-    if(!passDate(d.fecha_str,d.mes))return false;
-    if(F.campana!=='todas'&&d.campana!==F.campana)return false;
-    if(F.estrategia!=='todas'&&d.estrategia!==F.estrategia)return false;
+function filtReg(){
+  return RAW.evolucion_diaria.filter(d=>{
+    if(!passDate(d.fecha_str,d.mes)) return false;
     return true;
   });
 }
 
-function agregar(arr,keyFn,valFns){
-  const map={};
-  arr.forEach(d=>{
-    const k=keyFn(d);
-    if(!map[k])map[k]=valFns.reduce((o,vf)=>{o[vf.n]=0;return o;},{});
-    valFns.forEach(vf=>map[k][vf.n]+=vf.fn(d));
-  });
-  return Object.entries(map).map(([k,v])=>({_key:k,...v}));
-}
-
-function setF(tipo,val,el){
-  if(tipo==='periodo'){
-    F.periodo=val;
-    if(val!=='todo'){F.mes='todos';document.querySelectorAll('#fg-mes .fbtn').forEach(b=>b.classList.remove('active'));document.querySelector('#fg-mes .fbtn').classList.add('active');}
-    document.querySelectorAll('#fg-periodo .fbtn').forEach(b=>b.classList.remove('active'));
-    el.classList.add('active');
-  } else if(tipo==='mes'){
-    F.mes=val;if(val!=='todos')F.periodo='todo';
-    document.querySelectorAll('#fg-mes .fbtn').forEach(b=>b.classList.remove('active'));
-    el.classList.add('active');
-    if(val!=='todos'){document.querySelectorAll('#fg-periodo .fbtn').forEach(b=>b.classList.remove('active'));document.querySelector('#fg-periodo .fbtn').classList.add('active');}
-  } else if(tipo==='campana'){
-    F.campana=val;document.querySelectorAll('#fg-campana .fbtn').forEach(b=>b.classList.remove('active'));el.classList.add('active');
-  } else if(tipo==='estrategia'){F.estrategia=val;}
-  const lbl=document.getElementById('fa-lbl');
-  const p=[];
-  if(F.mes!=='todos')p.push(F.mes);if(F.campana!=='todas')p.push(F.campana);
-  if(F.estrategia!=='todas')p.push(EL[F.estrategia]||F.estrategia);if(F.periodo!=='todo')p.push(F.periodo.replace('_',' '));
-  if(p.length){lbl.style.display='';lbl.textContent='Filtro: '+p.join(' · ');}else lbl.style.display='none';
-  renderAll();
-}
-
+// ── TABS ─────────────────────────────────────────────────────────────────────
 function showTab(id,btn){
   document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
   document.querySelectorAll('.nbtn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');
+  btn.classList.add('active');
+  renderTab(id);
 }
 
-const cdO={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
-  scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#4a5568',font:{size:10,family:'DM Mono'}}},
-         y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#4a5568',font:{size:10}}}}};
+function renderAll(){renderTab(document.querySelector('.nbtn.active')?.textContent?.toLowerCase()||'resumen');}
 
-function mkChart(id,cfg){if(CH[id])CH[id].destroy();CH[id]=new Chart(document.getElementById(id),cfg);}
+function renderTab(id){
+  const tabs={
+    'resumen':renderResumen,'troncales':renderTroncales,'estrategia':renderEstrategia,
+    'tareas':renderTareas,'clusters':renderClusters,'semana':renderSemana,
+    'fatiga':renderFatiga,'tipificación':renderTipificacion,'tipificacion':renderTipificacion,
+    'anomalías':renderAnomalias,'anomalias':renderAnomalias
+  };
+  const fn=tabs[id.toLowerCase()];
+  if(fn) fn();
+}
 
-function renderAll(){
-  const evoF=filtrar(RAW.evolucion_diaria);
-  const troncF=filtrar(RAW.gran_tronc);
-  const estF=filtrar(RAW.gran_est);
-  const tareaF=filtrar(RAW.gran_tarea);
-  const clusterF=filtrar(RAW.gran_cluster);
-  const horaF=filtrar(RAW.gran_hora);
-  const tipifF=filtrar(RAW.gran_tipif);
-  const resF=filtrar(RAW.gran_res);
+// ── RESUMEN ───────────────────────────────────────────────────────────────────
+function renderResumen(){
+  const k=RAW.kpis;
+  document.getElementById('k-total').textContent=N(k.total_registros);
+  document.getElementById('k-tocados').textContent=N(k.total_tocados)+' tocados ('+k.pct_tocados+'%)';
+  document.getElementById('k-answer').textContent=N(k.total_answer);
+  document.getElementById('k-pct-answer').textContent=k.pct_answer+'% tasa contacto';
+  document.getElementById('k-abandon').textContent=N(k.total_abandon);
+  document.getElementById('k-pct-abandon').textContent=k.pct_abandon+'% del total';
+  document.getElementById('k-intentos').textContent=N(k.total_intentos);
+  document.getElementById('k-tasa-intentos').textContent=k.tasa_contacto_intentos+'% tasa';
+  document.getElementById('k-timeout').textContent=k.pct_timeout+'%';
 
-  // ── KPIs ──────────────────────────────────────────────────────────────────
-  const totReg=evoF.reduce((s,d)=>s+d.total,0);
-  const totAns=evoF.reduce((s,d)=>s+d.answer,0);
-  const totAban=evoF.reduce((s,d)=>s+d.abandon,0);
-  const tasa=totReg>0?(totAns/totReg*100):0;
-  document.getElementById('k-total').textContent=N(totReg);
-  document.getElementById('k-tocados').textContent=N(totReg)+' tocados';
-  document.getElementById('k-answer').textContent=N(totAns);
-  document.getElementById('k-pct-answer').textContent=tasa.toFixed(1)+'% de tocados';
-  document.getElementById('k-abandon').textContent=N(totAban);
-  document.getElementById('k-pct-abandon').textContent=totReg>0?(totAban/totReg*100).toFixed(1)+'% de tocados':'-';
-  document.getElementById('k-tasa').textContent=tasa.toFixed(1)+'%';
-  document.getElementById('k-timeout').textContent=RAW.kpis.pct_timeout+'%';
-  document.getElementById('an-timeout').textContent=RAW.kpis.pct_timeout+'%';
-  document.getElementById('an-abandon').textContent=N(totAban);
+  const evo=filtReg();
+  mkChart('cEvo',{type:'line',data:{
+    labels:evo.map(d=>d.fecha_str.slice(5)),
+    datasets:[
+      {data:evo.map(d=>d.answer),borderColor:C.g,backgroundColor:'rgba(16,185,129,.1)',fill:true,tension:0.3,pointRadius:0,borderWidth:1.5},
+      {data:evo.map(d=>d.abandon),borderColor:C.r,backgroundColor:'transparent',fill:false,tension:0.3,pointRadius:0,borderWidth:1}
+    ]},
+    options:{...cdO,plugins:{legend:{display:true,labels:{color:'#94a3b8',font:{size:10},boxWidth:6}}}}
+  });
 
-  // ── Evolución ─────────────────────────────────────────────────────────────
-  // Agrupar por fecha
-  const evoByF={};
-  evoF.forEach(d=>{if(!evoByF[d.fecha_str])evoByF[d.fecha_str]={total:0,answer:0,abandon:0};evoByF[d.fecha_str].total+=d.total;evoByF[d.fecha_str].answer+=d.answer;evoByF[d.fecha_str].abandon+=d.abandon;});
-  const evoDates=Object.keys(evoByF).sort();
-  const evoDat=evoDates.map(f=>({...evoByF[f],tasa:evoByF[f].total>0?(evoByF[f].answer/evoByF[f].total*100):0}));
-  mkChart('cEvo',{type:'line',data:{labels:evoDates.map(d=>d.slice(5)),datasets:[{data:evoDat.map(d=>+d.tasa.toFixed(1)),borderColor:C.b2,backgroundColor:'rgba(59,130,246,0.07)',borderWidth:1.5,pointRadius:3,pointBackgroundColor:evoDat.map(d=>bc(d.tasa)),pointBorderColor:evoDat.map(d=>bc(d.tasa)),fill:true,tension:0.3}]},options:{...cdO,plugins:{legend:{display:false}},scales:{x:{...cdO.scales.x,ticks:{...cdO.scales.x.ticks,maxTicksLimit:14,autoSkip:true}},y:{...cdO.scales.y,min:0,ticks:{...cdO.scales.y.ticks,callback:v=>v+'%'}}}}});
+  const resF=RAW.distribucion_resultados.filter(r=>!['CLEAN','DO-NOT-CALL'].includes(r.resultado_clean));
+  mkChart('cRes',{type:'doughnut',data:{
+    labels:resF.map(r=>r.resultado_clean),
+    datasets:[{data:resF.map(r=>r.n),backgroundColor:[C.r,C.g,C.a,C.o,C.gy,C.p,C.t,C.b],borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{display:true,position:'right',labels:{color:'#8892a4',font:{size:10},boxWidth:8,padding:6}}}}
+  });
 
-  // ── Resultados donut ──────────────────────────────────────────────────────
-  const resByTipo={};
-  resF.forEach(d=>{if(!['CLEAN','DO-NOT-CALL','DESCONOCIDO'].includes(d.resultado_clean)){if(!resByTipo[d.resultado_clean])resByTipo[d.resultado_clean]=0;resByTipo[d.resultado_clean]+=d.n;}});
-  const resLabels=Object.keys(resByTipo);const resVals=resLabels.map(k=>resByTipo[k]);
-  const dnc=resF.filter(d=>d.resultado_clean==='DO-NOT-CALL').reduce((s,d)=>s+d.n,0);
-  document.getElementById('an-dnc').textContent=N(dnc);
-  mkChart('cRes',{type:'doughnut',data:{labels:resLabels,datasets:[{data:resVals,backgroundColor:[C.r,C.g,C.a,C.o,C.gy,C.p,C.t,C.b],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{display:true,position:'right',labels:{color:'#8892a4',font:{size:10},boxWidth:8,padding:6}}}}});
+  const MN_MAP={'01':'Ene','02':'Feb','03':'Mar','04':'Abr','05':'May','06':'Jun','07':'Jul','08':'Ago','09':'Sep','10':'Oct','11':'Nov','12':'Dic'};
+  mkChart('cMeses',{type:'bar',data:{
+    labels:RAW.por_mes.map(m=>MN_MAP[m.mes.slice(5)]||m.mes),
+    datasets:[
+      {label:'ANSWER',data:RAW.por_mes.map(m=>m.answer),backgroundColor:C.b,borderRadius:3},
+      {label:'Tasa %',data:RAW.por_mes.map(m=>m.tasa),type:'line',borderColor:C.g,backgroundColor:'transparent',yAxisID:'y2',pointRadius:4,pointBackgroundColor:C.g}
+    ]},
+    options:{...cdO,plugins:{legend:{display:true,labels:{color:'#8892a4',font:{size:10},boxWidth:8}}},
+      scales:{x:cdO.scales.x,y:{...cdO.scales.y,ticks:{...cdO.scales.y.ticks,callback:v=>(v/1000).toFixed(0)+'K'}},
+      y2:{position:'right',grid:{display:false},ticks:{color:'#4a5568',font:{size:10},callback:v=>v+'%'}}}}
+  });
 
-  // ── Meses ─────────────────────────────────────────────────────────────────
-  const mesByM={};
-  evoF.forEach(d=>{if(!mesByM[d.mes])mesByM[d.mes]={total:0,answer:0};mesByM[d.mes].total+=d.total;mesByM[d.mes].answer+=d.answer;});
-  const mesKeys=Object.keys(mesByM).sort();
-  mkChart('cMeses',{type:'bar',data:{labels:mesKeys.map(m=>MN[m.slice(5)]||m),datasets:[{label:'ANSWER',data:mesKeys.map(m=>mesByM[m].answer),backgroundColor:C.b,borderRadius:3},{label:'Tasa %',data:mesKeys.map(m=>mesByM[m].total>0?+(mesByM[m].answer/mesByM[m].total*100).toFixed(1):0),type:'line',borderColor:C.g,backgroundColor:'transparent',yAxisID:'y2',pointRadius:4,pointBackgroundColor:C.g}]},options:{...cdO,plugins:{legend:{display:true,labels:{color:'#8892a4',font:{size:10},boxWidth:8}}},scales:{x:cdO.scales.x,y:{...cdO.scales.y,ticks:{...cdO.scales.y.ticks,callback:v=>(v/1000).toFixed(0)+'K'}},y2:{position:'right',grid:{display:false},ticks:{color:'#4a5568',font:{size:10},callback:v=>v+'%'}}}}});
+  mkChart('cDias',{type:'bar',data:{
+    labels:RAW.por_dia_semana.map(d=>d.nombre),
+    datasets:[{data:RAW.por_dia_semana.map(d=>d.tasa),backgroundColor:RAW.por_dia_semana.map(d=>bc(d.tasa)),borderRadius:4}]},
+    options:{...cdO,scales:{x:cdO.scales.x,y:{...cdO.scales.y,min:7,max:13,ticks:{...cdO.scales.y.ticks,callback:v=>v+'%'}}}}
+  });
+}
 
-  // ── Dias semana ───────────────────────────────────────────────────────────
-  const diaByD={};
-  evoF.forEach(d=>{const ds=new Date(d.fecha_str).getDay();if(ds>=1&&ds<=6){const dk=ds-1;if(!diaByD[dk])diaByD[dk]={total:0,answer:0};diaByD[dk].total+=d.total;diaByD[dk].answer+=d.answer;}});
-  const diaKeys=[0,1,2,3,4,5];
-  const diaTasas=diaKeys.map(k=>diaByD[k]&&diaByD[k].total>0?+(diaByD[k].answer/diaByD[k].total*100).toFixed(1):0);
-  mkChart('cDias',{type:'bar',data:{labels:DIAS,datasets:[{data:diaTasas,backgroundColor:diaTasas.map(v=>bc(v)),borderRadius:4}]},options:{...cdO,scales:{x:cdO.scales.x,y:{...cdO.scales.y,min:0,ticks:{...cdO.scales.y.ticks,callback:v=>v+'%'}}}}});
-  mkChart('cDiaSem',{type:'bar',data:{labels:DIAS,datasets:[{data:diaTasas,backgroundColor:diaTasas.map(v=>bc(v)),borderRadius:5}]},options:{...cdO,scales:{x:cdO.scales.x,y:{...cdO.scales.y,min:0,ticks:{...cdO.scales.y.ticks,callback:v=>v+'%'}}}}});
-
-  // ── TRONCALES ─────────────────────────────────────────────────────────────
-  const troncByT={};
-  troncF.forEach(d=>{const k=d.troncal;if(!troncByT[k])troncByT[k]={intentos:0,answer:0,abandon:0,celular:0,fijo:0};troncByT[k].intentos+=d.intentos;troncByT[k].answer+=d.answer;troncByT[k].abandon+=d.abandon;if(d.tipo_numero==='celular')troncByT[k].celular+=d.intentos;if(d.tipo_numero==='fijo')troncByT[k].fijo+=d.intentos;});
-  const troncArr=Object.entries(troncByT).map(([k,v])=>({troncal:k,...v,tasa:v.intentos>0?+(v.answer/v.intentos*100).toFixed(1):0})).sort((a,b)=>+a.troncal-+b.troncal);
-  // KPIs troncal
-  const kpT=document.getElementById('kpi-tronc');kpT.innerHTML='';
+// ── TRONCALES ─────────────────────────────────────────────────────────────────
+function renderTroncales(){
   const tC=[C.b2,C.g,C.a,C.t];
-  troncArr.forEach((t,i)=>{const d=document.createElement('div');d.className='kpi';d.style.cssText='background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px;position:relative;overflow:hidden';d.innerHTML=`<div style="position:absolute;top:0;left:0;right:0;height:2px;background:${tC[i]||C.b}"></div><div class="kpi-lbl">Troncal ${t.troncal}</div><div class="kpi-val" style="color:${tC[i]||C.b}">${t.tasa}%</div><div class="kpi-sub">${N(t.intentos)} intentos</div>`;kpT.appendChild(d);});
-  mkChart('cTronc',{type:'bar',data:{labels:troncArr.map(t=>'T-'+t.troncal),datasets:[{data:troncArr.map(t=>t.tasa),backgroundColor:troncArr.map(t=>t.tasa===Math.max(...troncArr.map(x=>x.tasa))?C.g:C.b),borderRadius:5}]},options:{...cdO,scales:{x:cdO.scales.x,y:{...cdO.scales.y,min:0,ticks:{...cdO.scales.y.ticks,callback:v=>v+'%'}}}}});
-  mkChart('cTipoNum',{type:'bar',data:{labels:troncArr.map(t=>'T-'+t.troncal),datasets:[{label:'Celular',data:troncArr.map(t=>t.celular),backgroundColor:C.b,borderRadius:3},{label:'Fijo',data:troncArr.map(t=>t.fijo),backgroundColor:C.a,borderRadius:3}]},options:{...cdO,plugins:{legend:{display:true,labels:{color:'#8892a4',font:{size:10},boxWidth:8}}},scales:{x:{...cdO.scales.x,stacked:true},y:{...cdO.scales.y,stacked:true,ticks:{...cdO.scales.y.ticks,callback:v=>(v/1000).toFixed(0)+'K'}}}}});
+  const kpT=document.getElementById('kpi-troncales');kpT.innerHTML='';
+  RAW.por_troncal.forEach((t,i)=>{
+    const d=document.createElement('div');d.className='kpi';
+    d.style.cssText='background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:14px;position:relative;overflow:hidden';
+    d.innerHTML=`<div style="position:absolute;top:0;left:0;right:0;height:2px;background:${tC[i]}"></div>
+      <div class="kpi-lbl">Troncal ${t.troncal}</div>
+      <div class="kpi-val" style="color:${tC[i]}">${t.tasa}%</div>
+      <div class="kpi-sub">${N(t.intentos)} intentos</div>`;
+    kpT.appendChild(d);
+  });
+  mkChart('cTronc',{type:'bar',data:{
+    labels:RAW.por_troncal.map(t=>'T-'+t.troncal),
+    datasets:[{data:RAW.por_troncal.map(t=>t.tasa),backgroundColor:RAW.por_troncal.map(t=>t.tasa===Math.max(...RAW.por_troncal.map(x=>x.tasa))?C.g:C.b),borderRadius:5}]},
+    options:{...cdO,scales:{x:cdO.scales.x,y:{...cdO.scales.y,min:4,max:9,ticks:{...cdO.scales.y.ticks,callback:v=>v+'%'}}}}
+  });
+  mkChart('cTipoNum',{type:'bar',data:{
+    labels:RAW.por_troncal.map(t=>'T-'+t.troncal),
+    datasets:[
+      {label:'Celular',data:RAW.por_troncal.map(t=>t.celular),backgroundColor:C.b,borderRadius:3},
+      {label:'Fijo',data:RAW.por_troncal.map(t=>t.fijo),backgroundColor:C.a,borderRadius:3}
+    ]},
+    options:{...cdO,plugins:{legend:{display:true,labels:{color:'#8892a4',font:{size:10},boxWidth:8}}},
+      scales:{x:{...cdO.scales.x,stacked:true},y:{...cdO.scales.y,stacked:true,ticks:{...cdO.scales.y.ticks,callback:v=>(v/1000).toFixed(0)+'K'}}}}
+  });
   const tbT=document.getElementById('tbTronc');tbT.innerHTML='';
-  troncArr.forEach(t=>{const tr=document.createElement('tr');tr.innerHTML=`<td><strong>Troncal ${t.troncal}</strong></td><td class="num">${N(t.intentos)}</td><td class="num">${N(t.answer)}</td><td class="num">${N(t.abandon)}</td><td class="num">${N(t.celular)}</td><td class="num">${N(t.fijo)}</td><td class="num">${sem(t.tasa)}</td>`;tbT.appendChild(tr);});
+  RAW.por_troncal.forEach(t=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><strong>Troncal ${t.troncal}</strong></td><td class="num">${N(t.intentos)}</td><td class="num">${N(t.answer)}</td><td class="num">${N(t.abandon)}</td><td class="num">${N(t.celular)}</td><td class="num">${N(t.fijo)}</td><td class="num">${sem(t.tasa)}</td>`;
+    tbT.appendChild(tr);
+  });
+}
 
-  // ── ESTRATEGIA ────────────────────────────────────────────────────────────
-  const estByE={};
-  estF.forEach(d=>{const k=d.estrategia;if(!estByE[k])estByE[k]={total:0,answer:0,abandon:0,llamadas:0};estByE[k].total+=d.total;estByE[k].answer+=d.answer;estByE[k].abandon+=d.abandon;estByE[k].llamadas+=d.llamadas_sum;});
-  const estArr=Object.entries(estByE).map(([k,v])=>({estrategia:k,...v,tasa:v.total>0?+(v.answer/v.total*100).toFixed(1):0,llamadas_prom:v.total>0?+(v.llamadas/v.total).toFixed(1):0}));
-  // Columna vs fila
-  const marcByM={};
-  estF.forEach(d=>{const k=d.estrategia_marcacion;if(!marcByM[k])marcByM[k]={total:0,answer:0,llamadas:0};marcByM[k].total+=d.total;marcByM[k].answer+=d.answer;marcByM[k].llamadas+=d.llamadas_sum;});
-  const cmpD=document.getElementById('cmp-marc');cmpD.innerHTML='';
-  ['columna','fila'].forEach(m=>{const v=marcByM[m]||{total:0,answer:0,llamadas:0};const tasa=v.total>0?+(v.answer/v.total*100).toFixed(1):0;const lp=v.total>0?+(v.llamadas/v.total).toFixed(1):0;const maxT=Math.max(...Object.values(marcByM).map(x=>x.total>0?x.answer/x.total:0));const isW=v.total>0&&v.answer/v.total===maxT;const div=document.createElement('div');div.className='cmp-card'+(isW?' win':'');div.innerHTML=`<div class="cmp-lbl">${m==='fila'?'Marcacion en fila '+(isW?'&#10003;':''):'Marcacion en columna'}</div><div class="cmp-big">${tasa}%</div><div class="cmp-d">${N(v.total)} registros · ${N(v.answer)} ANSWER</div><div class="cmp-d" style="margin-top:4px">Prom. <strong style="color:var(--text)">${lp} llamadas</strong></div>`;cmpD.appendChild(div);});
-  mkChart('cEst',{type:'bar',data:{labels:estArr.map(e=>EL[e.estrategia]||e.estrategia),datasets:[{data:estArr.map(e=>e.tasa),backgroundColor:[C.a,C.o,C.b,C.t],borderRadius:4}]},options:{...cdO,scales:{x:{...cdO.scales.x,ticks:{...cdO.scales.x.ticks,font:{size:10},maxRotation:0}},y:{...cdO.scales.y,min:0,ticks:{...cdO.scales.y.ticks,callback:v=>v+'%'}}}}});
-  mkChart('cEstVol',{type:'bar',data:{labels:estArr.map(e=>EL[e.estrategia]||e.estrategia),datasets:[{data:estArr.map(e=>e.total),backgroundColor:C.b+'88',borderRadius:4}]},options:{...cdO,scales:{x:{...cdO.scales.x,ticks:{...cdO.scales.x.ticks,font:{size:10},maxRotation:0}},y:{...cdO.scales.y,ticks:{...cdO.scales.y.ticks,callback:v=>(v/1000).toFixed(0)+'K'}}}}});
+// ── ESTRATEGIA ────────────────────────────────────────────────────────────────
+function renderEstrategia(){
+  const cmpD=document.getElementById('cmp-marcacion');cmpD.innerHTML='';
+  RAW.columna_vs_fila.forEach(m=>{
+    const w=m.tasa===Math.max(...RAW.columna_vs_fila.map(x=>x.tasa));
+    const d=document.createElement('div');d.className='cmp-card'+(w?' win':'');
+    d.innerHTML=`<div class="cmp-lbl">${m.estrategia_marcacion==='fila'?'Marcación en fila ✓':'Marcación en columna'}</div>
+      <div class="cmp-big">${m.tasa}%</div>
+      <div class="cmp-d">${N(m.total)} registros · ${N(m.answer)} ANSWER</div>
+      <div class="cmp-d" style="margin-top:4px">Prom. <strong style="color:var(--text)">${m.llamadas_prom} llamadas</strong></div>`;
+    cmpD.appendChild(d);
+  });
+  mkChart('cEst',{type:'bar',data:{
+    labels:RAW.por_estrategia.map(e=>EST_L[e.estrategia]||e.estrategia),
+    datasets:[{data:RAW.por_estrategia.map(e=>e.tasa),backgroundColor:[C.a,C.o,C.b,C.t,C.g],borderRadius:4}]},
+    options:{...cdO,scales:{x:{...cdO.scales.x,ticks:{...cdO.scales.x.ticks,font:{size:10},maxRotation:0}},y:{...cdO.scales.y,min:8,max:13,ticks:{...cdO.scales.y.ticks,callback:v=>v+'%'}}}}
+  });
+  mkChart('cEstVol',{type:'bar',data:{
+    labels:RAW.por_estrategia.map(e=>EST_L[e.estrategia]||e.estrategia),
+    datasets:[{data:RAW.por_estrategia.map(e=>e.total),backgroundColor:C.b+'88',borderRadius:4}]},
+    options:{...cdO,scales:{x:{...cdO.scales.x,ticks:{...cdO.scales.x.ticks,font:{size:10},maxRotation:0}},y:{...cdO.scales.y,ticks:{...cdO.scales.y.ticks,callback:v=>(v/1000).toFixed(0)+'K'}}}}
+  });
   const tbE=document.getElementById('tbEst');tbE.innerHTML='';
-  estArr.forEach(e=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${EL[e.estrategia]||e.estrategia}</td><td class="num">${N(e.total)}</td><td class="num">${N(e.answer)}</td><td class="num">${sem(e.tasa)}</td><td><div class="bw"><div class="bt"><div class="bf" style="width:${Math.min(e.tasa/15*100,100).toFixed(0)}%;background:${bc(e.tasa)}"></div></div></div></td>`;tbE.appendChild(tr);});
+  RAW.por_estrategia.forEach(e=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${EST_L[e.estrategia]||e.estrategia}</td><td class="num">${N(e.total)}</td><td class="num">${N(e.answer)}</td><td class="num">${sem(e.tasa)}</td>
+      <td><div class="bw"><div class="bt"><div class="bf" style="width:${Math.min(e.tasa/13*100,100).toFixed(0)}%;background:${bc(e.tasa)}"></div></div></div></td>`;
+    tbE.appendChild(tr);
+  });
+}
 
-  // ── TAREAS ────────────────────────────────────────────────────────────────
-  const tareaByT={};
-  tareaF.forEach(d=>{const k=d.tipoid_norm;if(!tareaByT[k])tareaByT[k]={total:0,answer:0};tareaByT[k].total+=d.total;tareaByT[k].answer+=d.answer;});
-  const tareaArr=Object.entries(tareaByT).map(([k,v])=>({tipoid_norm:k,...v,tasa:v.total>0?+(v.answer/v.total*100).toFixed(1):0})).filter(t=>t.total>=100).sort((a,b)=>b.total-a.total);
-  const top14=tareaArr.slice(0,14);
-  mkChart('cTareas',{type:'bar',data:{labels:top14.map(t=>t.tipoid_norm),datasets:[{data:top14.map(t=>t.tasa),backgroundColor:top14.map(t=>bc(t.tasa)),borderRadius:3}]},options:{...cdO,indexAxis:'y',scales:{x:{...cdO.scales.x,ticks:{...cdO.scales.x.ticks,callback:v=>v+'%'}},y:{...cdO.scales.y,ticks:{...cdO.scales.y.ticks,font:{size:10}}}}}});
+// ── TAREAS ────────────────────────────────────────────────────────────────────
+function renderTareas(){
+  const top14=RAW.por_tarea.filter(t=>t.tipoid_norm!=='Asignacion'&&t.total>=1000).slice(0,14);
+  mkChart('cTareas',{type:'bar',data:{
+    labels:top14.map(t=>t.tipoid_norm),
+    datasets:[{data:top14.map(t=>t.tasa),backgroundColor:top14.map(t=>bc(t.tasa)),borderRadius:3}]},
+    options:{...cdO,indexAxis:'y',scales:{x:{...cdO.scales.x,ticks:{...cdO.scales.x.ticks,callback:v=>v+'%'}},y:{...cdO.scales.y,ticks:{...cdO.scales.y.ticks,font:{size:10}}}}}
+  });
   const tbTar=document.getElementById('tbTareas');tbTar.innerHTML='';
-  [...tareaArr].sort((a,b)=>b.tasa-a.tasa).forEach(t=>{const tr=document.createElement('tr');tr.innerHTML=`<td style="font-size:11px">${t.tipoid_norm}</td><td class="num">${N(t.total)}</td><td class="num">${sem(t.tasa)}</td>`;tbTar.appendChild(tr);});
+  [...RAW.por_tarea].filter(t=>t.total>=500).sort((a,b)=>b.tasa-a.tasa).forEach(t=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="font-size:11px">${t.tipoid_norm}</td><td class="num">${N(t.total)}</td><td class="num">${sem(t.tasa)}</td>`;
+    tbTar.appendChild(tr);
+  });
+}
 
-  // ── CLUSTERS ──────────────────────────────────────────────────────────────
-  const clustByC={};
-  clusterF.forEach(d=>{const k=d.cluster_clean;if(!clustByC[k])clustByC[k]={total:0,answer:0};clustByC[k].total+=d.total;clustByC[k].answer+=d.answer;});
-  const clustArr=Object.entries(clustByC).map(([k,v])=>({cluster_clean:k,...v,tasa:v.total>0?+(v.answer/v.total*100).toFixed(1):0})).filter(c=>c.total>5).sort((a,b)=>a.cluster_clean.localeCompare(b.cluster_clean));
-  mkChart('cClust',{type:'bar',data:{labels:clustArr.map(c=>c.cluster_clean.replace('Cluster ','C')),datasets:[{data:clustArr.map(c=>c.tasa),backgroundColor:clustArr.map(c=>bc(c.tasa)),borderRadius:4}]},options:{...cdO,scales:{x:{...cdO.scales.x,ticks:{...cdO.scales.x.ticks,font:{size:9},maxRotation:30}},y:{...cdO.scales.y,min:0,ticks:{...cdO.scales.y.ticks,callback:v=>v+'%'}}}}});
-  mkChart('cClustVol',{type:'doughnut',data:{labels:clustArr.map(c=>c.cluster_clean.replace('Cluster ','')),datasets:[{data:clustArr.map(c=>c.total),backgroundColor:[C.b,C.t,C.g,C.a,C.o,C.r,C.p,'#34d399','#f472b6',C.gy],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{display:true,position:'right',labels:{color:'#8892a4',font:{size:10},boxWidth:8,padding:5}}}}});
+// ── CLUSTERS ──────────────────────────────────────────────────────────────────
+function renderClusters(){
+  const cl=RAW.por_cluster.filter(c=>c.total>5);
+  mkChart('cClust',{type:'bar',data:{
+    labels:cl.map(c=>c.cluster_clean.replace('Cluster ','C')),
+    datasets:[{data:cl.map(c=>c.tasa),backgroundColor:cl.map(c=>bc(c.tasa)),borderRadius:4}]},
+    options:{...cdO,scales:{x:{...cdO.scales.x,ticks:{...cdO.scales.x.ticks,font:{size:9},maxRotation:30}},y:{...cdO.scales.y,min:8,max:15,ticks:{...cdO.scales.y.ticks,callback:v=>v+'%'}}}}
+  });
+  mkChart('cClustVol',{type:'doughnut',data:{
+    labels:cl.map(c=>c.cluster_clean.replace('Cluster ','')),
+    datasets:[{data:cl.map(c=>c.total),backgroundColor:[C.b,C.t,C.g,C.a,C.o,C.r,C.p,'#34d399','#f472b6',C.gy],borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{display:true,position:'right',labels:{color:'#8892a4',font:{size:10},boxWidth:8,padding:5}}}}
+  });
   const tbCl=document.getElementById('tbClust');tbCl.innerHTML='';
-  const maxTC=Math.max(...clustArr.map(c=>c.tasa));
-  clustArr.forEach(c=>{const tr=document.createElement('tr');tr.innerHTML=`<td style="font-size:11px">${c.cluster_clean}</td><td class="num">${N(c.total)}</td><td class="num">${N(c.answer)}</td><td class="num">${sem(c.tasa)}</td><td><div class="bw"><div class="bt"><div class="bf" style="width:${maxTC>0?(c.tasa/maxTC*100).toFixed(0):0}%;background:${bc(c.tasa)}"></div></div><span style="font-family:var(--mono);font-size:10px;color:var(--text2);min-width:34px;text-align:right">${c.tasa}%</span></div></td>`;tbCl.appendChild(tr);});
+  const maxT=Math.max(...cl.map(c=>c.tasa));
+  cl.forEach(c=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="font-size:11px">${c.cluster_clean}</td><td class="num">${N(c.total)}</td><td class="num">${N(c.answer)}</td><td class="num">${sem(c.tasa)}</td>
+      <td><div class="bw"><div class="bt"><div class="bf" style="width:${(c.tasa/maxT*100).toFixed(0)}%;background:${bc(c.tasa)}"></div></div><span style="font-family:var(--mono);font-size:10px;color:var(--text2);min-width:34px;text-align:right">${c.tasa}%</span></div></td>`;
+    tbCl.appendChild(tr);
+  });
+}
 
-  // ── HEATMAP dia x hora ────────────────────────────────────────────────────
-  const horaByDH={};
-  horaF.forEach(d=>{const k=`${d.dia_semana}_${d.hora_intento}`;if(!horaByDH[k])horaByDH[k]={intentos:0,answer:0};horaByDH[k].intentos+=d.intentos;horaByDH[k].answer+=d.answer;});
-  const horas=[7,8,9,10,11,12,13,14,15,16,17,18];
+// ── SEMANA / HORA ─────────────────────────────────────────────────────────────
+function renderSemana(){
+  mkChart('cDiaSem',{type:'bar',data:{
+    labels:RAW.por_dia_semana.map(d=>d.nombre),
+    datasets:[{data:RAW.por_dia_semana.map(d=>d.tasa),backgroundColor:RAW.por_dia_semana.map(d=>bc(d.tasa)),borderRadius:5}]},
+    options:{...cdO,scales:{x:cdO.scales.x,y:{...cdO.scales.y,min:7,max:13,ticks:{...cdO.scales.y.ticks,callback:v=>v+'%'}}}}
+  });
+  mkChart('cHora',{type:'bar',data:{
+    labels:RAW.por_hora.map(h=>h.hora_intento+'h'),
+    datasets:[{data:RAW.por_hora.map(h=>h.tasa),backgroundColor:RAW.por_hora.map(h=>bc(h.tasa)),borderRadius:3}]},
+    options:{...cdO,scales:{x:cdO.scales.x,y:{...cdO.scales.y,min:4,max:9,ticks:{...cdO.scales.y.ticks,callback:v=>v+'%'}}}}
+  });
+  // Heatmap
   const hm=document.getElementById('heatmap');hm.innerHTML='';
+  const horas=[7,8,9,10,11,12,13,14,15,16,17,18];
+  const hmD=RAW.heatmap_hora_dia;
   const hHead=document.createElement('div');hHead.className='hm-head';hHead.textContent='';hm.appendChild(hHead);
   horas.forEach(h=>{const d=document.createElement('div');d.className='hm-head';d.textContent=h+'h';hm.appendChild(d);});
   [0,1,2,3,4].forEach(dia=>{
     const rl=document.createElement('div');rl.className='hm-row-lbl';rl.textContent=DIAS[dia];hm.appendChild(rl);
     horas.forEach(h=>{
-      const cell=horaByDH[`${dia+1}_${h}`]||horaByDH[`${dia}_${h}`];
-      const tasa=cell&&cell.intentos>0?+(cell.answer/cell.intentos*100).toFixed(1):0;
-      const pct=(tasa-4)/Math.max(1,7.5-4);
+      const cell=hmD.find(x=>x.dia_semana===dia&&x.hora_intento===h);
+      const tasa=cell?cell.tasa:0;
+      const pct=(tasa-4)/(7.5-4);
       const r=Math.round(59+pct*(34-59));const g2=Math.round(130+pct*(197-130));const b2=Math.round(246+pct*(94-246));
       const bg=`rgba(${r},${g2},${b2},${0.12+pct*0.55})`;
       const col=pct>0.6?'#22c55e':pct>0.3?'#60a5fa':'#4a5568';
-      const div=document.createElement('div');div.className='hm-cell';div.style.cssText=`background:${bg};border:1px solid rgba(255,255,255,0.04)`;div.style.color=col;div.textContent=tasa?tasa+'%':'-';
+      const div=document.createElement('div');div.className='hm-cell';
+      div.style.cssText=`background:${bg};border:1px solid rgba(255,255,255,0.04)`;
+      div.style.color=col;div.textContent=tasa?tasa+'%':'-';
       if(cell)div.title=`${DIAS[dia]} ${h}h - ${N(cell.intentos)} intentos`;
       hm.appendChild(div);
     });
   });
-
   // Hora por estrategia
-  const horaEstByEH={};
-  horaF.forEach(d=>{const k=`${d.estrategia}_${d.hora_intento}`;if(!horaEstByEH[k])horaEstByEH[k]={intentos:0,answer:0,estrategia:d.estrategia,hora:d.hora_intento};horaEstByEH[k].intentos+=d.intentos;horaEstByEH[k].answer+=d.answer;});
-  const heByEst={};
-  Object.values(horaEstByEH).forEach(d=>{if(!heByEst[d.estrategia])heByEst[d.estrategia]=[];heByEst[d.estrategia].push({hora:d.hora,tasa:d.intentos>0?+(d.answer/d.intentos*100).toFixed(1):0});});
+  const heD={};
+  RAW.hora_por_estrategia.forEach(d=>{if(!heD[d.estrategia])heD[d.estrategia]=[];heD[d.estrategia].push(d);});
   const heC={mora_alta_1100:C.a,mora_alta_580_1099:C.o,mora_intermedia_215_a_579:C.b,mora_temprana_0_214:C.t};
-  const horasFilter=[8,9,10,11,12,13,14,15];
-  mkChart('cHoraEst',{type:'line',data:{labels:horasFilter.map(h=>h+'h'),datasets:Object.entries(heByEst).map(([est,arr])=>({label:EL[est]||est,data:horasFilter.map(h=>{const r=arr.find(x=>x.hora===h);return r?r.tasa:null;}),borderColor:heC[est]||C.gy,backgroundColor:'transparent',borderWidth:1.5,pointRadius:3,tension:0.3,spanGaps:true}))},options:{...cdO,plugins:{legend:{display:true,labels:{color:'#8892a4',font:{size:10},boxWidth:8}}},scales:{x:cdO.scales.x,y:{...cdO.scales.y,min:0,ticks:{...cdO.scales.y.ticks,callback:v=>v+'%'}}}}});
-
-  // ── TIPIFICACION ──────────────────────────────────────────────────────────
-  const tipByC={};
-  tipifF.forEach(d=>{const k=d.cod01+'|'+d.desc1;if(!tipByC[k])tipByC[k]={cod01:d.cod01,desc1:d.desc1,n:0};tipByC[k].n+=d.n;});
-  const tipArr=Object.values(tipByC).sort((a,b)=>b.n-a.n).slice(0,14);
-  const tipTotal=tipArr.reduce((s,t)=>s+t.n,0);
-  mkChart('cTipif',{type:'doughnut',data:{labels:tipArr.map(t=>t.desc1.replace('CBZ_','').replace(/_/g,' ')),datasets:[{data:tipArr.map(t=>t.n),backgroundColor:[C.r,C.a,C.g,C.t,C.b,C.p,C.o,'#34d399','#f472b6',C.gy,'#818cf8','#fb923c','#4ade80','#e879f9'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{display:true,position:'right',labels:{color:'#8892a4',font:{size:10},boxWidth:8,padding:4}}}}});
-  const tbTipif=document.getElementById('tbTipif');tbTipif.innerHTML='';
-  tipArr.forEach(t=>{const pct=tipTotal>0?((t.n/tipTotal)*100).toFixed(1):'0.0';const tr=document.createElement('tr');tr.innerHTML=`<td><code style="font-size:9px;color:var(--text2)">${t.cod01}</code></td><td style="font-size:11px">${t.desc1.replace('CBZ_','').replace(/_/g,' ')}</td><td class="num">${N(t.n)}</td><td class="num">${pct}%</td>`;tbTipif.appendChild(tr);});
-
-  // ── ABANDON POR MES ────────────────────────────────────────────────────────
-  const abanByM={};
-  evoF.forEach(d=>{if(!abanByM[d.mes])abanByM[d.mes]={abandon:0,answer:0};abanByM[d.mes].abandon+=d.abandon;abanByM[d.mes].answer+=d.answer;});
-  const abanKeys=Object.keys(abanByM).sort();
-  mkChart('cAban',{type:'bar',data:{labels:abanKeys.map(m=>MN[m.slice(5)]||m),datasets:[{label:'Abandon',data:abanKeys.map(m=>abanByM[m].abandon),backgroundColor:C.r,borderRadius:3},{label:'Answer',data:abanKeys.map(m=>abanByM[m].answer),backgroundColor:C.g+'55',borderRadius:3}]},options:{...cdO,plugins:{legend:{display:true,labels:{color:'#8892a4',font:{size:10},boxWidth:8}}},scales:{x:cdO.scales.x,y:{...cdO.scales.y,ticks:{...cdO.scales.y.ticks,callback:v=>N(v)}}}}});
+  mkChart('cHoraEst',{type:'line',data:{
+    labels:[8,9,10,11,12,13,14,15].map(h=>h+'h'),
+    datasets:Object.entries(heD).map(([est,arr])=>({
+      label:EST_L[est]||est,
+      data:arr.sort((a,b)=>a.hora_intento-b.hora_intento).map(d=>d.tasa),
+      borderColor:heC[est]||C.gy,backgroundColor:'transparent',borderWidth:1.5,pointRadius:3,tension:0.3
+    }))},
+    options:{...cdO,plugins:{legend:{display:true,labels:{color:'#8892a4',font:{size:10},boxWidth:8}}},
+      scales:{x:cdO.scales.x,y:{...cdO.scales.y,min:4,max:9,ticks:{...cdO.scales.y.ticks,callback:v=>v+'%'}}}}
+  });
 }
 
-window.addEventListener('load',()=>{
-  // Fatiga (estatica)
+// ── FATIGA ────────────────────────────────────────────────────────────────────
+function renderFatiga(){
   const fs=RAW.fatiga_stats;
   const fsD=document.getElementById('fat-stats');fsD.innerHTML='';
-  [{val:fs.prom_intentos,lbl:'Promedio intentos hasta ANSWER'},{val:fs.mediana,lbl:'Mediana intentos'},{val:((fs.creditos_sin_answer/fs.total_creditos)*100).toFixed(1)+'%',lbl:'Creditos sin ningun ANSWER'}].forEach(s=>{const d=document.createElement('div');d.className='fat-stat';d.innerHTML=`<div class="fat-val">${s.val}</div><div class="fat-lbl">${s.lbl}</div>`;fsD.appendChild(d);});
-  mkChart('cFatiga',{type:'bar',data:{labels:RAW.fatiga_marcacion.map(f=>f.intentos+(f.intentos===15?'+':'')),datasets:[{data:RAW.fatiga_marcacion.map(f=>f.creditos),backgroundColor:C.b+'cc',borderRadius:3}]},options:{...cdO,scales:{x:cdO.scales.x,y:{...cdO.scales.y,ticks:{...cdO.scales.y.ticks,callback:v=>N(v)}}}}});
-  mkChart('cFatigaDona',{type:'doughnut',data:{labels:['Con al menos 1 ANSWER','Sin ningun ANSWER'],datasets:[{data:[fs.creditos_con_answer,fs.creditos_sin_answer],backgroundColor:[C.g,C.r+'88'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{display:true,position:'right',labels:{color:'#8892a4',font:{size:11},boxWidth:10,padding:8}}}}});
-  renderAll();
+  [{val:fs.prom_intentos,lbl:'Promedio intentos hasta ANSWER'},{val:fs.mediana,lbl:'Mediana intentos'},{val:((fs.creditos_sin_answer/fs.total_creditos)*100).toFixed(1)+'%',lbl:'Créditos sin ningún ANSWER'}].forEach(s=>{
+    const d=document.createElement('div');d.className='fat-stat';
+    d.innerHTML=`<div class="fat-val">${s.val}</div><div class="fat-lbl">${s.lbl}</div>`;
+    fsD.appendChild(d);
+  });
+  mkChart('cFatiga',{type:'bar',data:{
+    labels:RAW.fatiga_marcacion.map(f=>f.intentos+(f.intentos===15?'+':'')),
+    datasets:[{data:RAW.fatiga_marcacion.map(f=>f.creditos),backgroundColor:C.b+'cc',borderRadius:3}]},
+    options:{...cdO,scales:{x:cdO.scales.x,y:{...cdO.scales.y,ticks:{...cdO.scales.y.ticks,callback:v=>N(v)}}}}
+  });
+  mkChart('cFatigaDona',{type:'doughnut',data:{
+    labels:['Con al menos 1 ANSWER','Sin ningún ANSWER'],
+    datasets:[{data:[fs.creditos_con_answer,fs.creditos_sin_answer],backgroundColor:[C.g,C.r+'88'],borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{display:true,position:'right',labels:{color:'#8892a4',font:{size:11},boxWidth:10,padding:8}}}}
+  });
+}
+
+// ── TIPIFICACIÓN ──────────────────────────────────────────────────────────────
+function renderTipificacion(){
+  const tipTotal=RAW.tipificaciones.reduce((s,t)=>s+t.n,0);
+  mkChart('cTipif',{type:'doughnut',data:{
+    labels:RAW.tipificaciones.map(t=>t.desc1.replace('CBZ_','').replace(/_/g,' ')),
+    datasets:[{data:RAW.tipificaciones.map(t=>t.n),backgroundColor:[C.r,C.a,C.g,C.t,C.b,C.p,C.o,'#34d399','#f472b6',C.gy,'#818cf8','#fb923c','#4ade80','#e879f9'],borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{display:true,position:'right',labels:{color:'#8892a4',font:{size:10},boxWidth:8,padding:4}}}}
+  });
+  const tbTipif=document.getElementById('tbTipif');tbTipif.innerHTML='';
+  RAW.tipificaciones.forEach(t=>{
+    const pct=((t.n/tipTotal)*100).toFixed(1);
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><code style="font-size:9px;color:var(--text2);font-family:var(--mono)">${t.cod01}</code></td>
+      <td style="font-size:11px">${t.desc1.replace('CBZ_','').replace(/_/g,' ')}</td>
+      <td class="num">${N(t.n)}</td><td class="num">${pct}%</td>`;
+    tbTipif.appendChild(tr);
+  });
+  const MN_MAP={'01':'Ene','02':'Feb','03':'Mar','04':'Abr','05':'May','06':'Jun','07':'Jul','08':'Ago','09':'Sep','10':'Oct','11':'Nov','12':'Dic'};
+  mkChart('cAban',{type:'bar',data:{
+    labels:RAW.por_mes.map(m=>MN_MAP[m.mes.slice(5)]||m.mes),
+    datasets:[
+      {label:'Abandon',data:RAW.por_mes.map(m=>m.abandon),backgroundColor:C.r,borderRadius:3},
+      {label:'Answer',data:RAW.por_mes.map(m=>m.answer),backgroundColor:C.g+'55',borderRadius:3}
+    ]},
+    options:{...cdO,plugins:{legend:{display:true,labels:{color:'#8892a4',font:{size:10},boxWidth:8}}},
+      scales:{x:cdO.scales.x,y:{...cdO.scales.y,ticks:{...cdO.scales.y.ticks,callback:v=>N(v)}}}}
+  });
+}
+
+// ── ANOMALÍAS ─────────────────────────────────────────────────────────────────
+function renderAnomalias(){
+  const k=RAW.kpis;
+  const anomalias=[];
+  // Tasa de contacto baja
+  if(k.pct_answer<9) anomalias.push({tipo:'warn',icon:'⚠️',texto:`Tasa de contacto <strong>${k.pct_answer}%</strong> — por debajo del umbral esperado (>9%). Revisar calidad de bases y horarios de marcación.`});
+  else anomalias.push({tipo:'ok',icon:'✅',texto:`Tasa de contacto <strong>${k.pct_answer}%</strong> dentro del rango esperado.`});
+  // ABANDON alto
+  if(k.pct_abandon>1.5) anomalias.push({tipo:'warn',icon:'⚠️',texto:`Tasa de ABANDON <strong>${k.pct_abandon}%</strong> — superior al 1.5%. Puede indicar problemas de configuración en la marcación.`});
+  else anomalias.push({tipo:'ok',icon:'✅',texto:`Tasa de ABANDON <strong>${k.pct_abandon}%</strong> en niveles normales.`});
+  // Timeout alto
+  if(k.pct_timeout>25) anomalias.push({tipo:'warn',icon:'⚠️',texto:`Timeout del <strong>${k.pct_timeout}%</strong> sobre ANSWER — alto. Los asesores están tardando en tipificar.`});
+  else anomalias.push({tipo:'info',icon:'ℹ️',texto:`Timeout del <strong>${k.pct_timeout}%</strong> sobre ANSWER — dentro del rango aceptable.`});
+  // Créditos sin answer
+  const pctSinAnswer=((RAW.fatiga_stats.creditos_sin_answer/RAW.fatiga_stats.total_creditos)*100).toFixed(1);
+  if(+pctSinAnswer>35) anomalias.push({tipo:'warn',icon:'⚠️',texto:`El <strong>${pctSinAnswer}%</strong> de créditos no ha tenido ningún ANSWER — revisar calidad de teléfonos.`});
+  else anomalias.push({tipo:'info',icon:'ℹ️',texto:`El <strong>${pctSinAnswer}%</strong> de créditos sin ANSWER — nivel aceptable.`});
+  // Mejor troncal
+  const mejorT=RAW.por_troncal.reduce((a,b)=>a.tasa>b.tasa?a:b,RAW.por_troncal[0]);
+  anomalias.push({tipo:'info',icon:'📊',texto:`Mejor troncal: <strong>Troncal ${mejorT.troncal}</strong> con ${mejorT.tasa}% de tasa de contacto.`});
+  // Mejor día
+  const mejorD=RAW.por_dia_semana.reduce((a,b)=>a.tasa>b.tasa?a:b,RAW.por_dia_semana[0]);
+  anomalias.push({tipo:'info',icon:'📅',texto:`Mejor día para marcar: <strong>${mejorD.nombre}</strong> con ${mejorD.tasa}% de tasa.`});
+
+  const al=document.getElementById('anomalia-list');al.innerHTML='';
+  anomalias.forEach(a=>{
+    const d=document.createElement('div');d.className=`anomalia ${a.tipo}`;
+    d.innerHTML=`<div class="anomalia-icon">${a.icon}</div><div class="anomalia-text">${a.texto}</div>`;
+    al.appendChild(d);
+  });
+}
+
+// ── ACTUALIZAR ────────────────────────────────────────────────────────────────
+async function actualizarDashboard(){
+  window.open('https://github.com/GTR-ai421/avalogic-dashboards/actions/workflows/actualizar_dashboards.yml','_blank');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+window.addEventListener('load',()=>{
+  renderResumen();
 });
 </script>
 </body>
 </html>
-
