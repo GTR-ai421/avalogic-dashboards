@@ -425,7 +425,7 @@ def main():
             with open(box_config) as f:
                 bc = json.load(f)
             BOX_CLIENT_ID     = bc.get("client_id",     "smna0t2n580ncwpt47ip0hwon5uxf0d9")
-            BOX_CLIENT_SECRET = bc.get("client_secret", "rJJlVosTDHZsDifhy59XiTbr9SUlrxBj")
+            BOX_CLIENT_SECRET = bc.get("client_secret", "")
             BOX_ACCESS_TOKEN  = bc.get("access_token",  "")
             BOX_REFRESH_TOKEN = bc.get("refresh_token", "")
         else:
@@ -435,8 +435,8 @@ def main():
                 token_path = CARPETA_WA_IVR.parent / "box_token.json"
             with open(token_path) as f:
                 t = json.load(f)
-            BOX_CLIENT_ID     = "smna0t2n580ncwpt47ip0hwon5uxf0d9"
-            BOX_CLIENT_SECRET = "rJJlVosTDHZsDifhy59XiTbr9SUlrxBj"
+            BOX_CLIENT_ID = os.environ.get("BOX_CLIENT_ID", "smna0t2n580ncwpt47ip0hwon5uxf0d9")
+            BOX_CLIENT_SECRET = os.environ.get("BOX_CLIENT_SECRET", "")
             BOX_ACCESS_TOKEN  = t.get("access_token", "")
             BOX_REFRESH_TOKEN = t.get("refresh_token", "")
 

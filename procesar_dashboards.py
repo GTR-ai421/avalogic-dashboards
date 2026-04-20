@@ -18,7 +18,7 @@ log = logging.getLogger(__name__)
 
 # ─── CREDENCIALES BOX ────────────────────────────────────────────────────────
 BOX_CLIENT_ID     = os.environ.get("BOX_CLIENT_ID",     "smna0t2n580ncwpt47ip0hwon5uxf0d9")
-BOX_CLIENT_SECRET = os.environ.get("BOX_CLIENT_SECRET", "rJJlVosTDHZsDifhy59XiTbr9SUlrxBj")
+BOX_CLIENT_SECRET = os.environ.get("BOX_CLIENT_SECRET", "")
 BOX_ACCESS_TOKEN  = os.environ.get("BOX_ACCESS_TOKEN",  "")
 BOX_REFRESH_TOKEN = os.environ.get("BOX_REFRESH_TOKEN", "")
 
