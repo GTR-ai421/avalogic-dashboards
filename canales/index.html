@@ -431,19 +431,39 @@ tbody td:first-child{font-family:var(--sans);color:var(--text);font-size:12px}
 
   <!-- TAB: AGENTES WA -->
   <div class="tab-panel" id="tab-wa-agentes">
-    <div class="row c2">
-      <div class="card">
-        <div class="card-title">Top 10 agentes por tasa efectiva</div>
-        <div class="chart-wrap" style="height:280px"><canvas id="wa-chartAgentes"></canvas></div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap">
+      <span class="filtros-label">Filtrar por estrategia</span>
+      <div class="filter-group" id="fg-ag-est">
+        <button class="fbtn active" onclick="setAgEst('todas',this)">Todas</button>
+        <button class="fbtn" onclick="setAgEst('1. ESTRATEGIA 0-214',this)">Mora temprana</button>
+        <button class="fbtn" onclick="setAgEst('2. ESTRATEGIA 215-579',this)">Mora intermedia</button>
+        <button class="fbtn" onclick="setAgEst('3. ESTRATEGIA 580-1099',this)">Mora alta</button>
+        <button class="fbtn" onclick="setAgEst('4. ESTRATEGIA >= 1100',this)">Mora alta 1100+</button>
       </div>
-      <div class="card">
-        <div class="card-title">Ranking agentes</div>
-        <div class="tbl-wrap"><table><thead><tr><th>#</th><th>Agente</th><th>Chats</th><th>Efectivos</th><th>% efectivo</th></tr></thead><tbody id="wa-tbody-agentes"></tbody></table></div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+        <span class="filtros-label">Ordenar por</span>
+        <div class="filter-group" id="fg-ag-ord">
+          <button class="fbtn active" onclick="setAgOrd('total',this)">Volumen</button>
+          <button class="fbtn" onclick="setAgOrd('tasa',this)">Tasa efectiva</button>
+          <button class="fbtn" onclick="setAgOrd('efectivos',this)">Efectivos</button>
+        </div>
       </div>
     </div>
-    <div class="insight" style="margin-top:14px">
-      <div class="insight-icon">🏆</div>
-      <div class="insight-text"><strong>Jeremy Henao</strong> lidera con 60.7% de tasa efectiva (300 chats). Los top 3 agentes con alto volumen son <strong>Adriana Gómez</strong> (29.8%), <strong>Laura Serna</strong> (24.8%) y <strong>Francy Díaz</strong> (23.9%). La mediana de tasa efectiva entre agentes de alto volumen es ~24%.</div>
+    <div class="row c2">
+      <div class="card">
+        <div class="card-title">Tasa efectiva por agente <span id="ag-chart-label" style="font-size:10px;color:var(--text3);font-weight:400;text-transform:none;letter-spacing:0">(top 15 visible)</span></div>
+        <div class="chart-wrap" style="height:320px"><canvas id="wa-chartAgentes"></canvas></div>
+      </div>
+      <div class="card" style="display:flex;flex-direction:column">
+        <div class="card-title">Todos los agentes <span id="ag-count" style="font-size:10px;color:var(--text3);font-weight:400;text-transform:none;letter-spacing:0"></span></div>
+        <input id="ag-search" type="text" placeholder="Buscar agente..." 
+          style="padding:6px 10px;font-size:11px;font-family:var(--sans);background:var(--bg3);border:1px solid var(--border);border-radius:4px;color:var(--text);margin-bottom:10px;outline:none"
+          oninput="renderAgTabla()">
+        <div class="tbl-wrap" style="flex:1;overflow-y:auto;max-height:360px">
+          <table><thead><tr><th>#</th><th>Agente</th><th>Chats</th><th>Efectivos</th><th>% ef.</th></tr></thead>
+          <tbody id="wa-tbody-agentes"></tbody></table>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -805,16 +825,86 @@ const WA = {
     {cod:'2007',desc:'Posible entrega bien',n:23},
   ],
   agentes:[
-    {nombre:'JEREMY HENAO',    tot:300,  ef:182,tasa:60.7},
-    {nombre:'LUIS SANCHEZ',    tot:261,  ef:90, tasa:34.5},
-    {nombre:'ADRIANA GOMEZ',   tot:2719, ef:809,tasa:29.8},
-    {nombre:'PATRICIA TARAZONA',tot:554, ef:158,tasa:28.5},
-    {nombre:'LAURA SERNA',     tot:2234, ef:554,tasa:24.8},
-    {nombre:'ANDREA VALOR',    tot:257,  ef:62, tasa:24.1},
-    {nombre:'FRANCY DIAZ',     tot:2666, ef:638,tasa:23.9},
-    {nombre:'KAREN HERNANDEZ', tot:2531, ef:598,tasa:23.6},
-    {nombre:'ESTEBAN DAVILA',  tot:1639, ef:357,tasa:21.8},
-    {nombre:'NOEMÍ GIRALDO',   tot:709,  ef:140,tasa:19.7},
+    {usuario:'YVARGAS',nombre:'YEISON VARGAS HOYOS',total:6196,efectivos:171,tasa_ef:2.8},
+    {usuario:'WMERCHAN',nombre:'WILMER MERCHAN OCAMPO',total:4753,efectivos:212,tasa_ef:4.5},
+    {usuario:'JRAMIREZA',nombre:'JUAN RAMIREZ ARROYAVE',total:4140,efectivos:76,tasa_ef:1.8},
+    {usuario:'CCANON',nombre:'CAMILO CANON LOPEZ',total:3994,efectivos:3,tasa_ef:0.1},
+    {usuario:'MCCUESTAS',nombre:'CAMILA CUESTAS LOPEZ',total:3529,efectivos:2,tasa_ef:0.1},
+    {usuario:'MAGAVIRIA',nombre:'ANGELICA GAVIRIA GONZALEZ',total:3517,efectivos:150,tasa_ef:4.3},
+    {usuario:'LARCILAC',nombre:'LEIDY ARCILA CARDENAS',total:3470,efectivos:0,tasa_ef:0.0},
+    {usuario:'SCARBALLO',nombre:'SANTIAGO CARBALLO HENAO',total:3199,efectivos:0,tasa_ef:0.0},
+    {usuario:'LGOMEZM',nombre:'ADRIANA GOMEZ',total:2719,efectivos:809,tasa_ef:29.8},
+    {usuario:'FDIAZ',nombre:'FRANCY DIAZ',total:2666,efectivos:638,tasa_ef:23.9},
+    {usuario:'MCORRALESR',nombre:'MARIANA CORRALES RESTREPO',total:2616,efectivos:489,tasa_ef:18.7},
+    {usuario:'KYHERNANDEZ',nombre:'KAREN HERNANDEZ',total:2531,efectivos:598,tasa_ef:23.6},
+    {usuario:'KBARRAGAN',nombre:'KELLY BARRAGAN VILLANUEVA',total:2418,efectivos:241,tasa_ef:10.0},
+    {usuario:'LSERNAV',nombre:'LAURA SERNA',total:2234,efectivos:554,tasa_ef:24.8},
+    {usuario:'SAMELINES',nombre:'SHIRLEY AMELINES QUINTERO',total:2025,efectivos:415,tasa_ef:20.5},
+    {usuario:'LORREGO',nombre:'LICE ORREGO AMARILES',total:1929,efectivos:319,tasa_ef:16.5},
+    {usuario:'JMGAVIRIA',nombre:'JULIETH GAVIRIA MUNOZ',total:1872,efectivos:587,tasa_ef:31.4},
+    {usuario:'MOBANDO',nombre:'MARIANA OBANDO MONTES',total:1800,efectivos:312,tasa_ef:17.3},
+    {usuario:'ESTDAVILA',nombre:'ESTEBAN DAVILA',total:1639,efectivos:357,tasa_ef:21.8},
+    {usuario:'NGIRALDO',nombre:'NOEMI GIRALDO',total:709,efectivos:140,tasa_ef:19.7},
+    {usuario:'PTARAZONA',nombre:'PATRICIA TARAZONA',total:554,efectivos:158,tasa_ef:28.5},
+    {usuario:'LCSANCHEZ',nombre:'LUIS SANCHEZ',total:261,efectivos:90,tasa_ef:34.5},
+    {usuario:'JHENAO',nombre:'JEREMY HENAO',total:300,efectivos:182,tasa_ef:60.7},
+    {usuario:'AVALOR',nombre:'ANDREA VALOR',total:257,efectivos:62,tasa_ef:24.1},
+  ],
+  por_estrategia:[
+    {usuario:'YVARGAS',estrategia:'2. ESTRATEGIA 215-579',total:9043,efectivos:294,tasa:3.3},
+    {usuario:'YVARGAS',estrategia:'1. ESTRATEGIA 0-214',total:3687,efectivos:183,tasa:5.0},
+    {usuario:'YVARGAS',estrategia:'3. ESTRATEGIA 580-1099',total:609,efectivos:31,tasa:5.1},
+    {usuario:'YVARGAS',estrategia:'4. ESTRATEGIA >= 1100',total:106,efectivos:5,tasa:4.7},
+    {usuario:'JRAMIREZA',estrategia:'2. ESTRATEGIA 215-579',total:7980,efectivos:430,tasa:5.4},
+    {usuario:'JRAMIREZA',estrategia:'1. ESTRATEGIA 0-214',total:2118,efectivos:226,tasa:10.7},
+    {usuario:'JRAMIREZA',estrategia:'3. ESTRATEGIA 580-1099',total:480,efectivos:28,tasa:5.8},
+    {usuario:'MAGAVIRIA',estrategia:'2. ESTRATEGIA 215-579',total:5952,efectivos:500,tasa:8.4},
+    {usuario:'MAGAVIRIA',estrategia:'1. ESTRATEGIA 0-214',total:1876,efectivos:312,tasa:16.6},
+    {usuario:'MAGAVIRIA',estrategia:'3. ESTRATEGIA 580-1099',total:683,efectivos:48,tasa:7.0},
+    {usuario:'CCANON',estrategia:'2. ESTRATEGIA 215-579',total:4912,efectivos:1050,tasa:21.4},
+    {usuario:'CCANON',estrategia:'1. ESTRATEGIA 0-214',total:4031,efectivos:974,tasa:24.2},
+    {usuario:'CCANON',estrategia:'3. ESTRATEGIA 580-1099',total:524,efectivos:87,tasa:16.6},
+    {usuario:'MCCUESTAS',estrategia:'2. ESTRATEGIA 215-579',total:4697,efectivos:574,tasa:12.2},
+    {usuario:'MCCUESTAS',estrategia:'1. ESTRATEGIA 0-214',total:1890,efectivos:421,tasa:22.3},
+    {usuario:'LARCILAC',estrategia:'2. ESTRATEGIA 215-579',total:4497,efectivos:773,tasa:17.2},
+    {usuario:'LARCILAC',estrategia:'1. ESTRATEGIA 0-214',total:1580,efectivos:412,tasa:26.1},
+    {usuario:'MCORRALESR',estrategia:'1. ESTRATEGIA 0-214',total:4285,efectivos:1413,tasa:33.0},
+    {usuario:'MCORRALESR',estrategia:'2. ESTRATEGIA 215-579',total:2108,efectivos:523,tasa:24.8},
+    {usuario:'KBARRAGAN',estrategia:'1. ESTRATEGIA 0-214',total:3587,efectivos:1248,tasa:34.8},
+    {usuario:'KBARRAGAN',estrategia:'2. ESTRATEGIA 215-579',total:1432,efectivos:309,tasa:21.6},
+    {usuario:'JMGAVIRIA',estrategia:'1. ESTRATEGIA 0-214',total:3566,efectivos:1468,tasa:41.2},
+    {usuario:'JMGAVIRIA',estrategia:'2. ESTRATEGIA 215-579',total:3386,efectivos:1145,tasa:33.8},
+    {usuario:'WMERCHAN',estrategia:'1. ESTRATEGIA 0-214',total:3522,efectivos:640,tasa:18.2},
+    {usuario:'WMERCHAN',estrategia:'2. ESTRATEGIA 215-579',total:2108,efectivos:298,tasa:14.1},
+    {usuario:'SCARBALLO',estrategia:'1. ESTRATEGIA 0-214',total:3472,efectivos:803,tasa:23.1},
+    {usuario:'SCARBALLO',estrategia:'2. ESTRATEGIA 215-579',total:2134,efectivos:412,tasa:19.3},
+    {usuario:'SAMELINES',estrategia:'2. ESTRATEGIA 215-579',total:3420,efectivos:700,tasa:20.5},
+    {usuario:'SAMELINES',estrategia:'1. ESTRATEGIA 0-214',total:1280,efectivos:348,tasa:27.2},
+    {usuario:'LORREGO',estrategia:'4. ESTRATEGIA >= 1100',total:3416,efectivos:591,tasa:17.3},
+    {usuario:'LORREGO',estrategia:'3. ESTRATEGIA 580-1099',total:1204,efectivos:187,tasa:15.5},
+    {usuario:'JMGAVIRIA',estrategia:'3. ESTRATEGIA 580-1099',total:1208,efectivos:198,tasa:16.4},
+    {usuario:'FDIAZ',estrategia:'1. ESTRATEGIA 0-214',total:2980,efectivos:892,tasa:29.9},
+    {usuario:'FDIAZ',estrategia:'2. ESTRATEGIA 215-579',total:2134,efectivos:486,tasa:22.8},
+    {usuario:'LGOMEZM',estrategia:'1. ESTRATEGIA 0-214',total:2812,efectivos:943,tasa:33.5},
+    {usuario:'LGOMEZM',estrategia:'2. ESTRATEGIA 215-579',total:1987,efectivos:412,tasa:20.7},
+    {usuario:'LSERNAV',estrategia:'1. ESTRATEGIA 0-214',total:2643,efectivos:832,tasa:31.5},
+    {usuario:'LSERNAV',estrategia:'2. ESTRATEGIA 215-579',total:1876,efectivos:398,tasa:21.2},
+    {usuario:'KYHERNANDEZ',estrategia:'1. ESTRATEGIA 0-214',total:2534,efectivos:789,tasa:31.1},
+    {usuario:'KYHERNANDEZ',estrategia:'2. ESTRATEGIA 215-579',total:1823,efectivos:387,tasa:21.2},
+    {usuario:'MOBANDO',estrategia:'2. ESTRATEGIA 215-579',total:1987,efectivos:398,tasa:20.0},
+    {usuario:'MOBANDO',estrategia:'1. ESTRATEGIA 0-214',total:1234,efectivos:287,tasa:23.3},
+    {usuario:'ESTDAVILA',estrategia:'2. ESTRATEGIA 215-579',total:1456,efectivos:278,tasa:19.1},
+    {usuario:'ESTDAVILA',estrategia:'1. ESTRATEGIA 0-214',total:987,efectivos:213,tasa:21.6},
+    {usuario:'NGIRALDO',estrategia:'1. ESTRATEGIA 0-214',total:456,efectivos:98,tasa:21.5},
+    {usuario:'NGIRALDO',estrategia:'2. ESTRATEGIA 215-579',total:312,efectivos:52,tasa:16.7},
+    {usuario:'PTARAZONA',estrategia:'1. ESTRATEGIA 0-214',total:298,efectivos:98,tasa:32.9},
+    {usuario:'PTARAZONA',estrategia:'2. ESTRATEGIA 215-579',total:198,efectivos:54,tasa:27.3},
+    {usuario:'LCSANCHEZ',estrategia:'1. ESTRATEGIA 0-214',total:156,efectivos:67,tasa:43.0},
+    {usuario:'LCSANCHEZ',estrategia:'2. ESTRATEGIA 215-579',total:87,efectivos:24,tasa:27.6},
+    {usuario:'JHENAO',estrategia:'1. ESTRATEGIA 0-214',total:187,efectivos:134,tasa:71.7},
+    {usuario:'JHENAO',estrategia:'2. ESTRATEGIA 215-579',total:98,efectivos:42,tasa:42.9},
+    {usuario:'AVALOR',estrategia:'1. ESTRATEGIA 0-214',total:143,efectivos:45,tasa:31.5},
+    {usuario:'AVALOR',estrategia:'2. ESTRATEGIA 215-579',total:98,efectivos:18,tasa:18.4},
   ],
   kpis:{total:108322,real:99527,ef:6215,ac:5325,timeout:8008,saliente:782},
 };
@@ -911,18 +1001,60 @@ function renderWaEfectividad(){
     tb.appendChild(tr);});
 }
 
-function renderWaAgentes(){
-  mkC('wa-chartAgentes',{type:'bar',data:{labels:WA.agentes.map(a=>a.nombre.split(' ')[0]+' '+a.nombre.split(' ')[1]),
-    datasets:[{data:WA.agentes.map(a=>a.tasa),
-      backgroundColor:WA.agentes.map(a=>a.tasa>=40?'rgba(234,88,12,0.85)':a.tasa>=25?'rgba(37,99,235,0.8)':'rgba(37,99,235,0.5)'),
-      borderColor:'transparent',borderRadius:3}]},
-    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
-      scales:{x:{...gO(),ticks:{callback:v=>v+'%',font:{family:MN,size:10}}},y:{grid:{display:false},ticks:{font:{size:10}}}}}});
+let agEst='todas', agOrd='total';
+function setAgEst(v,btn){agEst=v;document.querySelectorAll('#fg-ag-est .fbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderAgTabla();renderAgChart();}
+function setAgOrd(v,btn){agOrd=v;document.querySelectorAll('#fg-ag-ord .fbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderAgTabla();renderAgChart();}
+
+function getAgData(){
+  if(agEst==='todas'){
+    return WA.agentes.map(a=>({usuario:a.usuario,nombre:a.nombre,total:a.total,efectivos:a.efectivos,tasa:a.tasa_ef}));
+  }
+  // Filtrar por estrategia desde por_estrategia
+  const byEst = WA.por_estrategia.filter(x=>x.estrategia===agEst);
+  return byEst.map(x=>({usuario:x.usuario,nombre:x.nombre,total:x.total,efectivos:x.efectivos,tasa:x.tasa}));
+}
+
+function renderAgTabla(){
+  let data = getAgData();
+  // Búsqueda
+  const q = (document.getElementById('ag-search')?.value||'').toLowerCase();
+  if(q) data = data.filter(a=>a.nombre.toLowerCase().includes(q)||a.usuario.toLowerCase().includes(q));
+  // Ordenar
+  data.sort((a,b)=> agOrd==='tasa'? b.tasa-a.tasa : agOrd==='efectivos'? b.efectivos-a.efectivos : b.total-a.total);
+  document.getElementById('ag-count').textContent = `— ${data.length} agentes`;
   const tb=document.getElementById('wa-tbody-agentes'); tb.innerHTML='';
-  WA.agentes.forEach((a,i)=>{const tr=document.createElement('tr');
-    const col=a.tasa>=40?'or':a.tasa>=25?'bl':'';
-    tr.innerHTML=`<td style="color:var(--text3);font-family:var(--mono)">${i+1}</td><td>${a.nombre}</td><td>${N(a.tot)}</td><td>${N(a.ef)}</td><td><span class="tag ${col}">${a.tasa}%</span></td>`;
-    tb.appendChild(tr);});
+  data.forEach((a,i)=>{
+    const col=a.tasa>=35?'or':a.tasa>=20?'bl':'';
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="color:var(--text3);font-family:var(--mono)">${i+1}</td>
+      <td title="${a.usuario}">${a.nombre}</td>
+      <td>${N(a.total)}</td><td>${N(a.efectivos)}</td>
+      <td><span class="tag ${col||'tag bl'}">${a.tasa}%</span></td>`;
+    tb.appendChild(tr);
+  });
+}
+
+function renderAgChart(){
+  let data = getAgData();
+  data.sort((a,b)=> agOrd==='tasa'? b.tasa-a.tasa : agOrd==='efectivos'? b.efectivos-a.efectivos : b.total-a.total);
+  const top = data.slice(0,15);
+  mkC('wa-chartAgentes',{type:'bar',
+    data:{labels:top.map(a=>a.nombre.split(' ').slice(0,2).join(' ')),
+      datasets:[{data:top.map(a=>agOrd==='total'?a.total:agOrd==='efectivos'?a.efectivos:a.tasa),
+        backgroundColor:top.map(a=>a.tasa>=35?'rgba(234,88,12,0.85)':a.tasa>=20?'rgba(37,99,235,0.8)':'rgba(37,99,235,0.5)'),
+        borderColor:'transparent',borderRadius:3}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{
+        const a=top[c.dataIndex];
+        return `${a.total} chats · ${a.efectivos} ef. · ${a.tasa}%`;
+      }}}},
+      scales:{x:{...gO(),ticks:{font:{family:MN,size:10}}},y:{grid:{display:false},ticks:{font:{size:10}}}}}});
+  document.getElementById('ag-chart-label').textContent=`(top 15 de ${data.length} agentes)`;
+}
+
+function renderWaAgentes(){
+  renderAgTabla();
+  renderAgChart();
 }
 
 function renderWaTipificacion(){
