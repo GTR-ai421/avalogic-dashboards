@@ -189,7 +189,7 @@ def calcular_kpis_wa(dfs):
     tipificaciones = [{'cod':str(r['COD_ACT']),'desc':str(r['desc']),'n':int(r['n'])}
                       for _,r in tip.iterrows()]
 
-    # Agentes
+    # Agentes + merge con estrategia_asesores
     ag = wa.groupby('usuario').agg(
         nombre=('AGENT_NAME', lambda x: x.mode()[0] if len(x)>0 else ''),
         total=('CONN_ID','count'),
@@ -197,8 +197,33 @@ def calcular_kpis_wa(dfs):
     ).reset_index()
     ag['tasa_ef'] = (ag['efectivos']/ag['total']*100).round(1)
     ag = ag[ag['total']>=5].sort_values('total',ascending=False)
+
+    # Buscar estrategia_asesores.xlsx
+    est_paths = [
+        CARPETA_WA_IVR.parent / "estrategia_asesores.xlsx",
+        CARPETA_WA_IVR.parent / "data" / "tmp" / "estrategia_asesores.xlsx",
+    ]
+    for est_path in est_paths:
+        if est_path.exists():
+            try:
+                est = pd.read_excel(str(est_path))
+                if 'managing_user_code' in est.columns and 'strategy' in est.columns:
+                    est['usuario'] = est['managing_user_code'].astype(str).str.strip().str.upper()
+                    est_merge = est[['usuario','strategy']].drop_duplicates('usuario')
+                    ag = ag.merge(est_merge, on='usuario', how='left')
+                    ag['estrategia_real'] = ag['strategy'].fillna('Sin asignar')
+                    ag = ag.drop(columns=['strategy'], errors='ignore')
+                    print(f"  ✓ Estrategia_asesores cargado: {est_path.name}")
+                    break
+            except Exception as e:
+                print(f"  ✗ Error leyendo estrategia_asesores: {e}")
+    else:
+        ag['estrategia_real'] = 'Sin asignar'
+
     agentes = [{'usuario':r['usuario'],'nombre':str(r['nombre']),
-                'total':int(r['total']),'efectivos':int(r['efectivos']),'tasa_ef':float(r['tasa_ef'])}
+                'total':int(r['total']),'efectivos':int(r['efectivos']),
+                'tasa_ef':float(r['tasa_ef']),
+                'estrategia_real':str(r.get('estrategia_real','Sin asignar'))}
                for _,r in ag.iterrows()]
 
     total_wa = int(len(wa))
