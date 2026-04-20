@@ -388,6 +388,63 @@ def main():
     print("\nLeyendo archivos IVR...")
     ivr_data = leer_ivr_files()
 
+    # Descargar estrategia_asesores.xlsx desde Box (siempre, para tener la versión más reciente)
+    print("Descargando estrategia_asesores.xlsx desde Box...")
+    est_local = CARPETA_WA_IVR.parent / "estrategia_asesores.xlsx"
+    try:
+        from boxsdk import OAuth2, Client as BoxClient
+
+        box_config = CARPETA_WA_IVR.parent / "box_config.json"
+        if box_config.exists():
+            with open(box_config) as f:
+                bc = json.load(f)
+            BOX_CLIENT_ID     = bc.get("client_id",     "smna0t2n580ncwpt47ip0hwon5uxf0d9")
+            BOX_CLIENT_SECRET = bc.get("client_secret", "rJJlVosTDHZsDifhy59XiTbr9SUlrxBj")
+            BOX_ACCESS_TOKEN  = bc.get("access_token",  "")
+            BOX_REFRESH_TOKEN = bc.get("refresh_token", "")
+        else:
+            # Leer tokens desde el token.json del VPS/local
+            token_path = Path(r"C:\box_automation\token.json")
+            if not token_path.exists():
+                token_path = CARPETA_WA_IVR.parent / "box_token.json"
+            with open(token_path) as f:
+                t = json.load(f)
+            BOX_CLIENT_ID     = "smna0t2n580ncwpt47ip0hwon5uxf0d9"
+            BOX_CLIENT_SECRET = "rJJlVosTDHZsDifhy59XiTbr9SUlrxBj"
+            BOX_ACCESS_TOKEN  = t.get("access_token", "")
+            BOX_REFRESH_TOKEN = t.get("refresh_token", "")
+
+        tokens_box = {"access": BOX_ACCESS_TOKEN, "refresh": BOX_REFRESH_TOKEN}
+        token_path_save = Path(r"C:\box_automation\token.json")
+
+        def store_tokens(at, rt):
+            tokens_box["access"] = at
+            tokens_box["refresh"] = rt
+            try:
+                with open(token_path_save, "w") as f:
+                    json.dump({"access_token": at, "refresh_token": rt}, f)
+            except: pass
+
+        auth = OAuth2(client_id=BOX_CLIENT_ID, client_secret=BOX_CLIENT_SECRET,
+                      access_token=tokens_box["access"], refresh_token=tokens_box["refresh"],
+                      store_tokens=store_tokens)
+        box = BoxClient(auth)
+
+        # Buscar estrategia_asesores en Archivos Complementarios (ID 363134860327)
+        items = box.folder("363134860327").get_items(limit=200)
+        for item in items:
+            if item.type == 'file' and 'estrategia_asesores' in item.name.lower():
+                content = box.file(item.id).content()
+                with open(est_local, 'wb') as f:
+                    f.write(content)
+                print(f"  ✓ estrategia_asesores.xlsx descargado de Box ({len(content)//1024} KB)")
+                break
+        else:
+            print("  ✗ No se encontró estrategia_asesores en Box — usando versión local si existe")
+    except Exception as e:
+        print(f"  ✗ Error conectando a Box: {e}")
+        print("    Usando versión local si existe...")
+
     # Calcular KPIs
     print("\nCalculando KPIs WA...")
     datos_wa = calcular_kpis_wa(dfs_wa) if dfs_wa else {}
