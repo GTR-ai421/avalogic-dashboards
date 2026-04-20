@@ -1,0 +1,9 @@
+# Configuración local con tokens
+gh_config.json
+wa_ivr_hash.json
+dashboard_hash.json
+
+# Archivos temporales
+data/tmp/
+__pycache__/
+*.pyc
